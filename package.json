@@ -1,7 +1,7 @@
 {
   "name": "neosserverclient",
   "productName": "Neos Headless Manager",
-  "version": "1.0.0",
+  "version": "0.7.0",
   "description": "Headless Server for Neos",
   "main": "start.js",
   "scripts": {
