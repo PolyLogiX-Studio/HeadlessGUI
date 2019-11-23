@@ -384,21 +384,21 @@ const mainMenuTemplate = [{
                 label: 'Online Help',
                 accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
                 click() {
-                    createURLWindow('www.polylogix.studio/headless-manager-help')
+                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki','OnlineHelp')
                 }
             },
             {
                 label: 'My PolyLogiX Account',
                 accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
                 click() {
-                    createURLWindow('www.polylogix.studio/PolyLogiX-Account')
+                    createURLWindow('www.polylogix.studio/PolyLogiX-Account','MyAccount')
                 }
             },
             {
                 label: 'Report a Bug',
                 accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
                 click() {
-                    createURLWindow('www.github.com/bombitmanbomb/Neos-Headless-Manager/issues')
+                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues','BugReport')
                 }
             },
         ]
