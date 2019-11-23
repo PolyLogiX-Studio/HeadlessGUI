@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+.vs/neosHeadlessDev/v15/.suo
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vscode/tasks.json
+release-builds/
