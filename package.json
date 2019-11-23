@@ -1,0 +1,24 @@
+{
+  "name": "neosserverclient",
+  "productName": "Neos Headless Manager",
+  "version": "1.0.0",
+  "description": "Headless Server for Neos",
+  "main": "start.js",
+  "scripts": {
+    "start": "electron .",
+    "package-win": "electron-packager . \"Neos Headless Manager\" --overwrite --asar --platform=win32 --arch=ia32 --icon=images/HeadlessGraphic.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Neos Headless Manager\""
+  },
+  "author": "Ethan Snow",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^7.1.1",
+    "electron-store": "^5.1.0",
+    "fs-extra": "^8.1.0",
+    "node-fetch": "^2.6.0",
+    "npm": "^6.13.1",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "electron-packager": "^14.1.0"
+  }
+}

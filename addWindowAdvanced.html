@@ -1,0 +1,115 @@
+<html>
+   <head>
+      <link rel="stylesheet" type="text/css" href="./bootstrap.min.css" />
+      <script type="text/javascript" src="./DOMediting.js"></script>
+      <title>Advanced Settings</title>
+      <style>
+            /* width */
+            ::-webkit-scrollbar {
+              width: 20px;
+            }
+            
+            /* Track */
+            ::-webkit-scrollbar-track {
+              box-shadow: inset 0 0 5px grey; 
+              border-radius: 10px;
+            }
+             
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+              background: #00afed; 
+              border-radius: 10px;
+            }
+            
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+              background: #00afed; 
+            }
+            </style>
+   </head>
+   <body>
+      <form>
+         <div class="form-group">
+            <label for="forcePort">Force Port</label>
+            <input type="number" id="forcePort" class="form-control" placeholder="Port">
+            <label for="idleRestartInterval">Restart on Idle</label>
+            <input type="number" id="idleRestartInterval" class="form-control" placeholder="Time (Minutes)">
+            <label for="forcedRestartInterval">Force Restart</label>
+            <input type="number" id="forcedRestartInterval" class="form-control" placeholder="Time (Minutes)">
+            
+            <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="keepOriginalRolesNOT" onchange="togglePermissions(this.checked)">
+                  <label class="custom-control-label" for="keepOriginalRolesNOT">Custom Permissions</label>
+            </div>
+            <div id="permissionContainer" style="display:none">
+                  <label for="PERMISSIONS">Permissions</label> 
+                  <div id="PERMISSIONS" class="list-group" style="overflow: scroll; height: 200px; overflow-x: hidden;">
+                          
+                  </div>
+                  <button type="button" class="btn btn-outline-success btn-sm" onclick="newRole()">+ New Role</button>
+            </div>
+            
+         </div>
+         <button type="button" class="btn btn-success" onclick="submitForm()">Save Advanced Settings</button>
+      </form>
+      <script>
+         //addElement(parentId, elementTag, elementId, elementClass, html)
+         //removeElement(elementId)
+         function openURL(url){
+            ipcRenderer.send('openURL',url)
+         }
+         const electron = require('electron');
+         const {ipcRenderer} = electron
+         const form = document.querySelector('form');
+         var roleID = 0
+         function newRole(){
+            addElement('PERMISSIONS', 'div', `role-${roleID}`, 'list-group-item list-group-item-action', `<button type="button" style="width:10%;" onclick="removeElement(this.parentElement.id)" class="close"><span aria-hidden="true">&times;</span></button><span id="idDisp" class="badge badge-dark" style="float:left; width:10%">${roleID}</span><input class="form-control" style="float:left; width:50%" id="username-${roleID}" type="text" placeholder="Username"><select style="float:right; width:30%" class="form-control" id="roleVal-${roleID}"><option value="Spectator">Spectator</option><option value="Guest">Guest</option><option value="Moderator">Moderator</option><option value="Builder">Builder</option><option value="Admin">Admin</option></select>`)
+            roleID++
+         }
+         function togglePermissions(val){
+            if (val){
+               document.getElementById('permissionContainer').style.display = 'block'
+               ipcRenderer.send('addWindowAdvanced:resize',{'x':500,'y':610})
+            } else {
+               document.getElementById('permissionContainer').style.display = 'none'
+               ipcRenderer.send('addWindowAdvanced:resize',{'x':500,'y':330})
+            }
+         }
+         function buildPermissions(perms){}
+         function parsePermissions(){
+            if (!document.getElementById('keepOriginalRolesNOT').checked){return null}
+            let Permissions = {}
+            for (let i=0;i<roleID;i++){
+            if (document.getElementById(`role-${i}`)){
+               Permissions[document.getElementById(`username-${i}`).value] = document.getElementById(`roleVal-${i}`).value;
+            }
+            }
+            return Permissions
+         }
+         function setData(dat){
+            document.getElementById('forcePort').value = (!dat.forcePort?undefined:dat.forcePort)
+            document.getElementById('idleRestartInterval').value = (dat.idleRestartInterval===-1?undefined:dat.idleRestartInterval)
+            document.getElementById('forcedRestartInterval').value = (dat.forcedRestartInterval===-1?undefined:dat.forcedRestartInterval)
+            document.getElementById('keepOriginalRolesNOT').checked = (!dat.keepOriginalRoles?false:true)
+            togglePermissions((!dat.keepOriginalRoles?false:true))
+         }
+         function submitForm(){
+           let ret = {
+              "forcePort": (!document.getElementById('forcePort').value?null:document.getElementById('forcePort').value),
+              "idleRestartInterval": (!document.getElementById('idleRestartInterval').value?-1.0:document.getElementById('idleRestartInterval').value),
+              "forcedRestartInterval":(!document.getElementById('forcedRestartInterval').value?-1.0:document.getElementById('forcedRestartInterval').value),
+              "keepOriginalRoles": document.getElementById('keepOriginalRolesNOT').checked,
+              "defaultUserRoles": parsePermissions()
+           }
+           ipcRenderer.send('addWindowAdvanced:save', ret)
+         }
+         function requestData(){
+            ipcRenderer.send('addWindowAdvanced:request')
+         }
+         ipcRenderer.on('addWindowAdvanced:response', function(e,data){
+            setData(data)
+         })
+         requestData()
+      </script>
+   </body>
+</html>

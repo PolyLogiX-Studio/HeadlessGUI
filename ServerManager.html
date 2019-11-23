@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script type="text/javascript" src="./DOMediting.js"></script>
+      <link rel="stylesheet" type="text/css" href="./bootstrap.min.css" />
+      <title>Server Config</title>
+      <style>.AlertWindow{position: fixed; z-index: 999; width:100%;}</style>
+      <style>
+            /* width */
+            ::-webkit-scrollbar {
+              width: 20px;
+            }
+            
+            /* Track */
+            ::-webkit-scrollbar-track {
+              box-shadow: inset 0 0 5px grey; 
+              border-radius: 10px;
+            }
+             
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+              background: #00afed; 
+              border-radius: 10px;
+            }
+            
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+              background: #00afed; 
+            }
+            </style>
+   </head>
+   <body>
+      <div id="alerts" class="AlertWindow" width="100%">
+      </div>
+      <div style="width:70%">
+      <div class="list-group border-secondary" id="Console" style="vertical-align: bottom; width:100%; height:550px; overflow-y: scroll; overflow-wrap: break-word;"></div>
+     
+      <div class="form-group">
+          <div class="form-group">
+            <div class="input-group mb-3">
+              <input id="ConsoleInput" type="text" class="form-control" aria-label="Command">
+              <div class="input-group-append">
+                <span class="input-group"><button id="ConsoleSend" type="button" class="btn btn-secondary" onclick="sendCommand()">Send</button></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+      <script>
+const urlParams = new URLSearchParams(window.location.search);
+         const SESSION_ID = urlParams.get('id');
+
+
+function sendCommand(){
+  let command = document.getElementById('ConsoleInput').value
+  if (!command){return}
+  addElement('Console','div','0','list-group-item',`>${command}`)
+  ipcRenderer.send('Console:Command',{'id':SESSION_ID,'command':command})
+  document.getElementById('ConsoleInput').value = undefined
+
+}
+
+
+
+
+
+        var scrolled = false
+function updateScroll(){
+    if(!scrolled){
+        var element = document.getElementById("Console");
+        element.scrollTop = element.scrollHeight;
+        while(element.scrollHeight>6000){
+          removeTop()
+        }
+    }
+}
+function removeTop(){
+  document.getElementById('Console').removeChild(documment.getElementById('Console').children[0])
+}
+
+
+        //addElement(parentId, elementTag, elementId, elementClass, html)
+         const electron = require('electron')
+         const {ipcRenderer} = electron;
+         const Store = require('electron-store');
+         const store = new Store();
+         //UpdateItems
+         ipcRenderer.on('Update:Raw', (e,session)=>{
+           updateSession(session)
+         })  
+
+         ipcRenderer.on('Server:Log', (e,message)=>{
+          addElement('Console','div','0','list-group-item',`${message}`)
+          updateScroll()
+         })
+          function updateElementHTML(ID,value){
+            document.getElementById(ID).innerHTML=value
+          }
+          function updateElementSrc(ID,value){
+            document.getElementById(ID).src = value
+          }
+          function updateSession(session){
+            console.log('Update: '+session.ID)
+            if (session.Status==='Running'){
+              removeAlert('startAlert-'+session.ID)
+            }
+            /*
+            updateElementSrc('previewImage-'+session.ID,session.SessionPreview)
+            updateElementHTML('usercount-'+session.ID,'Players: '+(session.UserCount-1)+'/'+(session.Config.startWorlds[0].maxUsers-1))
+            updateElementHTML("status-"+session.ID,'Status: '+session.Status)
+            console.log(session.displayStatusMessage)
+            */
+            if (session.displayStatusMessage){
+              console.log('alert')
+              switch (session.event){
+                case 'Saving':
+                  removeAlert(addAlert(`Saving...`,'info'),5000)
+                  break
+                  case 'Started':
+                  removeAlert(addAlert(`Session Running!`,'success'),2000)
+                  break
+                case 'Saved':
+                  removeAlert(addAlert(`Saved!`,'success'),5000)
+                  break
+                case 'Syncing':
+                 removeAlert(addAlert(`Syncing...`,'info'),5000)
+                  break
+                case 'Synced':
+                 removeAlert(addAlert(`Synced!`,'success'),5000)
+                  break
+                  case 'ShuttingDown':
+                  removeAlert(addAlert(`Shutting Down...`,'warning'),5000)
+                  break
+                  case 'ShutDown':
+                  removeAlert(addAlert(`Session Ended.`,'danger'),2000)
+                  break
+                case 'UserJoinContext':
+                  removeAlert(addAlert(`User <strong>${session.eventContext[1]}</strong> connected!`,'primary'),5000)
+                  break
+                case 'UserLeft':
+                  removeAlert(addAlert(`User <strong>${session.eventContext[1]}</strong> disconnected!`,'warning'),5000)
+                  break
+                default:
+              }
+            }
+          }
+        
+           let alertID = 0
+         function removeAlert(alertID, timeout=0){
+           setTimeout(function(){removeElement('alert-'+alertID)},timeout)
+         }
+         function addAlert(message,alertType="",CustomAlertID){
+           let myAlert = (!CustomAlertID ? alertID : CustomAlertID)
+          addElement('alerts', 'div', 'alert-'+myAlert,'alert alert-dismissible alert-'+alertType,'<button type="button" class="close" data-dismiss="alert" onclick="removeElement(\'alert-'+myAlert+'\')">&times;</button>'+message)
+          if (!CustomAlertID){alertID++}
+          return myAlert
+        }
+     </script>
+   </body>
+</html>

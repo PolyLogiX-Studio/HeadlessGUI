@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script type="text/javascript" src="./DOMediting.js"></script>
+      <link rel="stylesheet" type="text/css" href="./bootstrap.min.css" />
+      <title>Neos Headless Manager</title>
+      <style>.AlertWindow{position: fixed; z-index: 999; width:100%;}</style>
+      <style>
+         /* width */
+         ::-webkit-scrollbar {
+         width: 20px;
+         }
+         /* Track */
+         ::-webkit-scrollbar-track {
+         box-shadow: inset 0 0 5px grey; 
+         border-radius: 10px;
+         }
+         /* Handle */
+         ::-webkit-scrollbar-thumb {
+         background: #00afed; 
+         border-radius: 10px;
+         }
+         /* Handle on hover */
+         ::-webkit-scrollbar-thumb:hover {
+         background: #00afed; 
+         }
+      </style>
+   </head>
+   <body>
+      <div id="alerts" class="AlertWindow" width="100%">
+      </div>
+      <div id="ServerList" class="list-group" style="flex-direction: row; flex-wrap:wrap">
+      </div>
+      <script>
+         //addElement(parentId, elementTag, elementId, elementClass, html)
+          const electron = require('electron')
+          const {ipcRenderer} = electron;
+          const Store = require('electron-store');
+          const store = new Store();
+          //UpdateItems
+          ipcRenderer.on('Server:Update', (e,session)=>{
+            updateSession(session)
+          })
+          ipcRenderer.on('ConfigError', function(e,items){
+          removeAlert(addAlert('<strong>Oh Snap!</strong> Make sure to set your config before starting a server! Do this in <strong>Main -> Config</strong> or with <strong>'+(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')+'</strong>','danger','noConfig'),5000)
+         });
+         ipcRenderer.on('removeStart', function(e,items){
+           removeAlert('StartupAlert')
+         });      
+         ipcRenderer.on('removeConfig', function(e,items){
+           while (document.getElementById('alert-noConfig')){
+           removeAlert('noConfig')
+           }
+         });    
+          ipcRenderer.on('Main:updateList', function(e,items){
+            addAlert('Session <strong>'+items.id+'</strong> Starting..','info', 'startAlert-'+items.id)
+            addElement('ServerList',"div",'SERVER-'+items.id,"",'<div class="card mb-3" id=""  style="width: 300px;"><h3 id="Session Name" class="card-header">'+items.sessionName+'</h3><div class="card-body"><h5 id="WorldName-'+items.id+'" class="card-title">'+(!items.loadWorldURL ? items.loadWorldPresetName : 'Custom')+'</h5><h6 class="card-subtitle text-muted">'+items.id+'</h6></div><img id="previewImage-'+items.id+'" style="height: 200px; width: 100%; display: block;" src="https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607" alt="Card image"><div class="card-body"><p id="description-'+items.id+'" class="card-text">'+items.description+'</p></div><ul class="list-group list-group-flush"><li id="usercount-'+items.id+'" class="list-group-item">Players: undefined/'+items.maxUsers--+'</li>  <li id="status-'+items.id+'" class="list-group-item">Status: Starting</li></ul><div class="card-body"><a href="javascript:openManager(\''+items.id+'\')" class="card-link">Manage Server</a></div><div id="uptime" class="card-footer text-muted">'+new Date()+'</div></div>')
+            });
+           function openManager(id){
+             ipcRenderer.send('openManager',id)
+           }
+           function updateElementHTML(ID,value){
+             document.getElementById(ID).innerHTML=value
+           }
+           function updateElementSrc(ID,value){
+             document.getElementById(ID).src = value
+           }
+           function updateSession(session){
+             console.log('Update: '+session.ID)
+             if (session.Status==='Running'){
+               removeAlert('startAlert-'+session.ID)
+             }
+             updateElementSrc('previewImage-'+session.ID,session.SessionPreview)
+             updateElementHTML('usercount-'+session.ID,'Players: '+(session.UserCount-1)+'/'+(session.Config.startWorlds[0].maxUsers-1))
+             updateElementHTML("status-"+session.ID,'Status: '+session.Status)
+             console.log(session.displayStatusMessage)
+             if (session.displayStatusMessage){
+               console.log('alert')
+               switch (session.event){
+                 case 'Saving':
+                   removeAlert(addAlert(`Session ${session.ID} Saving...`,'info'),5000)
+                   break
+                   case 'Started':
+                   removeAlert(addAlert(`Session ${session.ID} Running!`,'success'),2000)
+                   break
+                 case 'Saved':
+                   removeAlert(addAlert(`Session ${session.ID} Saved!`,'success'),5000)
+                   break
+                 case 'Syncing':
+                  removeAlert(addAlert(`Session ${session.ID} Syncing...`,'info'),5000)
+                   break
+                 case 'Synced':
+                  removeAlert(addAlert(`Session ${session.ID} Synced!`,'success'),5000)
+                   break
+                   case 'ShuttingDown':
+                   removeAlert(addAlert(`Session ${session.ID} Shutting Down...`,'warning'),5000)
+                   break
+                   case 'ShutDown':
+                   removeAlert(addAlert(`Session ${session.ID} has Ended.`,'danger'),2000)
+                 removeElement('SERVER-'+session.ID)
+                   break
+                 case 'UserJoinContext':
+                   removeAlert(addAlert(`User <strong>${session.eventContext[1]}</strong> connected to ${session.ID}!`,'primary'),5000)
+                   break
+                 case 'UserLeft':
+                   removeAlert(addAlert(`User <strong>${session.eventContext[1]}</strong> disconnected from ${session.ID}!`,'warning'),5000)
+                   break
+                 default:
+               }
+             }
+           }
+         
+            let alertID = 0
+          function removeAlert(alertID, timeout=0){
+            setTimeout(function(){removeElement('alert-'+alertID)},timeout)
+          }
+          function addAlert(message,alertType="",CustomAlertID){
+            let myAlert = (!CustomAlertID ? alertID : CustomAlertID)
+           addElement('alerts', 'div', 'alert-'+myAlert,'alert alert-dismissible alert-'+alertType,'<button type="button" class="close" data-dismiss="alert" onclick="removeElement(\'alert-'+myAlert+'\')">&times;</button>'+message)
+           if (!CustomAlertID){alertID++}
+           return myAlert
+         }
+            
+         
+            addAlert('Start a New Server through <strong>Main -> New Server</strong> Or by pressing <strong>Ctrl+N</strong>.','info','StartupAlert')
+            if (!store.has('configSet')){
+             addAlert('<strong>Oh Snap!</strong> Make sure to set your config before starting a server! Do this in <strong>Main -> Config</strong> or with <strong>'+(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')+'</strong>','danger','noConfig')
+            }  
+      </script>
+   </body>
+</html>

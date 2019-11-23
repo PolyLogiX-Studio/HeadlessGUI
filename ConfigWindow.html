@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <link rel="stylesheet" type="text/css" href="./bootstrap.min.css" />
+      <title>Config</title>
+   </head>
+   <body>
+      <div id="alerts">
+      </div>
+      <form>
+         <div class="form-group">
+                <label for="usernameOverride">Display Name</label>
+                <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp" placeholder="Display Username">
+            <label for="NeosEmail">Neos Account Email</label>
+            <input type="email" class="form-control" id="NeosEmail" aria-describedby="emailHelp" placeholder="Enter Email">
+            <label for="NeosPassword">Neos Account Password</label>
+            <input type="password" class="form-control" id="NeosPassword" placeholder="Enter Password">
+            <small id="emailHelp" class="form-text text-muted">This is Only used to start the Neos Headless</small>
+            <label for="apikey">PolyLogiX Api Key</label>
+            <input type="password" class="form-control" id="apikey" placeholder="Optional">
+            <small id="apikeyhelp" class="form-text text-muted">API Key for communicating with your PolyLogiX Account</small>
+            <small id="apikeyhelp" class="form-text text-muted">NOT YET IMPLIMENTED</small>
+            <label for="tickRate">Server Tick Rate</label>
+            <input  type="number" id="tickRate" class="form-control" placeholder="User Limit" min="24" max="1024" value="60">
+            <label for="custom-file">Headless Client</label>
+            <div class="custom-file">=
+               <input type="file" accept=".exe" class="custom-file-input" id="NeosClient" onchange="setFileDisplay(this.files[0].path)" webkitdirectory/>
+               <label class="custom-file-label" id="clientText" for="NeosClient">Browse for Folder</label>
+            </div>
+            <div class='form-group' id="PathFormGroup">
+                    <input type="text" class="form-control" id="NeosClientPath" aria-describedby="emailHelp" placeholder="Path" onchange="validatePath()">
+                    <div id="PathFeedback" class="invalid-feedback"></div>
+            </div>
+            <label for="allowedUrlHosts">Networking Hosts Allowed</label>
+            <textarea rows=3 type="text" id="allowedUrlHosts" class="form-control" placeholder="URI Hosts; Comma Delimited"></textarea>
+         </div>
+
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" type="submit" onclick="saveConfig()">Save changes</button>
+         </div>
+      </form>
+      <script>
+         const electron = require('electron')
+         const {ipcRenderer} = electron;
+         const Store = require('electron-store');
+         const store = new Store();
+         const fs = require('fs')
+         const path = require('path');
+         var pathValid = false
+         function setFileDisplay(FilePath){
+             //console.log(FilePath)
+             let folder = FilePath.split('\\')
+             //console.log(folder)
+             document.getElementById('NeosClientPath').value = FilePath.substring(0,FilePath.lastIndexOf('\\') + 1);
+             document.getElementById('clientText').innerHTML = folder[folder.length-2]
+             validatePath()
+         }
+         function validatePath(){
+             if (fs.existsSync(path.join(document.getElementById('NeosClientPath').value,'Neos.exe'))){
+                document.getElementById('NeosClientPath').setAttribute('class', 'form-control is-valid')
+                document.getElementById('PathFeedback').setAttribute('class', 'valid-feedback')
+                document.getElementById('PathFeedback').innerHTML='Headless Client Found!'
+                pathValid = true
+             } else {
+                document.getElementById('NeosClientPath').setAttribute('class', 'form-control is-invalid')
+                document.getElementById('PathFeedback').setAttribute('class', 'invalid-feedback')
+                document.getElementById('PathFeedback').innerHTML='Headless Client not found!'
+                pathValid = false
+             }
+
+         }
+         function getConfig(){
+            let hosts = store.get('allowedUrlHosts')
+            
+             if (!store.has('configSet')){return}
+            document.getElementById('tickRate').value=store.get('tickRate')
+            document.getElementById('NeosClientPath').value=store.get('neosClientPath')
+            document.getElementById('usernameOverride').value=store.get('usernameOverride')
+            document.getElementById('NeosEmail').value=store.get('loginCredentials')
+            document.getElementById('NeosPassword').value=store.get('loginPassword')
+            document.getElementById('apikey').value=store.get('PolyLogiXAPI')
+            if (hosts){
+            document.getElementById('allowedUrlHosts').value=hosts.join(',\r\n')
+            }
+            validatePath()
+         }
+         function saveConfig(){
+             store.set('configSet',true)
+             store.set('tickRate',document.getElementById('tickRate').value)
+             store.set('neosClientPath',document.getElementById('NeosClientPath').value)
+             store.set('usernameOverride',document.getElementById('usernameOverride').value)
+             store.set('loginCredentials',document.getElementById('NeosEmail').value)
+             store.set('loginPassword',document.getElementById('NeosPassword').value)
+             store.set('PolyLogiXAPI',document.getElementById('apikey').value)
+             let hosts = document.getElementById('allowedUrlHosts').value
+             hosts = hosts.replace(/\s/g, '');
+             hosts = hosts.replace(/\r\n[\r]\n/g, '')
+             store.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
+            ipcRenderer.send('Config:Update');
+         }
+         getConfig()
+      </script>
+   </body>
+</html>
