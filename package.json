@@ -6,7 +6,10 @@
   "main": "start.js",
   "scripts": {
     "start": "electron .",
-    "package-win": "electron-packager . \"Neos Headless Manager\" --overwrite --asar --platform=win32 --arch=ia32 --icon=images/HeadlessGraphic.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Neos Headless Manager\""
+    "package-win-64": "electron-packager . \"Neos Headless Manager\" --overwrite --asar --platform=win32 --arch=x64 --icon=images/HeadlessGraphic.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Neos Headless Manager\"",
+    "package-win-32": "electron-packager . \"Neos Headless Manager\" --overwrite --asar --platform=win32 --arch=x32 --icon=images/HeadlessGraphic.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Neos Headless Manager\"",
+    "package-linux": "electron-packager . \"Neos Headless Manager\" --overwrite --asar --platform=linux --arch=armv71 --icon=images/HeadlessGraphic.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Neos Headless Manager\"",
+    "package-all": "electron-packager . \"Neos Headless Manager\" --overwrite --asar --all --icon=images/HeadlessGraphic.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Neos Headless Manager\""
   },
   "author": "Ethan Snow",
   "license": "MIT",
