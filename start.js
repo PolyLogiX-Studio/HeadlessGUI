@@ -34,14 +34,14 @@ app.on('ready', function() {
     mainWindow = new BrowserWindow({
         width: 1920,
         height: 1080,
-        icon: path.join(__dirname, 'HeadlessGraphic.png'),
+        icon: path.join(__dirname, 'images/HeadlessGraphic.png'),
         webPreferences: {
             nodeIntegration: true
         }
     });
     // Load HTML file
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'mainWindow.html'),
+        pathname: path.join(__dirname, 'Pages/mainWindow.html'),
         protocol: 'file:',
         slashes: true,
     }));
@@ -108,7 +108,7 @@ function createAddWindow() {
         width: 400,
         height: 800,
         title: "New Server",
-        icon: path.join(__dirname, 'GraphicIcon_-_Golden_Neos.png'),
+        icon: path.join(__dirname, 'images/GraphicIcon_-_Golden_Neos.png'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -118,7 +118,7 @@ function createAddWindow() {
     }
     // Load HTML file
     addWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'addWindow.html'),
+        pathname: path.join(__dirname, 'Pages/addWindow.html'),
         protocol: 'file:',
         slashes: true,
     }))
@@ -142,7 +142,7 @@ function createConfigWindow() {
         width: 400,
         height: 790,
         title: "Config",
-        icon: path.join(__dirname, 'Gear.png'),
+        icon: path.join(__dirname, 'images/Gear.png'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -152,7 +152,7 @@ function createConfigWindow() {
     }
     // Load HTML file
     configWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'ConfigWindow.html'),
+        pathname: path.join(__dirname, 'Pages/ConfigWindow.html'),
         protocol: 'file:',
         slashes: true,
     }))
@@ -171,7 +171,7 @@ function createAddWindowAdvanced() {
         width: 500,
         height: 330,
         title: 'Advanced Settings',
-        icon: path.join(__dirname, 'Gear.png'),
+        icon: path.join(__dirname, 'images/Gear.png'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -181,7 +181,7 @@ function createAddWindowAdvanced() {
     }
 
     addWindowAdvanced.loadURL(url.format({
-        pathname: path.join(__dirname, 'addWindowAdvanced.html'),
+        pathname: path.join(__dirname, 'Pages/addWindowAdvanced.html'),
         protocol: 'file:',
         slashes: true
     }))
@@ -203,7 +203,7 @@ function createURLWindow(URL, width = 1080, height = 1080) {
         width: width,
         height: height,
         title: "Config",
-        icon: path.join(__dirname, 'polylogix.jpg'),
+        icon: path.join(__dirname, 'images/polylogix.jpg'),
         webPreferences: {
             nodeIntegration: false
         }
@@ -582,13 +582,13 @@ class Server {
             width: 800,
             height: 800,
             title: "Console",
-            icon: path.join(__dirname, 'GraphicIcon_-_Golden_Neos.png'),
+            icon: path.join(__dirname, 'images/GraphicIcon_-_Golden_Neos.png'),
             webPreferences: {
                 nodeIntegration: true
             }
         });
         this.Console.loadURL(url.format({
-            pathname: path.join(__dirname, `ServerManager.html`),
+            pathname: path.join(__dirname, `Pages/ServerManager.html`),
             protocol: 'file:',
             slashes: true,
         })+`?id=${this.ID}`);
