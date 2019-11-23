@@ -19,11 +19,20 @@ let addWindowAdvanced = null;
 let loginWindow = null
 const _ = undefined
 const fs = require('fs-extra');
-function closeAllWindows(){
-    if (addWindow){addWindow.close()}
-    if (configWindow){configWindow.close()}
-    if (addWindowAdvanced){addWindowAdvanced.close()}
-    if (loginWindow){loginWindow.close()}
+
+function closeAllWindows() {
+    if (addWindow) {
+        addWindow.close()
+    }
+    if (configWindow) {
+        configWindow.close()
+    }
+    if (addWindowAdvanced) {
+        addWindowAdvanced.close()
+    }
+    if (loginWindow) {
+        loginWindow.close()
+    }
 }
 //Init
 
@@ -32,26 +41,15 @@ var Instances = {}
 var dataDir = app.getPath('userData') //AppData/Roaming
 var sessionsDir = path.join(dataDir, "Active Sessions") //%AppData%/NeosHeadlessManager/Active Sessions
 fs.removeSync(sessionsDir)
-if (!store.has('MachineId')){ //For API Calls
+if (!store.has('MachineId')) { //For API Calls
     store.set(new uuidv4())
 }
 
 
 
 
-
-
-
 //Disable SubMenu & Dev tools
 //process.env.NODE_ENV = 'production';
-
-
-
-
-
-
-
-
 
 
 
@@ -83,49 +81,55 @@ app.on('ready', function() {
     // Insert Menu
     Menu.setApplicationMenu(mainMenu);
     mainWindow.on('close', (e) => {
-        if (JSON.stringify(Instances)==='{}'){
+        if (JSON.stringify(Instances) === '{}') {
             return false
         } else {
             e.preventDefault()
-            dialog.showMessageBox(null,{
-                type:'question',
-                buttons: ['Cancel', `Yes, I'm Sure`,`No, I clicked this by mistake`],
-                defaultId:2,
+            dialog.showMessageBox(null, {
+                type: 'question',
+                buttons: ['Cancel', `Yes, I'm Sure`, `No, I clicked this by mistake`],
+                defaultId: 2,
                 title: "Close Program?",
                 message: "Are you sure you want to quit?",
                 detail: "This will Kick all players and close all sessions."
-            }).then((e)=>{
-                if (e.response===1){safeQuit()}
+            }).then((e) => {
+                if (e.response === 1) {
+                    safeQuit()
+                }
             })
             //console.log(response)
         }
-      })
+    })
 });
 //QUIT HANDELING
 
 shuttingDown = false
 
-function safeQuit(){
+function safeQuit() {
     closeAllWindows()
     shuttingDown = true
-let instances = Object.keys(Instances)
-        for (let i=0;i<instances.length;i++){
-            Instances[instances[i]].end()
-        }
+    let instances = Object.keys(Instances)
+    for (let i = 0; i < instances.length; i++) {
+        Instances[instances[i]].end()
     }
-    function clearCache(id){
-        fs.removeSync(Instances[id].sessionDir)
-        delete Instances[id]
-        //console.log('Instanced Left: ',JSON.stringify(Instances))
-        if (shuttingDown && JSON.stringify(Instances) === '{}'){
+}
+
+function clearCache(id) {
+    fs.removeSync(Instances[id].sessionDir)
+    delete Instances[id]
+    //console.log('Instanced Left: ',JSON.stringify(Instances))
+    if (shuttingDown && JSON.stringify(Instances) === '{}') {
         //console.log("CLEAR QUIT")
-            ClearQuit()
-        }
+        ClearQuit()
     }
-    function ClearQuit(){
-        fs.removeSync(sessionsDir)
-        setTimeout(()=>{app.quit()},5000) // Need a better way to do this
-    }
+}
+
+function ClearQuit() {
+    fs.removeSync(sessionsDir)
+    setTimeout(() => {
+        app.quit()
+    }, 5000) // Need a better way to do this
+}
 // Handle Creatre Add Window
 function createAddWindow() {
     if (addWindow !== null) {
@@ -169,7 +173,7 @@ function createLoginWindow() {
         return
     }
     loginWindow = new BrowserWindow({
-        darkTheme:true,
+        darkTheme: true,
         width: 500,
         height: 300,
         title: "Neos Login",
@@ -179,7 +183,7 @@ function createLoginWindow() {
         }
     });
     loginWindow.loadURL(url.format({
-        pathname: path.join(__dirname,'Pages/NeosLogin.html'),
+        pathname: path.join(__dirname, 'Pages/NeosLogin.html'),
         protocol: 'file:',
         slashes: true,
     }))
@@ -259,7 +263,7 @@ function createAddWindowAdvanced() {
 
 function createURLWindow(URL, width = 1080, height = 1080) {
     let URLwindow = new BrowserWindow({
-        darkTheme:true,
+        darkTheme: true,
         width: width,
         height: height,
         title: "Config",
@@ -284,7 +288,7 @@ function createURLWindow(URL, width = 1080, height = 1080) {
 
 }
 
-ipcMain.on('callWindow:Login', function(e){
+ipcMain.on('callWindow:Login', function(e) {
     createLoginWindow()
 })
 ipcMain.on('addWindowAdvanced:save', function(e, ret) {
@@ -327,19 +331,19 @@ ipcMain.on('addWindowAdvanced:request', function(e) {
 ipcMain.on('addWindowAdvanced:response', function(e, data) {
     addWindowAdvanced.webContents.send('addWindowAdvanced:response', data)
 })
-ipcMain.on('Console:Command',function(e,item){
-        if (!Instances[item.id]){
-            dialog.showMessageBox(null,{
-                type:'error',
-                buttons: ['Ok'],
-                defaultId:2,
-                title: "Session Not Found",
-                message: `Session ${item.id} not found!`,
-                detail: "This session does not exist!"
-            })
-            return
-        }
-        Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
+ipcMain.on('Console:Command', function(e, item) {
+    if (!Instances[item.id]) {
+        dialog.showMessageBox(null, {
+            type: 'error',
+            buttons: ['Ok'],
+            defaultId: 2,
+            title: "Session Not Found",
+            message: `Session ${item.id} not found!`,
+            detail: "This session does not exist!"
+        })
+        return
+    }
+    Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
 })
 
 // Main Menu Template
@@ -384,29 +388,29 @@ const mainMenuTemplate = [{
                 label: 'Online Help',
                 accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
                 click() {
-                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki','OnlineHelp')
+                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki', 'OnlineHelp')
                 }
             },
             {
                 label: 'My PolyLogiX Account',
                 accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
                 click() {
-                    createURLWindow('www.polylogix.studio/PolyLogiX-Account','MyAccount')
+                    createURLWindow('www.polylogix.studio/PolyLogiX-Account', 'MyAccount')
                 }
             },
             {
                 label: 'Report a Bug',
                 accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
                 click() {
-                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues','BugReport')
+                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues', 'BugReport')
                 }
             },
         ]
 
     },
     {
-        label:"Support Us on Patreon!",
-        click(){
+        label: "Support Us on Patreon!",
+        click() {
             createURLWindow('www.patreon.com/PolyLogiX_VR')
         }
     }
@@ -509,50 +513,66 @@ class Server {
         this.UserCount = 1
         this.Users = []
         this.Timers = {
-            'UpdatePreview':()=>{this.updateCloudXID()}
+            'UpdatePreview': () => {
+                this.updateCloudXID()
+            }
         }
         this.PolyLogiXAPI = null
         this.configWindow = new Object()
-        this.TimerProc = ()=>{setTimeout(()=>{this.runTimers()},3000);setInterval(()=>{this.runTimers()},60000)}
+        this.TimerProc = () => {
+            setTimeout(() => {
+                this.runTimers()
+            }, 3000);
+            setInterval(() => {
+                this.runTimers()
+            }, 60000)
+        }
         fs.mkdirSync(this.sessionDir)
         fs.mkdirSync(this.Config.dataFolder)
         fs.mkdirSync(this.Config.cacheFolder)
         fs.writeFileSync(path.join(this.sessionDir, 'Config.json'), JSON.stringify(this.Config));
-        if (process.platform==='win32'){ //Windows
+        if (process.platform === 'win32') { //Windows
             this.Session = spawn(path.join(store.get('neosClientPath'), 'Neos.exe'), ['--config', path.join(this.sessionDir, 'Config.json')], {
                 windowsHide: true,
                 cwd: store.get('neosClientPath')
             })
         } else { //Linux requires Mono
-            this.Session = spawn('mono', [path.join(store.get('neosClientPath'), 'Neos.exe'),'--config', path.join(this.sessionDir, 'Config.json')], {
+            this.Session = spawn('mono', [path.join(store.get('neosClientPath'), 'Neos.exe'), '--config', path.join(this.sessionDir, 'Config.json')], {
                 windowsHide: true,
                 cwd: store.get('neosClientPath')
             })
         }
-        
+
         this.Session.stdin.write('log\n')
-        this.Session.on('exit',()=>{
+        this.Session.on('exit', () => {
             //console.log("SESSION CLOSED")
             this.Session.stdin.pause();
             this.event = 'ShutDown';
             this.displayStatusMessage = true;
             this.update();
-            if (this.Console!==null){this.Console.close();this.Console = null}
-                
+            if (this.Console !== null) {
+                this.Console.close();
+                this.Console = null
+            }
+
             this.Session.kill();
             this.Session = null
             clearCache(this.ID);
-            
+
         })
         this.Session.stdout.on('data', (data) => {
-            if (data.toString().startsWith('Enabling logging output.')){return}
+            if (data.toString().startsWith('Enabling logging output.')) {
+                return
+            }
             console.log('NEOS: ' + data)
             if (data.toString().startsWith('World running')) {
                 this.Status = 'Running';
                 this.event = 'Started'
                 this.displayStatusMessage = true;
                 this.update()
-                setTimeout(()=>{this.TimerProc()},10000) // Start Internal Timers
+                setTimeout(() => {
+                    this.TimerProc()
+                }, 10000) // Start Internal Timers
             }
             if (data.toString().startsWith('World Saving') || data.toString().startsWith('Autosaving')) {
                 this.event = 'Saving';
@@ -627,50 +647,58 @@ class Server {
                 });
 
                 this.update()
-                
+
             }
-            if (data.toString().startsWith(this.Config.startWorlds[0].sessionName+">")){return}
-            if (this.Console!==null){
-                this.Console.webContents.send('Server:Log',data.toString())
+            if (data.toString().startsWith(this.Config.startWorlds[0].sessionName + ">")) {
+                return
+            }
+            if (this.Console !== null) {
+                this.Console.webContents.send('Server:Log', data.toString())
             }
         });
         return this
     }
-    updateCloudXID(){
-        if (this.CloudXID===null){
-            if(this.Session===null||this.Session==undefined){return}
+    updateCloudXID() {
+        if (this.CloudXID === null) {
+            if (this.Session === null || this.Session == undefined) {
+                return
+            }
             this.Session.stdin.write('\nsessionUrl\nlog\n')
-        //setTimeout(()=>{this.updatePreview()},10000);;
+            //setTimeout(()=>{this.updatePreview()},10000);;
         } else {
             this.updatePreview()
         }
     }
-    updatePreview(){
-        if (this.CloudXID===null){return}
-        let url = 'https://cloudx.azurewebsites.net/api/sessions/'+this.CloudXID
+    updatePreview() {
+        if (this.CloudXID === null) {
+            return
+        }
+        let url = 'https://cloudx.azurewebsites.net/api/sessions/' + this.CloudXID
         //console.log(url)
         fetch(url)
-        .then(res => res.json())
-        .then(json => {
-            this.SessionPreview = (json.thumbnail? json.thumbnail : "https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607")
-        })
+            .then(res => res.json())
+            .then(json => {
+                this.SessionPreview = (json.thumbnail ? json.thumbnail : "https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607")
+            })
     }
-    runTimers(){
+    runTimers() {
         //console.log('running timers on '+this.ID)
-        for (var timer in this.Timers){
+        for (var timer in this.Timers) {
             //console.log('Running '+timer)
             this.Timers[timer].call()
         }
     }
-    end(){
+    end() {
         //console.log('Ending Session '+this.ID)
         this.Status = 'Shutting Down'
         this.event = 'ShuttingDown'
         this.displayStatusMessage = true
         this.update()
-        setTimeout(()=>{this.Session.stdin.write('\nshutdown\n');},1000)
+        setTimeout(() => {
+            this.Session.stdin.write('\nshutdown\n');
+        }, 1000)
     }
-        
+
     update() {
 
         //console.log('USERS: ', this.Users)
@@ -696,7 +724,7 @@ class Server {
             pathname: path.join(__dirname, `/Pages/ServerManager.html`),
             protocol: 'file:',
             slashes: true,
-        })+`?id=${this.ID}`);
+        }) + `?id=${this.ID}`);
         this.Console.on('close', () => {
             this.Console = null
         })
@@ -707,4 +735,3 @@ class Server {
 ipcMain.on('openManager', function(e, id) {
     Instances[id].openWindow()
 })
-

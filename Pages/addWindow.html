@@ -1,111 +1,115 @@
 <html>
-   <head>
-      <link rel="stylesheet" type="text/css" href="./Resources/bootstrap.min.css" />
-      <title>New Server</title>
-   </head>
-   <body>
-      <form>
-         <div class="form-group">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="./Resources/bootstrap.min.css" />
+    <title>New Server</title>
+</head>
+
+<body>
+    <form>
+        <div class="form-group">
             <label for="sessionName">Session Name</label>
-            <input  type="text" id="sessionName" class="form-control" placeholder="Default World">
+            <input type="text" id="sessionName" class="form-control" placeholder="Default World">
             <label for="description">Description</label>
             <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
             <label for="maxUsers">User Limit</label>
-            <input  type="number" id="maxUsers" class="form-control" placeholder="User Limit" min="1" max="32" value="32">
+            <input type="number" id="maxUsers" class="form-control" placeholder="User Limit" min="1" max="32" value="32">
             <label for="accessLevel">Visibility</label>
             <select class="custom-select" id="accessLevel">
-               <option value="Anyone" selected>Anyone</option>
-               <option value="RegisteredUsers">Registered Users</option>
-               <option value="Friends">Friends</option>
-               <option value="LAN">LAN</option>
-               <option value="Private">Private</option>
+                <option value="Anyone" selected>Anyone</option>
+                <option value="RegisteredUsers">Registered Users</option>
+                <option value="Friends">Friends</option>
+                <option value="LAN">LAN</option>
+                <option value="Private">Private</option>
             </select>
             <label for="loadWorldURL">World Record URL <small class="text-info"><a href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is This?</a></small></label>
-            
-            <input  type="text" id="loadWorldURL" class="form-control" placeholder="neosrec:///">
+
+            <input type="text" id="loadWorldURL" class="form-control" placeholder="neosrec:///">
             <label for="loadWorldPresetName">Load World Preset Name</label>
             <select class="custom-select" id="loadWorldPresetName">
-                  <option value="SpaceWorld" selected>SpaceWorld</option>
-                  <option value="Basic Empty">Basic Empty</option>
-                  <option value="GridSpace">GridSpace</option>
-                  <option value="Microworld">Microworld</option>
-               </select>
-           
+                <option value="SpaceWorld" selected>SpaceWorld</option>
+                <option value="Basic Empty">Basic Empty</option>
+                <option value="GridSpace">GridSpace</option>
+                <option value="Microworld">Microworld</option>
+            </select>
+
             <label for="autosaveInterval">Autosave Interval (Minutes)</label>
-            <input  type="number" id="autosaveInterval" class="form-control" placeholder="User Limit" min="-1.0"  value="-1.0">
+            <input type="number" id="autosaveInterval" class="form-control" placeholder="User Limit" min="-1.0" value="-1.0">
             <div class="custom-control custom-switch">
-               <input type="checkbox" class="custom-control-input" id="mobileFriendly">
-               <label class="custom-control-label" for="mobileFriendly">Mobile Friendly</label>
+                <input type="checkbox" class="custom-control-input" id="mobileFriendly">
+                <label class="custom-control-label" for="mobileFriendly">Mobile Friendly</label>
             </div>
             <div class="custom-control custom-switch">
-               <input type="checkbox" class="custom-control-input" id="autoRecover">
-               <label class="custom-control-label" for="autoRecover">Auto Recover</label>
+                <input type="checkbox" class="custom-control-input" id="autoRecover">
+                <label class="custom-control-label" for="autoRecover">Auto Recover</label>
             </div>
             <div class="custom-control custom-switch">
-               <input type="checkbox" class="custom-control-input" id="saveOnExit">
-               <label class="custom-control-label" for="saveOnExit">Save on Exit</label>
+                <input type="checkbox" class="custom-control-input" id="saveOnExit">
+                <label class="custom-control-label" for="saveOnExit">Save on Exit</label>
             </div>
             <label for="addons"><small class="text-danger">Addons Not Yet Implemented</small></label><br>
             <button id="addons" type="button" class="btn btn-secondary">Manage Addons</button>
             <button id="advancedBtn" type="button" class="btn btn-outline-info" onclick="ipcRenderer.send('server:new:advanced')">Advanced Settings</button>
-         </div>
-         <button class="btn btn-success" type="submit">New Server</button>
-      </form>
-      <script>
-
-         function openURL(url){
-            ipcRenderer.send('openURL',url)
-         }
-         const electron = require('electron');
-         const Store = require('electron-store');
-         const store = new Store();
-         const {ipcRenderer} = electron
-         const form = document.querySelector('form');
-         form.addEventListener('submit', submitForm);
-         var advanced = {"forcePort": null,
-              "idleRestartInterval": -1.0,
-              "forcedRestartInterval":-1.0,
-              "keepOriginalRoles": false,
-              "defaultUserRoles": null}
-         ipcRenderer.on('addWindowAdvanced:save', function(e,item){
+        </div>
+        <button class="btn btn-success" type="submit">New Server</button>
+    </form>
+    <script>
+        function openURL(url) {
+            ipcRenderer.send('openURL', url)
+        }
+        const electron = require('electron');
+        const Store = require('electron-store');
+        const store = new Store();
+        const {
+            ipcRenderer
+        } = electron
+        const form = document.querySelector('form');
+        form.addEventListener('submit', submitForm);
+        var advanced = {
+            "forcePort": null,
+            "idleRestartInterval": -1.0,
+            "forcedRestartInterval": -1.0,
+            "keepOriginalRoles": false,
+            "defaultUserRoles": null
+        }
+        ipcRenderer.on('addWindowAdvanced:save', function(e, item) {
             advanced = item
-         })         
+        })
 
-         function submitForm(e){
-           e.preventDefault();
-           //console.log(e)
-           ipcRenderer.send('server:new', {
-            'sessionName' : (!document.querySelector('#sessionName').value? 'DefaultWorld' : document.querySelector('#sessionName').value),
-            'description' : document.querySelector('#description').value,
-            'maxUsers' : document.querySelector('#maxUsers').value,
-            'accessLevel' : document.querySelector('#accessLevel').value,
-            'loadWorldURL' : (document.querySelector('#loadWorldURL').value=='' ? null :document.querySelector('#loadWorldURL').value) ,
-            'loadWorldPresetName' : document.querySelector('#loadWorldPresetName').value,
-            'autosaveInterval' : document.querySelector('#autosaveInterval').value,
-            'mobileFriendly' : document.querySelector('#mobileFriendly').value==='on',
-            'autoRecover' : document.querySelector('#autoRecover').value==='on',
-            'saveOnExit' : document.querySelector('#saveOnExit').value==='on',
-            'usernameOverride':undefined,
-            'tickRate':store.get('tickRate'),
-            'keepOriginalRoles':advanced.keepOriginalRoles,
-            'defaultUserRoles':advanced.defaultUserRoles,
-            'idleRestartInterval':advanced.idleRestartInterval,
-            'forcedRestartInterval':advanced.forcedRestartInterval,
-            'forcePort':advanced.forcePort,
-            'autoInviteMessage':undefined,
-            'autoInviteUsernames':undefined
-           })
-          
-
-
-         }
-         //Advanced Variable Definition
-         let forcePort
-         ipcRenderer.on('addWindowAdvanced:request', function(){
-            ipcRenderer.send('addWindowAdvanced:response',advanced)
-         })
+        function submitForm(e) {
+            e.preventDefault();
+            //console.log(e)
+            ipcRenderer.send('server:new', {
+                'sessionName': (!document.querySelector('#sessionName').value ? 'DefaultWorld' : document.querySelector('#sessionName').value),
+                'description': document.querySelector('#description').value,
+                'maxUsers': document.querySelector('#maxUsers').value,
+                'accessLevel': document.querySelector('#accessLevel').value,
+                'loadWorldURL': (document.querySelector('#loadWorldURL').value == '' ? null : document.querySelector('#loadWorldURL').value),
+                'loadWorldPresetName': document.querySelector('#loadWorldPresetName').value,
+                'autosaveInterval': document.querySelector('#autosaveInterval').value,
+                'mobileFriendly': document.querySelector('#mobileFriendly').value === 'on',
+                'autoRecover': document.querySelector('#autoRecover').value === 'on',
+                'saveOnExit': document.querySelector('#saveOnExit').value === 'on',
+                'usernameOverride': undefined,
+                'tickRate': store.get('tickRate'),
+                'keepOriginalRoles': advanced.keepOriginalRoles,
+                'defaultUserRoles': advanced.defaultUserRoles,
+                'idleRestartInterval': advanced.idleRestartInterval,
+                'forcedRestartInterval': advanced.forcedRestartInterval,
+                'forcePort': advanced.forcePort,
+                'autoInviteMessage': undefined,
+                'autoInviteUsernames': undefined
+            })
 
 
-      </script>
-   </body>
+
+        }
+        //Advanced Variable Definition
+        let forcePort
+        ipcRenderer.on('addWindowAdvanced:request', function() {
+            ipcRenderer.send('addWindowAdvanced:response', advanced)
+        })
+    </script>
+</body>
+
 </html>
