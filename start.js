@@ -16,16 +16,45 @@ let mainWindow = null;
 let addWindow = null;
 let configWindow = null;
 let addWindowAdvanced = null;
+let loginWindow = null
 const _ = undefined
 const fs = require('fs-extra');
+function closeAllWindows(){
+    if (addWindow){addWindow.close()}
+    if (configWindow){configWindow.close()}
+    if (addWindowAdvanced){addWindowAdvanced.close()}
+    if (loginWindow){loginWindow.close()}
+}
+//Init
 
 var Instances = {}
 
-var dataDir = app.getPath('userData')
-var sessionsDir = path.join(dataDir, "Active Sessions")
+var dataDir = app.getPath('userData') //AppData/Roaming
+var sessionsDir = path.join(dataDir, "Active Sessions") //%AppData%/NeosHeadlessManager/Active Sessions
 fs.removeSync(sessionsDir)
+if (!store.has('MachineId')){ //For API Calls
+    store.set(new uuidv4())
+}
+
+
+
+
+
+
+
 //Disable SubMenu & Dev tools
 //process.env.NODE_ENV = 'production';
+
+
+
+
+
+
+
+
+
+
+
 
 // Listen for App to be ready
 
@@ -75,7 +104,9 @@ app.on('ready', function() {
 //QUIT HANDELING
 
 shuttingDown = false
+
 function safeQuit(){
+    closeAllWindows()
     shuttingDown = true
 let instances = Object.keys(Instances)
         for (let i=0;i<instances.length;i++){
@@ -92,7 +123,8 @@ let instances = Object.keys(Instances)
         }
     }
     function ClearQuit(){
-        setTimeout(()=>{fs.removeSync(sessionsDir);setTimeout(function(){app.quit()},1000)},1000)
+        fs.removeSync(sessionsDir)
+        setTimeout(()=>{app.quit()},5000) // Need a better way to do this
     }
 // Handle Creatre Add Window
 function createAddWindow() {
@@ -132,7 +164,34 @@ function createAddWindow() {
 
 }
 
+function createLoginWindow() {
+    if (loginWindow !== null) {
+        return
+    }
+    loginWindow = new BrowserWindow({
+        darkTheme:true,
+        width: 500,
+        height: 300,
+        title: "Neos Login",
+        icon: path.join(__dirname, 'images/GraphicIcon_-_Golden_Neos.png'),
+        webPreferences: {
+            nodeIntegration: false
+        }
+    });
+    loginWindow.loadURL(url.format({
+        pathname: path.join(__dirname,'Pages/NeosLogin.html'),
+        protocol: 'file:',
+        slashes: true,
+    }))
+    if (process.env.NODE_ENV === 'production') {
+        loginWindow.setMenu(null)
+    }
+    // GC Handle
+    loginWindow.on('close', function() {
+        loginWindow = null
+    })
 
+}
 
 function createConfigWindow() {
     if (configWindow !== null) {
@@ -200,6 +259,7 @@ function createAddWindowAdvanced() {
 
 function createURLWindow(URL, width = 1080, height = 1080) {
     let URLwindow = new BrowserWindow({
+        darkTheme:true,
         width: width,
         height: height,
         title: "Config",
@@ -224,7 +284,9 @@ function createURLWindow(URL, width = 1080, height = 1080) {
 
 }
 
-
+ipcMain.on('callWindow:Login', function(e){
+    createLoginWindow()
+})
 ipcMain.on('addWindowAdvanced:save', function(e, ret) {
     addWindow.webContents.send('addWindowAdvanced:save', ret)
     addWindowAdvanced.close()
@@ -341,6 +403,12 @@ const mainMenuTemplate = [{
             },
         ]
 
+    },
+    {
+        label:"Support Us on Patreon!",
+        click(){
+            createURLWindow('www.patreon.com/PolyLogiX_VR')
+        }
     }
 ]
 

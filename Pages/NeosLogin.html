@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <link rel="stylesheet" type="text/css" href="./Resources/bootstrap.min.css" />
+      <title>Config</title>
+   </head>
+   <body>
+      <div id="alerts">
+      </div>
+      <form>
+         <div class="form-group">
+            <label for="NeosEmail">Neos Account Email</label>
+            <input type="email" class="form-control" id="NeosEmail" aria-describedby="emailHelp" placeholder="Enter Email">
+            <label for="NeosPassword">Neos Account Password</label>
+            <input type="password" class="form-control" id="NeosPassword" placeholder="Enter Password">
+            <small id="emailHelp" class="form-text text-muted">Neos does not support OAuth (Yet)</small>
+            
+         <div class="modal-footer">
+            <button type="button" class="btn btn-success" type="submit" onclick="saveConfig()">Login</button>
+         </div>
+      </form>
+      <script>
+         const electron = require('electron')
+         const {ipcRenderer} = electron;
+         const Store = require('electron-store');
+         const store = new Store();
+      </script>
+   </body>
+</html>

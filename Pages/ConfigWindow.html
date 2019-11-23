@@ -9,13 +9,16 @@
       </div>
       <form>
          <div class="form-group">
+            <div id='ProfileDisplay' style="display: none;">
+               <img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" style="float:left; width:75px; height: 75px; padding-right: 5px;" >
+               <h3 id="userNameProfile">test</h3>
+            </div>
+            <div id="Login" style="display: none;">
+                  <button type="button" class="btn btn-info" onclick="callLogin()">Login to Neos</button>
+            </div>
                 <label for="usernameOverride">Display Name</label>
                 <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp" placeholder="Display Username">
-            <label for="NeosEmail">Neos Account Email</label>
-            <input type="email" class="form-control" id="NeosEmail" aria-describedby="emailHelp" placeholder="Enter Email">
-            <label for="NeosPassword">Neos Account Password</label>
-            <input type="password" class="form-control" id="NeosPassword" placeholder="Enter Password">
-            <small id="emailHelp" class="form-text text-muted">This is Only used to start the Neos Headless</small>
+            
             <label for="apikey">PolyLogiX Api Key</label>
             <input type="password" class="form-control" id="apikey" placeholder="Optional">
             <small id="apikeyhelp" class="form-text text-muted">API Key for communicating with your PolyLogiX Account</small>
@@ -47,6 +50,23 @@
          const fs = require('fs')
          const path = require('path');
          var pathValid = false
+
+         var neosToken = store.get('neos:token')
+         var loginCredential = store.get('neos:loginCredential')
+         var loginPassword = store.get('neos:loginPassword')
+
+
+         if (!loginPassword || !loginCredential){
+            document.getElementById('Login').style.display = 'block'
+         } else {
+            login()
+         }
+         function callLogin(){
+            ipcRenderer.send('callWindow:Login')
+         }
+         function login(){
+
+         }
          function setFileDisplay(FilePath){
              //console.log(FilePath)
              let folder = FilePath.split('\\')
@@ -76,8 +96,8 @@
             document.getElementById('tickRate').value=store.get('tickRate')
             document.getElementById('NeosClientPath').value=store.get('neosClientPath')
             document.getElementById('usernameOverride').value=store.get('usernameOverride')
-            document.getElementById('NeosEmail').value=store.get('loginCredentials')
-            document.getElementById('NeosPassword').value=store.get('loginPassword')
+            //loginCredential=store.get('neos:loginCredential')
+            //loginPassword=store.get('neos:loginPassword')
             document.getElementById('apikey').value=store.get('PolyLogiXAPI')
             if (hosts){
             document.getElementById('allowedUrlHosts').value=hosts.join(',\r\n')
@@ -89,8 +109,6 @@
              store.set('tickRate',document.getElementById('tickRate').value)
              store.set('neosClientPath',document.getElementById('NeosClientPath').value)
              store.set('usernameOverride',document.getElementById('usernameOverride').value)
-             store.set('loginCredentials',document.getElementById('NeosEmail').value)
-             store.set('loginPassword',document.getElementById('NeosPassword').value)
              store.set('PolyLogiXAPI',document.getElementById('apikey').value)
              let hosts = document.getElementById('allowedUrlHosts').value
              hosts = hosts.replace(/\s/g, '');

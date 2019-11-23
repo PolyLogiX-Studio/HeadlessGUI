@@ -3,7 +3,7 @@
    <head>
       <script type="text/javascript" src="./Resources/DOMediting.js"></script>
       <link rel="stylesheet" type="text/css" href="./Resources/bootstrap.min.css" />
-      <title>Server Config</title>
+      <title id="title">Server Config</title>
       <style>.AlertWindow{position: fixed; z-index: 999; width:100%;}</style>
       <style>
             /* width */
@@ -50,6 +50,8 @@
       <script>
 const urlParams = new URLSearchParams(window.location.search);
          const SESSION_ID = urlParams.get('id');
+        updateElementHTML('title', `Console: ${SESSION_ID}`)
+
 
          function handle(e){
         e.preventDefault()
