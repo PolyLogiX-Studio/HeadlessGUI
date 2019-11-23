@@ -15,6 +15,7 @@
     "package-win32-x64": "electron-packager . \"Neos Headless Manager\" --overwrite --asar --platform=win32 --arch=x64 --icon=images/HeadlessGraphic.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Neos Headless Manager\"",
     "package-all": "electron-packager . \"Neos Headless Manager\" --overwrite --asar --all --icon=images/HeadlessGraphic.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Neos Headless Manager\""
   },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
   "author": "Ethan Snow",
   "license": "MIT",
   "dependencies": {
