@@ -331,7 +331,14 @@ const mainMenuTemplate = [{
                 click() {
                     createURLWindow('www.polylogix.studio/PolyLogiX-Account')
                 }
-            }
+            },
+            {
+                label: 'Report a Bug',
+                accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
+                click() {
+                    createURLWindow('www.github.com/bombitmanbomb/Neos-Headless-Manager/issues')
+                }
+            },
         ]
 
     }
@@ -443,10 +450,18 @@ class Server {
         fs.mkdirSync(this.Config.dataFolder)
         fs.mkdirSync(this.Config.cacheFolder)
         fs.writeFileSync(path.join(this.sessionDir, 'Config.json'), JSON.stringify(this.Config));
-        this.Session = spawn(path.join(store.get('neosClientPath'), 'Neos.exe'), ['--config', path.join(this.sessionDir, 'Config.json')], {
-            windowsHide: true,
-            cwd: store.get('neosClientPath')
-        })
+        if (process.platform==='win32'){ //Windows
+            this.Session = spawn(path.join(store.get('neosClientPath'), 'Neos.exe'), ['--config', path.join(this.sessionDir, 'Config.json')], {
+                windowsHide: true,
+                cwd: store.get('neosClientPath')
+            })
+        } else { //Linux requires Mono
+            this.Session = spawn('mono', [path.join(store.get('neosClientPath'), 'Neos.exe'),'--config', path.join(this.sessionDir, 'Config.json')], {
+                windowsHide: true,
+                cwd: store.get('neosClientPath')
+            })
+        }
+        
         this.Session.stdin.write('log\n')
         this.Session.on('exit',()=>{
             //console.log("SESSION CLOSED")
