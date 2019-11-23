@@ -34,7 +34,7 @@
       </div>
       <div style="width:70%">
       <div class="list-group border-secondary" id="Console" style="vertical-align: bottom; width:100%; height:550px; overflow-y: scroll; overflow-wrap: break-word;"></div>
-     
+     <form id="ConsoleForm" action="#" onsubmit="handle(event)">
       <div class="form-group">
           <div class="form-group">
             <div class="input-group mb-3">
@@ -45,20 +45,23 @@
             </div>
           </div>
         </div>
-
+        </form>
     </div>
       <script>
 const urlParams = new URLSearchParams(window.location.search);
          const SESSION_ID = urlParams.get('id');
 
-
+         function handle(e){
+        e.preventDefault()
+        sendCommand()
+        }
 function sendCommand(){
   let command = document.getElementById('ConsoleInput').value
   if (!command){return}
   addElement('Console','div','0','list-group-item',`>${command}`)
   ipcRenderer.send('Console:Command',{'id':SESSION_ID,'command':command})
-  document.getElementById('ConsoleInput').value = undefined
-
+  document.getElementById('ConsoleInput').value = ''
+  updateScroll()
 }
 
 

@@ -34,14 +34,14 @@ app.on('ready', function() {
     mainWindow = new BrowserWindow({
         width: 1920,
         height: 1080,
-        icon: path.join(__dirname, 'images/HeadlessGraphic.png'),
+        icon: path.join(__dirname, '/images/HeadlessGraphic.png'),
         webPreferences: {
             nodeIntegration: true
         }
     });
     // Load HTML file
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'Pages/mainWindow.html'),
+        pathname: path.join(__dirname, '/Pages/mainWindow.html'),
         protocol: 'file:',
         slashes: true,
     }));
@@ -58,7 +58,7 @@ app.on('ready', function() {
             return false
         } else {
             e.preventDefault()
-            let response = dialog.showMessageBox(null,{
+            dialog.showMessageBox(null,{
                 type:'question',
                 buttons: ['Cancel', `Yes, I'm Sure`,`No, I clicked this by mistake`],
                 defaultId:2,
@@ -108,7 +108,7 @@ function createAddWindow() {
         width: 400,
         height: 800,
         title: "New Server",
-        icon: path.join(__dirname, 'images/GraphicIcon_-_Golden_Neos.png'),
+        icon: path.join(__dirname, '/images/GraphicIcon_-_Golden_Neos.png'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -118,7 +118,7 @@ function createAddWindow() {
     }
     // Load HTML file
     addWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'Pages/addWindow.html'),
+        pathname: path.join(__dirname, '/Pages/addWindow.html'),
         protocol: 'file:',
         slashes: true,
     }))
@@ -142,7 +142,7 @@ function createConfigWindow() {
         width: 400,
         height: 790,
         title: "Config",
-        icon: path.join(__dirname, 'images/Gear.png'),
+        icon: path.join(__dirname, '/images/Gear.png'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -152,7 +152,7 @@ function createConfigWindow() {
     }
     // Load HTML file
     configWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'Pages/ConfigWindow.html'),
+        pathname: path.join(__dirname, '/Pages/ConfigWindow.html'),
         protocol: 'file:',
         slashes: true,
     }))
@@ -171,7 +171,7 @@ function createAddWindowAdvanced() {
         width: 500,
         height: 330,
         title: 'Advanced Settings',
-        icon: path.join(__dirname, 'images/Gear.png'),
+        icon: path.join(__dirname, '/images/Gear.png'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -181,7 +181,7 @@ function createAddWindowAdvanced() {
     }
 
     addWindowAdvanced.loadURL(url.format({
-        pathname: path.join(__dirname, 'Pages/addWindowAdvanced.html'),
+        pathname: path.join(__dirname, '/Pages/addWindowAdvanced.html'),
         protocol: 'file:',
         slashes: true
     }))
@@ -203,7 +203,7 @@ function createURLWindow(URL, width = 1080, height = 1080) {
         width: width,
         height: height,
         title: "Config",
-        icon: path.join(__dirname, 'images/polylogix.jpg'),
+        icon: path.join(__dirname, '/images/polylogix.jpg'),
         webPreferences: {
             nodeIntegration: false
         }
@@ -266,6 +266,17 @@ ipcMain.on('addWindowAdvanced:response', function(e, data) {
     addWindowAdvanced.webContents.send('addWindowAdvanced:response', data)
 })
 ipcMain.on('Console:Command',function(e,item){
+        if (!Instances[item.id]){
+            dialog.showMessageBox(null,{
+                type:'error',
+                buttons: ['Ok'],
+                defaultId:2,
+                title: "Session Not Found",
+                message: `Session ${item.id} not found!`,
+                detail: "This session does not exist!"
+            })
+            return
+        }
         Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
 })
 
@@ -443,8 +454,12 @@ class Server {
             this.event = 'ShutDown';
             this.displayStatusMessage = true;
             this.update();
-            clearCache(this.ID);
+            if (this.Console!==null){this.Console.close();this.Console = null}
+                
             this.Session.kill();
+            this.Session = null
+            clearCache(this.ID);
+            
         })
         this.Session.stdout.on('data', (data) => {
             if (data.toString().startsWith('Enabling logging output.')){return}
@@ -477,6 +492,12 @@ class Server {
             if (data.toString().startsWith('Finished sync')) {
                 this.event = 'Synced';
                 this.Status = 'Running';
+                this.displayStatusMessage = true;
+                this.update()
+            }
+            if (data.toString().startsWith('Shutting Down')) {
+                this.event = 'ShuttingDown';
+                this.Status = 'Shutting Down';
                 this.displayStatusMessage = true;
                 this.update()
             }
@@ -534,7 +555,8 @@ class Server {
     }
     updateCloudXID(){
         if (this.CloudXID===null){
-        this.Session.stdin.write('\nsessionUrl\nlog\n')
+            if(this.Session===null||this.Session==undefined){return}
+            this.Session.stdin.write('\nsessionUrl\nlog\n')
         //setTimeout(()=>{this.updatePreview()},10000);;
         } else {
             this.updatePreview()
@@ -582,13 +604,13 @@ class Server {
             width: 800,
             height: 800,
             title: "Console",
-            icon: path.join(__dirname, 'images/GraphicIcon_-_Golden_Neos.png'),
+            icon: path.join(__dirname, '/images/GraphicIcon_-_Golden_Neos.png'),
             webPreferences: {
                 nodeIntegration: true
             }
         });
         this.Console.loadURL(url.format({
-            pathname: path.join(__dirname, `Pages/ServerManager.html`),
+            pathname: path.join(__dirname, `/Pages/ServerManager.html`),
             protocol: 'file:',
             slashes: true,
         })+`?id=${this.ID}`);
