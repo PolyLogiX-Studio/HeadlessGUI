@@ -11,10 +11,10 @@
     </div>
     <form>
         <div class="form-group">
-            <label for="NeosEmail">Neos Account Email</label>
-            <input type="email" class="form-control" id="NeosEmail" aria-describedby="emailHelp" placeholder="Enter Email">
+            <label for="neosCredential">Neos Account Credential</label>
+            <input type="text" class="form-control" id="neosCredential" aria-describedby="emailHelp" placeholder="Neos Login">
             <label for="NeosPassword">Neos Account Password</label>
-            <input type="password" class="form-control" id="NeosPassword" placeholder="Enter Password">
+            <input type="password" class="form-control" id="NeosPassword" placeholder="Neos Password">
             <small id="emailHelp" class="form-text text-muted">Neos does not support OAuth (Yet)</small>
 
             <div class="modal-footer">
@@ -29,8 +29,8 @@
         const Store = require('electron-store');
         const store = new Store();
         function attemptLogin(){
-            if (document.getElementById('NeosEmail').value&&document.getElementById('NeosPassword').value)
-            ipcRenderer.send('NEOS:Login', {'neosCredential':document.getElementById('NeosEmail').value,'neosPassword':document.getElementById('NeosPassword').value})
+            if (document.getElementById('neosCredential').value&&document.getElementById('NeosPassword').value)
+            ipcRenderer.send('NEOS:Login', {'neosCredential':document.getElementById('neosCredential').value,'neosPassword':document.getElementById('NeosPassword').value})
         }
 
     </script>

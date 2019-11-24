@@ -68,6 +68,7 @@ process.env.NODE_ENV = 'production';
 app.on('ready', function() {
     // Create new Window
     mainWindow = new BrowserWindow({
+        show: false,
         width: 1920,
         height: 1080,
         icon: ICON_GLOBAL_PNG,
@@ -81,6 +82,9 @@ app.on('ready', function() {
         protocol: 'file:',
         slashes: true,
     }));
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show()
+    })
     // Quit app when main closed
     mainWindow.on('closed', function() {
         safeQuit()
@@ -150,6 +154,7 @@ function createAddWindow() {
     }
     mainWindow.webContents.send('removeStart')
     addWindow = new BrowserWindow({
+        show: false,
         width: 400,
         height: 800,
         title: "New Server",
@@ -167,6 +172,9 @@ function createAddWindow() {
         protocol: 'file:',
         slashes: true,
     }))
+    addWindow.once('ready-to-show', () => {
+        addWindow.show()
+    })
     // GC Handle
     addWindow.on('close', function() {
         if (addWindowAdvanced) {
@@ -182,6 +190,7 @@ function createLoginWindow() {
         return
     }
     loginWindow = new BrowserWindow({
+        show: false,
         darkTheme: true,
         width: 500,
         height: 300,
@@ -196,6 +205,9 @@ function createLoginWindow() {
         protocol: 'file:',
         slashes: true,
     }))
+    loginWindow.once('ready-to-show', () => {
+        loginWindow.show()
+    })
     if (process.env.NODE_ENV === 'production') {
         loginWindow.setMenu(null)
     }
@@ -212,7 +224,8 @@ function createConfigWindow() {
     }
     configWindow = new BrowserWindow({
         width: 400,
-        height: 790,
+        show: false,
+        height: 800,
         title: "Config",
         icon: ICON_GLOBAL_PNG,
         webPreferences: {
@@ -228,6 +241,9 @@ function createConfigWindow() {
         protocol: 'file:',
         slashes: true,
     }))
+    configWindow.once('ready-to-show', () => {
+        configWindow.show()
+    })
     // GC Handle
     configWindow.on('close', function() {
         configWindow = null
@@ -240,8 +256,9 @@ function createAddWindowAdvanced() {
         return
     } // 1 copy
     addWindowAdvanced = new BrowserWindow({
+        show: false,
         width: 500,
-        height: 330,
+        height: 340,
         title: 'Advanced Settings',
         icon: ICON_GLOBAL_PNG,
         webPreferences: {
@@ -258,7 +275,9 @@ function createAddWindowAdvanced() {
         slashes: true
     }))
 
-
+    addWindowAdvanced.once('ready-to-show', () => {
+        addWindowAdvanced.show()
+    })
 
     addWindowAdvanced.on('close', function() {
         addWindowAdvanced = null //GC Cleanup
@@ -272,6 +291,7 @@ function createAddWindowAdvanced() {
 
 function createURLWindow(URL, width = 1080, height = 1080) {
     let URLwindow = new BrowserWindow({
+        show: false,
         darkTheme: true,
         width: width,
         height: height,
@@ -294,9 +314,12 @@ function createURLWindow(URL, width = 1080, height = 1080) {
     URLwindow.on('close', function() {
         URLwindow = null
     })
+    URLwindow.once('ready-to-show', () => {
+        URLwindow.show()
+    })
 
 }
-ipcMain.on('NEOS:Login', function(e,info){
+ipcMain.on('NEOS:Login', function(e, info) {
     info.neosCredential
     info.neosPassword
     store.get('MachineId')
@@ -517,6 +540,9 @@ class Server {
         this.Config.dataFolder = path.join(this.sessionDir, 'Data')
         this.Config.cacheFolder = path.join(this.sessionDir, 'Cache')
         this.Status = 'Starting'
+        this.log = (message) => {
+            console.log(`${this.ID}:${message}`)
+        }
         this.Console = null
         this.event = null
         this.CloudXID = null
@@ -525,20 +551,22 @@ class Server {
         this.displayStatusMessage = false
         this.UserCount = 1
         this.Users = []
+        this.timerMod = 0
         this.Timers = {
-            'UpdatePreview': () => {
-                this.updateCloudXID()
+            'UpdatePreview': {
+                func: () => {
+                    this.log('updateCloudXID')
+                    this.updateCloudXID()
+                },
+                freq: 60
             }
         }
         this.PolyLogiXAPI = null
         this.configWindow = new Object()
         this.TimerProc = () => {
-            setTimeout(() => {
-                this.runTimers()
-            }, 3000);
             setInterval(() => {
                 this.runTimers()
-            }, 60000)
+            }, 1000)
         }
         fs.mkdirSync(this.sessionDir)
         fs.mkdirSync(this.Config.dataFolder)
@@ -582,6 +610,9 @@ class Server {
                 this.Status = 'Running';
                 this.event = 'Started'
                 this.displayStatusMessage = true;
+
+
+
                 this.update()
                 setTimeout(() => {
                     this.TimerProc()
@@ -695,11 +726,12 @@ class Server {
             })
     }
     runTimers() {
-        //console.log('running timers on '+this.ID)
         for (var timer in this.Timers) {
-            //console.log('Running '+timer)
-            this.Timers[timer].call()
+            if (this.timerMod % this.Timers[timer].freq === 0) {
+                this.Timers[timer].func.call()
+            }
         }
+        this.timerMod++
     }
     end() {
         //console.log('Ending Session '+this.ID)
@@ -725,6 +757,7 @@ class Server {
     }
     openWindow() {
         this.Console = new BrowserWindow({
+            show: false,
             width: 800,
             height: 800,
             title: "Console",
@@ -738,6 +771,9 @@ class Server {
             protocol: 'file:',
             slashes: true,
         }) + `?id=${this.ID}`);
+        this.Console.once('ready-to-show', () => {
+            this.Console.show()
+        })
         this.Console.on('close', () => {
             this.Console = null
         })
