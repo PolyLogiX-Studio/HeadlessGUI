@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+<head id="head">
     <script type="text/javascript" src="./Resources/DOMediting.js"></script>
-    <link rel="stylesheet" type="text/css" href="./Resources/bootstrap.min.css" />
     <title>Headless Core</title>
     <style>
         .AlertWindow {
@@ -43,6 +42,7 @@
     <div id="ServerList" class="list-group" style="flex-direction: row; flex-wrap:wrap">
     </div>
     <script>
+        setupThemes()
         //addElement(parentId, elementTag, elementId, elementClass, html)
         const electron = require('electron')
         const {
@@ -61,6 +61,7 @@
             removeAlert('StartupAlert')
         });
         ipcRenderer.on('removeConfig', function(e, items) {
+            replacejscssfile(store.get(`Themes.${store.get('oldTheme')}.url`), store.get(`Themes.${store.get('currentTheme')}.url`), 'css')
             while (document.getElementById('alert-noConfig')) {
                 removeAlert('noConfig')
             }

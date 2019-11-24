@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <link rel="stylesheet" type="text/css" href="./Resources/bootstrap.min.css" />
+<head id="head">
+    <script type="text/javascript" src="./Resources/DOMediting.js"></script>
     <title>Config</title>
 </head>
 
@@ -42,6 +42,13 @@
         </div>
 
         <div class="modal-footer">
+            <div>
+                <label for="SelectTheme">Theme</label>
+                    <select id="SelectTheme"  class="custom-select" onchange="newThemeFunc()">
+                    </select>
+            </div>
+            <br>
+                <div class="modal-footer"></div>
             <button type="button" class="btn btn-primary" type="submit" onclick="saveConfig()">Save changes</button>
         </div>
     </form>
@@ -116,7 +123,13 @@
             }
             validatePath()
         }
-
+        var oldTheme = undefined
+        var newTheme = undefined
+        function newThemeFunc(){
+            oldTheme = (newTheme?newTheme:store.get('currentTheme'))
+            newTheme = document.getElementById("SelectTheme").value
+            replacejscssfile(store.get(`Themes.${oldTheme}.url`), store.get(`Themes.${newTheme}.url`), 'css')
+        }
         function saveConfig() {
             store.set('configSet', true)
             store.set('tickRate', document.getElementById('tickRate').value)
@@ -127,9 +140,20 @@
             hosts = hosts.replace(/\s/g, '');
             hosts = hosts.replace(/\r\n[\r]\n/g, '')
             store.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
+            
+            store.set('oldTheme',store.get('currentTheme'))
+            store.set('currentTheme',document.getElementById("SelectTheme").value)
             ipcRenderer.send('Config:Update');
         }
-        getConfig()
+        let select = document.getElementById("SelectTheme"); 
+        let table = store.get('Themes');
+        let options = Object.keys(table);
+        for (let i = 0; i < options.length; i++) {select.innerHTML += ("<option "+(options[i]==store.get('currentTheme')?'selected ':'')+"value=\"" + options[i] + "\">" + options[i] + "</option>");}
+        getConfig();
+
+        
+
+
     </script>
 </body>
 

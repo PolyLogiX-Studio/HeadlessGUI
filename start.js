@@ -58,7 +58,7 @@ if (!store.has('MachineId')) { //For API Calls
 
 
 //Disable SubMenu & Dev tools
-//process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'production';
 
 
 
@@ -188,7 +188,7 @@ function createLoginWindow() {
         title: "Neos Login",
         icon: path.join(__dirname, 'images/GraphicIcon_-_Golden_Neos.png'),
         webPreferences: {
-            nodeIntegration: false
+            nodeIntegration: true
         }
     });
     loginWindow.loadURL(url.format({
