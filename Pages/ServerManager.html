@@ -40,7 +40,7 @@
 <body>
     <div id="alerts" class="AlertWindow" width="100%">
     </div>
-    <div style="width:70%">
+    <div style="width:70%; float: left;">
         <div class="list-group border-secondary" id="Console" style="vertical-align: bottom; width:100%; height:550px; overflow-y: scroll; overflow-wrap: break-word;"></div>
         <form id="ConsoleForm" action="#" onsubmit="handle(event)">
             <div class="form-group">
@@ -54,6 +54,9 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div style="float: right; width: 30%;">
+        <h3>HI MUM IM A USERLIST</h3>
     </div>
     <script>
         const urlParams = new URLSearchParams(window.location.search);

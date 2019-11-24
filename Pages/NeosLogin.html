@@ -18,7 +18,7 @@
             <small id="emailHelp" class="form-text text-muted">Neos does not support OAuth (Yet)</small>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" type="submit" onclick="saveConfig()">Login</button>
+                <button type="button" class="btn btn-success" type="submit" onclick="attemptLogin()">Login</button>
             </div>
     </form>
     <script>
@@ -28,6 +28,11 @@
         } = electron;
         const Store = require('electron-store');
         const store = new Store();
+        function attemptLogin(){
+            if (document.getElementById('NeosEmail').value&&document.getElementById('NeosPassword').value)
+            ipcRenderer.send('NEOS:Login', {'neosCredential':document.getElementById('NeosEmail').value,'neosPassword':document.getElementById('NeosPassword').value})
+        }
+
     </script>
 </body>
 

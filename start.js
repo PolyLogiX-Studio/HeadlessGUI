@@ -20,6 +20,15 @@ let loginWindow = null
 const _ = undefined
 const fs = require('fs-extra');
 
+const CLOUDX_PRODUCTION_NEOS_API = "https://cloudx.azurewebsites.net";
+const CLOUDX_STAGING_NEOS_API = "https://cloudx-staging.azurewebsites.net";
+const CLOUDX_NEOS_BLOB = "https://cloudxstorage.blob.core.windows.net/";
+const CLOUDX_NEOS_CDN = "https://cloudx.azureedge.net/";
+const LOCAL_NEOS_API = "http://localhost:60612";
+const LOCAL_NEOS_BLOB = "http://127.0.0.1:10000/devstoreaccount1/";
+const ICON_GLOBAL_PNG = path.join(__dirname, '/images/icon.png')
+const ICON_GLOBAL_ICO = path.join(__dirname, '/images/icon.ico')
+
 function closeAllWindows() {
     if (addWindow) {
         addWindow.close()
@@ -61,7 +70,7 @@ app.on('ready', function() {
     mainWindow = new BrowserWindow({
         width: 1920,
         height: 1080,
-        icon: path.join(__dirname, '/images/HeadlessGraphic.png'),
+        icon: ICON_GLOBAL_PNG,
         webPreferences: {
             nodeIntegration: true
         }
@@ -144,7 +153,7 @@ function createAddWindow() {
         width: 400,
         height: 800,
         title: "New Server",
-        icon: path.join(__dirname, '/images/GraphicIcon_-_Golden_Neos.png'),
+        icon: ICON_GLOBAL_PNG,
         webPreferences: {
             nodeIntegration: true
         }
@@ -205,7 +214,7 @@ function createConfigWindow() {
         width: 400,
         height: 790,
         title: "Config",
-        icon: path.join(__dirname, '/images/Gear.png'),
+        icon: ICON_GLOBAL_PNG,
         webPreferences: {
             nodeIntegration: true
         }
@@ -234,7 +243,7 @@ function createAddWindowAdvanced() {
         width: 500,
         height: 330,
         title: 'Advanced Settings',
-        icon: path.join(__dirname, '/images/Gear.png'),
+        icon: ICON_GLOBAL_PNG,
         webPreferences: {
             nodeIntegration: true
         }
@@ -287,7 +296,11 @@ function createURLWindow(URL, width = 1080, height = 1080) {
     })
 
 }
-
+ipcMain.on('NEOS:Login', function(e,info){
+    info.neosCredential
+    info.neosPassword
+    store.get('MachineId')
+})
 ipcMain.on('callWindow:Login', function(e) {
     createLoginWindow()
 })
@@ -715,7 +728,7 @@ class Server {
             width: 800,
             height: 800,
             title: "Console",
-            icon: path.join(__dirname, '/images/GraphicIcon_-_Golden_Neos.png'),
+            icon: ICON_GLOBAL_PNG,
             webPreferences: {
                 nodeIntegration: true
             }
