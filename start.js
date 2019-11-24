@@ -59,7 +59,7 @@ if (!store.has('MachineId')) { //For API Calls
 }
 
 if ((store.has('NEOS:token')&&(new Date(store.get('NEOS:token:expire'))>new Date()))){
-    login() // Login to Neos (If Able)
+    login(store.get('loginCredentials'),store.get('loginPassword')) // Login to Neos (If Able)
 }
 
 
@@ -231,7 +231,7 @@ function createConfigWindow() {
     configWindow = new BrowserWindow({
         width: 400,
         show: false,
-        height: 800,
+        height: 810,
         title: "Config",
         icon: ICON_GLOBAL_PNG,
         webPreferences: {
@@ -335,8 +335,8 @@ if (credential){
     loginPayload.username = credential
     }
 }
-loginPayload.ownerId = (store.has('NEOS:userId'))?store.get('NEOS:userId'):undefined
-loginPayload.sessionCode = (store.has('NEOS:token')&&(new Date(store.get('NEOS:token:expire'))>new Date()))?store.get('NEOS:token'):undefined
+//loginPayload.ownerId = (store.has('NEOS:userId'))?store.get('NEOS:userId'):undefined
+//loginPayload.sessionCode = (store.has('NEOS:token')&&(new Date(store.get('NEOS:token:expire'))>new Date()))?store.get('NEOS:token'):undefined
 if (password){
 loginPayload.password = password;
 }

@@ -3,7 +3,7 @@
 
 <head id="head">
     <script type="text/javascript" src="./Resources/DOMediting.js"></script>
-    <title>Headless Core</title>
+    <title>Headless Core 0.1.3-alpha.1</title>
     <style>
         .AlertWindow {
             position: fixed;
@@ -147,7 +147,7 @@
 
 
         addAlert('Start a New Server through <strong>Main -> New Server</strong> Or by pressing <strong>Ctrl+N</strong>.', 'info', 'StartupAlert')
-        if (!store.has('configSet')||!!store.get('loginPassword')) {
+        if (!store.has('configSet')||!store.get('loginPassword')) {
             addAlert('<strong>Oh Snap!</strong> Make sure to set your config before starting a server! Do this in <strong>Main -> Config</strong> or with <strong>' + (process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P') + '</strong>', 'danger', 'noConfig')
         }
     </script>
