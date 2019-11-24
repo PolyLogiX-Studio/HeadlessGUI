@@ -20,8 +20,8 @@ let loginWindow = null
 const _ = undefined
 const fs = require('fs-extra');
 
-const CLOUDX_PRODUCTION_NEOS_API = "https://cloudx.azurewebsites.net";
-const CLOUDX_STAGING_NEOS_API = "https://cloudx-staging.azurewebsites.net";
+const CLOUDX_PRODUCTION_NEOS_API = "https://cloudx.azurewebsites.net/";
+const CLOUDX_STAGING_NEOS_API = "https://cloudx-staging.azurewebsites.net/";
 const CLOUDX_NEOS_BLOB = "https://cloudxstorage.blob.core.windows.net/";
 const CLOUDX_NEOS_CDN = "https://cloudx.azureedge.net/";
 const LOCAL_NEOS_API = "http://localhost:60612";
@@ -50,11 +50,17 @@ var Instances = {}
 var dataDir = app.getPath('userData') //AppData/Roaming
 var sessionsDir = path.join(dataDir, "Active Sessions") //%AppData%/NeosHeadlessManager/Active Sessions
 fs.removeSync(sessionsDir)
+
+
+
 if (!store.has('MachineId')) { //For API Calls
-    store.set(new uuidv4())
+    console.log('MachineID Generated')
+    store.set('MachineId',uuidv4())
 }
 
-
+if ((store.has('NEOS:token')&&(new Date(store.get('NEOS:token:expire'))>new Date()))){
+    login() // Login to Neos (If Able)
+}
 
 
 //Disable SubMenu & Dev tools
@@ -319,10 +325,54 @@ function createURLWindow(URL, width = 1080, height = 1080) {
     })
 
 }
+function login(credential,password){
+let loginPayload = {}
+loginPayload.secretMachineId = store.get('MachineId');
+if (credential){
+    if (credential.includes('@')){
+    loginPayload.email = credential
+    } else {
+    loginPayload.username = credential
+    }
+}
+loginPayload.ownerId = (store.has('NEOS:userId'))?store.get('NEOS:userId'):undefined
+loginPayload.sessionCode = (store.has('NEOS:token')&&(new Date(store.get('NEOS:token:expire'))>new Date()))?store.get('NEOS:token'):undefined
+if (password){
+loginPayload.password = password;
+}
+loginPayload.rememberMe = true
+
+return fetch(CLOUDX_PRODUCTION_NEOS_API+'api/userSessions', {method:"POST",body:JSON.stringify(loginPayload), headers: { 'Content-Type': 'application/json' }})
+            .then(res => res.json())
+            .then(json => {
+                store.set('NEOS:token',json.token)
+                store.set('NEOS:userId', json.userId)
+                store.set('NEOS:token:expire',json.expire)
+                return json
+            }).catch((err)=>{
+                console.log(err)
+                store.delete('NEOS:token')
+                store.delete('NEOS:userId')
+                store.delete('NEOS:token:expire')
+                return {err:true}
+            })
+
+
+}
 ipcMain.on('NEOS:Login', function(e, info) {
-    info.neosCredential
-    info.neosPassword
-    store.get('MachineId')
+    login(info.neosCredential,info.neosPassword).then((test)=>{
+        if (!test.err){
+            console.log(test)
+            configWindow.webContents.send('NEOS:Login')
+            if (loginWindow){
+                loginWindow.close()
+            }
+           
+        } else {
+            loginWindow.webContents.send('NEOS:Failed',test)
+        }
+    })
+    
 })
 ipcMain.on('callWindow:Login', function(e) {
     createLoginWindow()

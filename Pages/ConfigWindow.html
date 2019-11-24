@@ -13,8 +13,9 @@
         <div class="form-group">
             <label for="ProfileDisplay">Neos Account</label>
             <div id='ProfileDisplay' style="display: none;">
-                <img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" style="float:left; width:75px; height: 75px; padding-right: 5px;">
+                <img id="ProfilePicture" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" style="float:left; width:75px; height: 75px; padding-right: 5px; border-radius: 50%;">
                 <h3 id="userNameProfile">test</h3>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="callLogout()">Logout</button>
             </div>
             <div id="Login" style="display: none;">
                 <button type="button" class="btn btn-info" onclick="callLogin()">Login to Neos</button>
@@ -60,24 +61,47 @@
         const store = new Store();
         const fs = require('fs')
         const path = require('path');
+        const fetch = require('node-fetch')
         var pathValid = false
 
-        var neosToken = store.get('neos:token')
-        var loginCredential = store.get('neos:loginCredential')
-        var loginPassword = store.get('neos:loginPassword')
+        var neosToken = store.get('NEOS:token')
 
 
-        if (!loginPassword || !loginCredential) {
+        if (!neosToken) {
             document.getElementById('Login').style.display = 'block'
         } else {
             login()
+            document.getElementById('ProfileDisplay').style.display = 'block'
         }
 
         function callLogin() {
             ipcRenderer.send('callWindow:Login')
         }
-
+        ipcRenderer.on("NEOS:Login", (e)=>{
+            login()
+            document.getElementById('ProfileDisplay').style.display = 'block'
+            document.getElementById('Login').style.display = 'none'
+        })
+        function callLogout(){
+            store.delete('NEOS:token')
+            store.delete('NEOS:userId')
+            store.delete('NEOS:token:expire')
+            document.getElementById('ProfileDisplay').style.display = 'none'
+            document.getElementById('Login').style.display = 'block'
+            ipcRenderer.send('NEOS:Logout')
+        }
         function login() {
+            fetch(`https://cloudx.azurewebsites.net/api/users/${store.get('NEOS:userId')}`)
+            .then(res => res.json())
+            .then(json => {
+                document.getElementById('userNameProfile').innerHTML = json.username
+                let str = json.profile.iconUrl
+                var hash = str.substring(
+                    str.lastIndexOf("/") + 1, 
+                    str.lastIndexOf("."))
+                    document.getElementById('ProfilePicture').src = `https://cloudxstorage.blob.core.windows.net/assets/${hash}`
+
+            })
 
         }
 
