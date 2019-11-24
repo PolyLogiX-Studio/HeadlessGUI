@@ -154,7 +154,7 @@ function createAddWindow() {
     if (addWindow !== null) {
         return
     }
-    if (!store.get('configSet')) {
+    if (!store.get('configSet')||!store.get('loginPassword')) {
         mainWindow.webContents.send('ConfigError')
         return
     }
@@ -345,12 +345,16 @@ loginPayload.rememberMe = true
 return fetch(CLOUDX_PRODUCTION_NEOS_API+'api/userSessions', {method:"POST",body:JSON.stringify(loginPayload), headers: { 'Content-Type': 'application/json' }})
             .then(res => res.json())
             .then(json => {
+                store.set('loginCredentials',credential)
+                store.set('loginPassword',(password?password:store.get('loginPassword')))
                 store.set('NEOS:token',json.token)
                 store.set('NEOS:userId', json.userId)
                 store.set('NEOS:token:expire',json.expire)
                 return json
             }).catch((err)=>{
                 console.log(err)
+                store.delete('loginCredentials')
+                store.delete('loginPassword')
                 store.delete('NEOS:token')
                 store.delete('NEOS:userId')
                 store.delete('NEOS:token:expire')
