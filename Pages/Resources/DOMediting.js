@@ -62,25 +62,11 @@ function setupThemes(){
         store.set('Themes',{
             "Darkly":{"url":"https://bootswatch.com/4/darkly/bootstrap.min.css","description":"Flatly in night mode"},
             "Flatly":{"url":"https://bootswatch.com/4/flatly/bootstrap.min.css","description":"Flat and modern"},
-            "Cerulean":{"url":"https://bootswatch.com/4/cerulean/bootstrap.min.css","description":"A calm blue sky"},
-            "Cosmo":{"url":"https://bootswatch.com/4/cosmo/bootstrap.min.css","description":"An ode to Metro"},
             "Cyborg":{"url":"https://bootswatch.com/4/cyborg/bootstrap.min.css","description":"Jet black and electric blue"},
-            "Journal":{"url":"https://bootswatch.com/4/journal/bootstrap.min.css","description":"Crisp like a new sheet of paper"},
-            "Litera":{"url":"https://bootswatch.com/4/litera/bootstrap.min.css","description":"The medium is the message"},
-            "Lumen":{"url":"https://bootswatch.com/4/lumen/bootstrap.min.css","description":"Light and shadow"},
-            "Lux":{"url":"https://bootswatch.com/4/lux/bootstrap.min.css","description":"A touch of class"},
-            "Materia":{"url":"https://bootswatch.com/4/materia/bootstrap.min.css","description":"Material is the metapho"},
             "Minty":{"url":"https://bootswatch.com/4/minty/bootstrap.min.css","description":"A fresh feel"},
-            "Pulse":{"url":"https://bootswatch.com/4/pulse/bootstrap.min.css","description":"A trace of purple"},
-            "Sandstone":{"url":"https://bootswatch.com/4/sandstone/bootstrap.min.css","description":"A touch of warmth"},
-            "Simplex":{"url":"https://bootswatch.com/4/simplex/bootstrap.min.css","description":"Mini and minimalist"},
             "Sketchy":{"url":"https://bootswatch.com/4/sketchy/bootstrap.min.css","description":"A hand-drawn look for mockups and mirth"},
-            "Slate":{"url":"https://bootswatch.com/4/slate/bootstrap.min.css","description":"Shades of gunmetal gray"},
             "Solar":{"url":"https://bootswatch.com/4/solar/bootstrap.min.css","description":"A spin on Solarized"},
-            "Spacelab":{"url":"https://bootswatch.com/4/spacelab/bootstrap.min.css","description":"Silvery and sleek"},
-            "Superhero":{"url":"https://bootswatch.com/4/superhero/bootstrap.min.css","description":"The brave and the blue"},
-            "United":{"url":"https://bootswatch.com/4/united/bootstrap.min.css","description":"Ubuntu orange and unique font"},
-            "Yeti":{"url":"https://bootswatch.com/4/yeti/bootstrap.min.css","description":"A friendly foundation"}
+            "Superhero":{"url":"https://bootswatch.com/4/superhero/bootstrap.min.css","description":"The brave and the blue"}
         })
     }
     loadjscssfile(store.get(`Themes.${store.get('currentTheme')}.url`),'css')
