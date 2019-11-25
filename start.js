@@ -61,7 +61,6 @@ fs.removeSync(sessionsDir)
 
 
 if (!store.has('MachineId')) { //For API Calls
-    console.log('MachineID Generated')
     store.set('MachineId', uuidv4())
 }
 
@@ -134,7 +133,6 @@ app.on('ready', function () {
                     safeQuit()
                 }
             })
-            //console.log(response)
         }
     })
 });
@@ -159,9 +157,7 @@ function safeQuit() {
 function clearCache(id) {
     fs.removeSync(Instances[id].sessionDir)
     delete Instances[id]
-    //console.log('Instanced Left: ',JSON.stringify(Instances))
     if (shuttingDown && JSON.stringify(Instances) === '{}') {
-        //console.log("CLEAR QUIT")
         ClearQuit()
     }
 }
@@ -413,7 +409,6 @@ function login(credential, password) {
             store.set('NEOS:token:expire', json.expire)
             return json
         }).catch((err) => {
-            console.log(err)
             store.delete('loginCredentials')
             store.delete('loginPassword')
             store.delete('NEOS:token')
@@ -430,7 +425,6 @@ function login(credential, password) {
 ipcMain.on('NEOS:Login', function (e, info) {
     login(info.neosCredential, info.neosPassword).then((test) => {
         if (!test.err) {
-            console.log(test)
             configWindow.webContents.send('NEOS:Login')
             if (loginWindow) {
                 loginWindow.close()
@@ -480,6 +474,9 @@ ipcMain.on('addWindowAdvanced:request', function (e) {
 })
 ipcMain.on('addWindowAdvanced:response', function (e, data) {
     addWindowAdvanced.webContents.send('addWindowAdvanced:response', data)
+})
+ipcMain.on('getUpdateRaw',function(e,session){
+    Instances[session].update()
 })
 ipcMain.on('Console:Command', function (e, item) {
     if (!Instances[item.id]) {
@@ -729,7 +726,6 @@ class Server {
 
         this.Session.stdin.write('log\n')
         this.Session.on('exit', () => {
-            //console.log("SESSION CLOSED")
             this.Session.stdin.pause();
             this.event = 'ShutDown';
             this.displayStatusMessage = true;
@@ -749,7 +745,6 @@ class Server {
             if (data.toString().startsWith('Enabling logging output.')) {
                 return
             }
-            console.log('NEOS: ' + data)
             if (data.toString().startsWith('World running')) {
                 this.Status = 'Running';
                 this.event = 'Started'
@@ -802,7 +797,6 @@ class Server {
             }
             if (data.toString().startsWith('http://cloudx.azurewebsites.net/open/session/')) {
                 let id = data.toString().substring(45)
-                console.log(id)
                 this.CloudXID = id
                 this.updatePreview()
                 return
@@ -869,7 +863,6 @@ class Server {
             return
         }
         let url = 'https://cloudx.azurewebsites.net/api/sessions/' + this.CloudXID
-        //console.log(url)
         fetch(url)
             .then(res => res.json())
             .then(json => {
@@ -895,7 +888,6 @@ class Server {
      * @memberof Server
      */
     end() {
-        //console.log('Ending Session '+this.ID)
         this.Status = 'Shutting Down'
         this.event = 'ShuttingDown'
         this.displayStatusMessage = true
@@ -912,7 +904,6 @@ class Server {
      */
     update() {
 
-        //console.log('USERS: ', this.Users)
         if (this.Console) {
             this.Console.webContents.send("Update:Raw", this)
         }
@@ -929,7 +920,7 @@ class Server {
     openWindow() {
         this.Console = new BrowserWindow({
             show: false,
-            width: 800,
+            width: 1200,
             height: 800,
             title: "Console",
             icon: ICON_GLOBAL_PNG,

@@ -55,13 +55,17 @@
         </form>
     </div>
     <div style="float: right; width: 30%;">
-        <h3>HI MUM IM A USERLIST</h3>
+            <div class="card border-secondary mb-3">
+                    <div class="card-header" id='userListHeader'>Users (0/0)</div>
+                    <div class="card-body" id='UserListInner'>
+                    </div>
+                  </div>
     </div>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const SESSION_ID = urlParams.get('id');
         updateElementHTML('title', `Console: ${SESSION_ID}`)
-
+        //ipcRenderer.send('getUpdateRaw',SESSION_ID)
 
         function handle(e) {
             e.preventDefault()
@@ -132,6 +136,9 @@
             if (session.Status === 'Running') {
                 removeAlert('startAlert-' + session.ID)
             }
+            updateElementHTML('userListHeader',`Connected Users (${session.UserCount-1}/${session.Config.startWorlds[0].maxUsers-1})`)
+
+
             /*
             updateElementSrc('previewImage-'+session.ID,session.SessionPreview)
             updateElementHTML('usercount-'+session.ID,'Players: '+(session.UserCount-1)+'/'+(session.Config.startWorlds[0].maxUsers-1))
@@ -171,6 +178,10 @@
                     default:
                 }
             }
+            
+
+
+
         }
 
         let alertID = 0
