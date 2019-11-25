@@ -73,7 +73,18 @@ if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new 
 //Disable SubMenu & Dev tools
 process.env.NODE_ENV = 'production';
 
-
+if (!store.has('Themes')){
+    store.set('currentTheme','Darkly')
+    store.set('Themes',{
+        "Darkly":{"url":"https://bootswatch.com/4/darkly/bootstrap.min.css","description":"Flatly in night mode"},
+        "Flatly":{"url":"https://bootswatch.com/4/flatly/bootstrap.min.css","description":"Flat and modern"},
+        "Cyborg":{"url":"https://bootswatch.com/4/cyborg/bootstrap.min.css","description":"Jet black and electric blue"},
+        "Minty":{"url":"https://bootswatch.com/4/minty/bootstrap.min.css","description":"A fresh feel"},
+        "Sketchy":{"url":"https://bootswatch.com/4/sketchy/bootstrap.min.css","description":"A hand-drawn look for mockups and mirth"},
+        "Solar":{"url":"https://bootswatch.com/4/solar/bootstrap.min.css","description":"A spin on Solarized"},
+        "Superhero":{"url":"https://bootswatch.com/4/superhero/bootstrap.min.css","description":"The brave and the blue"}
+    })
+}
 
 
 // Listen for App to be ready
