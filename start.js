@@ -12,14 +12,17 @@ const {
 } = electron;
 const Store = require('electron-store');
 const store = new Store();
+//Predefine Windows in Global Space
 let mainWindow = null;
 let addWindow = null;
 let configWindow = null;
 let addWindowAdvanced = null;
 let loginWindow = null
-const _ = undefined
-const fs = require('fs-extra');
+const fs = require('fs-extra'); //Recursive Folder Delete
 
+/**
+ * Neos API Endpoints
+ */
 const CLOUDX_PRODUCTION_NEOS_API = "https://cloudx.azurewebsites.net/";
 const CLOUDX_STAGING_NEOS_API = "https://cloudx-staging.azurewebsites.net/";
 const CLOUDX_NEOS_BLOB = "https://cloudxstorage.blob.core.windows.net/";
@@ -29,6 +32,10 @@ const LOCAL_NEOS_BLOB = "http://127.0.0.1:10000/devstoreaccount1/";
 const ICON_GLOBAL_PNG = path.join(__dirname, '/images/icon.png')
 const ICON_GLOBAL_ICO = path.join(__dirname, '/images/icon.ico')
 
+/**
+ * Close all Windows
+ * (Excluding Console Windows, Handling Later)
+ */
 function closeAllWindows() {
     if (addWindow) {
         addWindow.close()
@@ -55,11 +62,11 @@ fs.removeSync(sessionsDir)
 
 if (!store.has('MachineId')) { //For API Calls
     console.log('MachineID Generated')
-    store.set('MachineId',uuidv4())
+    store.set('MachineId', uuidv4())
 }
 
-if ((store.has('NEOS:token')&&(new Date(store.get('NEOS:token:expire'))>new Date()))){
-    login(store.get('loginCredentials'),store.get('loginPassword')) // Login to Neos (If Able)
+if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
+    login(store.get('loginCredentials'), store.get('loginPassword')) // Login to Neos (If Able)
 }
 
 
@@ -71,7 +78,7 @@ process.env.NODE_ENV = 'production';
 
 // Listen for App to be ready
 
-app.on('ready', function() {
+app.on('ready', function () {
     // Create new Window
     mainWindow = new BrowserWindow({
         show: false,
@@ -92,7 +99,7 @@ app.on('ready', function() {
         mainWindow.show()
     })
     // Quit app when main closed
-    mainWindow.on('closed', function() {
+    mainWindow.on('closed', function () {
         safeQuit()
     })
     // Build Menu from Template
@@ -106,7 +113,7 @@ app.on('ready', function() {
             e.preventDefault()
             dialog.showMessageBox(null, {
                 type: 'question',
-                buttons: ['Cancel', `Yes, I'm Sure`, `No, I clicked this by mistake`],
+                buttons: ['Cancel', `Yes, Kill them All :)`, `No, I clicked this by mistake`],
                 defaultId: 2,
                 title: "Close Program?",
                 message: "Are you sure you want to quit?",
@@ -133,6 +140,11 @@ function safeQuit() {
     }
 }
 
+/**
+ * Remove Instance, Clear Local Files, and Nullify for GC
+ *
+ * @param {string} id ID of Instances to clear
+ */
 function clearCache(id) {
     fs.removeSync(Instances[id].sessionDir)
     delete Instances[id]
@@ -143,18 +155,25 @@ function clearCache(id) {
     }
 }
 
+/**
+ * Remove Session Directory and quit app
+ *
+ */
 function ClearQuit() {
     fs.removeSync(sessionsDir)
     setTimeout(() => {
         app.quit()
     }, 5000) // Need a better way to do this
 }
-// Handle Creatre Add Window
+/**
+ * Create the New Server window
+ *
+ */
 function createAddWindow() {
     if (addWindow !== null) {
         return
     }
-    if (!store.get('configSet')||!store.get('loginPassword')) {
+    if (!store.get('configSet') || !store.get('loginPassword')) {
         mainWindow.webContents.send('ConfigError')
         return
     }
@@ -182,7 +201,7 @@ function createAddWindow() {
         addWindow.show()
     })
     // GC Handle
-    addWindow.on('close', function() {
+    addWindow.on('close', function () {
         if (addWindowAdvanced) {
             addWindowAdvanced.close()
         }
@@ -191,6 +210,10 @@ function createAddWindow() {
 
 }
 
+/**
+ * Create the Login Window
+ *
+ */
 function createLoginWindow() {
     if (loginWindow !== null) {
         return
@@ -218,12 +241,16 @@ function createLoginWindow() {
         loginWindow.setMenu(null)
     }
     // GC Handle
-    loginWindow.on('close', function() {
+    loginWindow.on('close', function () {
         loginWindow = null
     })
 
 }
 
+/**
+ * Create the Config Menu
+ *
+ */
 function createConfigWindow() {
     if (configWindow !== null) {
         return
@@ -251,12 +278,16 @@ function createConfigWindow() {
         configWindow.show()
     })
     // GC Handle
-    configWindow.on('close', function() {
+    configWindow.on('close', function () {
         configWindow = null
     })
 
 }
-//Advanced Server Settings
+
+/**
+ * Build Advance Settings page of Config Menu
+ *
+ */
 function createAddWindowAdvanced() {
     if (addWindowAdvanced !== null) {
         return
@@ -285,7 +316,7 @@ function createAddWindowAdvanced() {
         addWindowAdvanced.show()
     })
 
-    addWindowAdvanced.on('close', function() {
+    addWindowAdvanced.on('close', function () {
         addWindowAdvanced = null //GC Cleanup
     })
 
@@ -295,6 +326,13 @@ function createAddWindowAdvanced() {
 
 
 
+/**
+ * Open a Window to a URL with height and width dimentions
+ *
+ * @param {*} URL www.host.com
+ * @param {number} [width=1080] Window Width
+ * @param {number} [height=1080] Window Height
+ */
 function createURLWindow(URL, width = 1080, height = 1080) {
     let URLwindow = new BrowserWindow({
         show: false,
@@ -317,7 +355,7 @@ function createURLWindow(URL, width = 1080, height = 1080) {
         slashes: true,
     }))
     // GC Handle
-    URLwindow.on('close', function() {
+    URLwindow.on('close', function () {
         URLwindow = null
     })
     URLwindow.once('ready-to-show', () => {
@@ -325,103 +363,114 @@ function createURLWindow(URL, width = 1080, height = 1080) {
     })
 
 }
-function login(credential,password){
-let loginPayload = {}
-loginPayload.secretMachineId = store.get('MachineId');
-if (credential){
-    if (credential.includes('@')){
-    loginPayload.email = credential
-    } else {
-    loginPayload.username = credential
-    }
-}
-//loginPayload.ownerId = (store.has('NEOS:userId'))?store.get('NEOS:userId'):undefined
-//loginPayload.sessionCode = (store.has('NEOS:token')&&(new Date(store.get('NEOS:token:expire'))>new Date()))?store.get('NEOS:token'):undefined
-if (password){
-loginPayload.password = password;
-}
-loginPayload.rememberMe = true
 
-return fetch(CLOUDX_PRODUCTION_NEOS_API+'api/userSessions', {method:"POST",body:JSON.stringify(loginPayload), headers: { 'Content-Type': 'application/json' }})
-            .then(res => res.json())
-            .then(json => {
-                store.set('loginCredentials',credential)
-                store.set('loginPassword',(password?password:store.get('loginPassword')))
-                store.set('NEOS:token',json.token)
-                store.set('NEOS:userId', json.userId)
-                store.set('NEOS:token:expire',json.expire)
-                return json
-            }).catch((err)=>{
-                console.log(err)
-                store.delete('loginCredentials')
-                store.delete('loginPassword')
-                store.delete('NEOS:token')
-                store.delete('NEOS:userId')
-                store.delete('NEOS:token:expire')
-                return {err:true}
-            })
-
-
-}
-ipcMain.on('NEOS:Login', function(e, info) {
-    login(info.neosCredential,info.neosPassword).then((test)=>{
-        if (!test.err){
-            console.log(test)
-            configWindow.webContents.send('NEOS:Login')
-            if (loginWindow){
-                loginWindow.close()
-            }
-           
+/**
+ * Login to Neos
+ *
+ * @param {string} credential username, or email
+ * @param {string} password password
+ * @returns {JSON} Session Object
+ */
+function login(credential, password) {
+    let loginPayload = {}
+    loginPayload.secretMachineId = store.get('MachineId');
+    if (credential) {
+        if (credential.includes('@')) {
+            loginPayload.email = credential
         } else {
-            loginWindow.webContents.send('NEOS:Failed',test)
+            loginPayload.username = credential
+        }
+    }
+    if (password) {
+        loginPayload.password = password;
+    }
+    loginPayload.rememberMe = true
+    /* Login User and return Session Token */
+    return fetch(CLOUDX_PRODUCTION_NEOS_API + 'api/userSessions', {
+        method: "POST",
+        body: JSON.stringify(loginPayload),
+        headers: {
+            'Content-Type': 'application/json'
         }
     })
-    
+        .then(res => res.json())
+        .then(json => {
+            store.set('loginCredentials', credential)
+            store.set('loginPassword', (password ? password : store.get('loginPassword')))
+            store.set('NEOS:token', json.token)
+            store.set('NEOS:userId', json.userId)
+            store.set('NEOS:token:expire', json.expire)
+            return json
+        }).catch((err) => {
+            console.log(err)
+            store.delete('loginCredentials')
+            store.delete('loginPassword')
+            store.delete('NEOS:token')
+            store.delete('NEOS:userId')
+            store.delete('NEOS:token:expire')
+            return {
+                err: true
+            }
+        })
+
+
+}
+/* Data Calls from Windows */
+ipcMain.on('NEOS:Login', function (e, info) {
+    login(info.neosCredential, info.neosPassword).then((test) => {
+        if (!test.err) {
+            console.log(test)
+            configWindow.webContents.send('NEOS:Login')
+            if (loginWindow) {
+                loginWindow.close()
+            }
+
+        } else {
+            loginWindow.webContents.send('NEOS:Failed', test)
+        }
+    })
+
 })
-ipcMain.on('callWindow:Login', function(e) {
+ipcMain.on('callWindow:Login', function (e) {
     createLoginWindow()
 })
-ipcMain.on('addWindowAdvanced:save', function(e, ret) {
+ipcMain.on('addWindowAdvanced:save', function (e, ret) {
     addWindow.webContents.send('addWindowAdvanced:save', ret)
     addWindowAdvanced.close()
 })
-ipcMain.on('addWindowAdvanced:resize', function(e, size) {
+ipcMain.on('addWindowAdvanced:resize', function (e, size) {
     addWindowAdvanced.setSize(size.x, size.y)
 })
-
-ipcMain.on('Config:Update', function(e, item) {
-    //console.log('ConfigUpdate')
+// User has changed the Config
+ipcMain.on('Config:Update', function (e, item) {
     configWindow.close()
     mainWindow.webContents.send('removeConfig')
 })
-
-ipcMain.on('server:new:advanced', function(e) {
-    //console.log('AdvancedSettings')
+// Open Advanced Settings for New Server window
+ipcMain.on('server:new:advanced', function (e) {
     createAddWindowAdvanced()
 })
-
-//catch IPC
-ipcMain.on('server:new', function(e, item) {
+/* Create New Session */
+ipcMain.on('server:new', function (e, item) {
     //console.log(item)
     //Create server
     item.id = uuidv4()
     mainWindow.webContents.send('Main:updateList', item);
     addWindow.close();
     Instances[item.id] = new Server(item.id, item.usernameOverride, item.sessionName, item.loadWorldURL, item.maxUsers, item.description, item.saveOnExit, item.autosaveInterval, item.accessLevel, item.loadWorldPresetName, item.autoRecover, item.mobileFriendly, item.tickRate, item.keepOriginalRoles, item.defaultUserRoles, item.idleRestartInterval, item.forcedRestartInterval, item.forcePort, item.autoInviteUsernames, item.autoInviteMessage)
-
 })
-
-ipcMain.on('openURL', function(e, item) {
-    //console.log("Opening: "+item)
+//Open a Browser
+ipcMain.on('openURL', function (e, item) {
     createURLWindow(item)
 })
-ipcMain.on('addWindowAdvanced:request', function(e) {
+//Advanced Server requesting data
+ipcMain.on('addWindowAdvanced:request', function (e) {
     addWindow.webContents.send('addWindowAdvanced:request')
 })
-ipcMain.on('addWindowAdvanced:response', function(e, data) {
+ipcMain.on('addWindowAdvanced:response', function (e, data) {
     addWindowAdvanced.webContents.send('addWindowAdvanced:response', data)
 })
-ipcMain.on('Console:Command', function(e, item) {
+ipcMain.on('Console:Command', function (e, item) {
     if (!Instances[item.id]) {
         dialog.showMessageBox(null, {
             type: 'error',
@@ -438,72 +487,72 @@ ipcMain.on('Console:Command', function(e, item) {
 
 // Main Menu Template
 const mainMenuTemplate = [{
-        label: 'Main',
-        submenu: [{
-                label: 'New Server',
-                accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
-                click() {
-                    createAddWindow()
-                }
-            },
-            {
-                label: "Config",
-                accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
-                click() {
-                    createConfigWindow()
-                }
-            },
-            {
-                label: "Refresh",
-                accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
-                click() {
-                    RefreshAll()
-                }
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'Quit',
-                accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-                click() {
-                    safeQuit()
-                }
-            }
-        ]
-    },
-    {
-        label: 'Help',
-        submenu: [{
-                label: 'Online Help',
-                accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
-                click() {
-                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki', 'OnlineHelp')
-                }
-            },
-            {
-                label: 'My PolyLogiX Account',
-                accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
-                click() {
-                    createURLWindow('www.polylogix.studio/PolyLogiX-Account', 'MyAccount')
-                }
-            },
-            {
-                label: 'Report a Bug',
-                accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
-                click() {
-                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues', 'BugReport')
-                }
-            },
-        ]
-
-    },
-    {
-        label: "Support Us on Patreon!",
+    label: 'Main',
+    submenu: [{
+        label: 'New Server',
+        accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
         click() {
-            createURLWindow('www.patreon.com/PolyLogiX_VR')
+            createAddWindow()
+        }
+    },
+    {
+        label: "Config",
+        accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
+        click() {
+            createConfigWindow()
+        }
+    },
+    {
+        label: "Refresh",
+        accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
+        click() {
+            RefreshAll()
+        }
+    },
+    {
+        type: 'separator'
+    },
+    {
+        label: 'Quit',
+        accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+        click() {
+            safeQuit()
         }
     }
+    ]
+},
+{
+    label: 'Help',
+    submenu: [{
+        label: 'Online Help',
+        accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
+        click() {
+            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki', 'OnlineHelp')
+        }
+    },
+    {
+        label: 'My PolyLogiX Account',
+        accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
+        click() {
+            createURLWindow('www.polylogix.studio/PolyLogiX-Account', 'MyAccount')
+        }
+    },
+    {
+        label: 'Report a Bug',
+        accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
+        click() {
+            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues', 'BugReport')
+        }
+    },
+    ]
+
+},
+{
+    label: "Support Us on Patreon!",
+    click() {
+        createURLWindow('www.patreon.com/PolyLogiX_VR')
+    }
+}
 ]
 
 // Dev tools so i know when i fuck up
@@ -511,15 +560,15 @@ if (process.env.NODE_ENV !== 'production') {
     mainMenuTemplate.push({
         label: 'Developer Tools',
         submenu: [{
-                label: 'Toggle DevTools',
-                accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
-                click(item, focusedWindow) {
-                    focusedWindow.toggleDevTools();
-                }
-            },
-            {
-                role: 'reload'
+            label: 'Toggle DevTools',
+            accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
+            click(item, focusedWindow) {
+                focusedWindow.toggleDevTools();
             }
+        },
+        {
+            role: 'reload'
+        }
         ]
     })
 }
@@ -561,7 +610,36 @@ const {
 } = require('child_process');
 
 
+/**
+ *
+ *
+ * @class Server
+ */
 class Server {
+    /**
+     *Creates an instance of Server.
+     * @param {string} [UUID=uuidv4()] Instance Session ID, Generate if none specified
+     * @param {string} [usernameOverride=null] Username for server to use
+     * @param {string} [sessionName="DefaultWorld"] Name of Session
+     * @param {string} [loadWorldURL=null] neosrec:/// World URL 
+     * @param {number} [maxUsers=32] User count
+     * @param {string} [description=null] World Description
+     * @param {boolean} [saveOnExit=false]
+     * @param {number} [autosaveInterval=-1.0]
+     * @param {string} [accessLevel="Anyone"] Access Level
+     * @param {string} [loadWorldPresetName="SpaceWorld"] WOrld Preset
+     * @param {boolean} [autoRecover=false] Restart Server if it crashes
+     * @param {boolean} [mobileFriendly=false] enable Mobile/Quest Support
+     * @param {number} [tickRate=60] Server Tickrate (FPS)
+     * @param {boolean} [keepOriginalRoles=false]
+     * @param {JSON} [defaultUserRoles=null]
+     * @param {number} [idleRestartInterval=-1.0] Restart after {float} seconds of inactivity
+     * @param {number} [forcedRestartInterval=-1.0] Force Restart after float seconds
+     * @param {number} [forcePort=null] What port to use, Self Managed
+     * @param {array} [autoInviteUsernames=null] array of Usernames
+     * @param {string} [autoInviteMessage=null] Message to send with Invite
+     * @memberof Server
+     */
     constructor(UUID = uuidv4(), usernameOverride = null, sessionName = "DefaultWorld", loadWorldURL = null, maxUsers = 32, description = null, saveOnExit = false, autosaveInterval = -1.0, accessLevel = "Anyone", loadWorldPresetName = "SpaceWorld", autoRecover = false, mobileFriendly = false, tickRate = 60, keepOriginalRoles = false, defaultUserRoles = null, idleRestartInterval = -1.0, forcedRestartInterval = -1.0, forcePort = null, autoInviteUsernames = null, autoInviteMessage = null) {
         if (!fs.existsSync(sessionsDir)) {
             fs.mkdirSync(sessionsDir)
@@ -655,6 +733,7 @@ class Server {
             clearCache(this.ID);
 
         })
+        // Handle Events
         this.Session.stdout.on('data', (data) => {
             if (data.toString().startsWith('Enabling logging output.')) {
                 return
@@ -664,9 +743,6 @@ class Server {
                 this.Status = 'Running';
                 this.event = 'Started'
                 this.displayStatusMessage = true;
-
-
-
                 this.update()
                 setTimeout(() => {
                     this.TimerProc()
@@ -740,7 +816,7 @@ class Server {
                 var foundIndex = this.Users.findIndex(x => x.ip == ip);
                 let user = this.Users[foundIndex]
                 this.eventContext = [user.userID, user.username]
-                this.Users = this.Users.filter(function(returnableObjects) {
+                this.Users = this.Users.filter(function (returnableObjects) {
                     return returnableObjects.ip !== ip;
                 });
 
@@ -756,6 +832,11 @@ class Server {
         });
         return this
     }
+    /**
+     * Call to update the internal Neos Session ID
+     * for use with the NeosAPI
+     * @memberof Server
+     */
     updateCloudXID() {
         if (this.CloudXID === null) {
             if (this.Session === null || this.Session == undefined) {
@@ -767,6 +848,11 @@ class Server {
             this.updatePreview()
         }
     }
+    /**
+     * Update the preview image on Main Window
+     *
+     * @memberof Server
+     */
     updatePreview() {
         if (this.CloudXID === null) {
             return
@@ -779,6 +865,11 @@ class Server {
                 this.SessionPreview = (json.thumbnail ? json.thumbnail : "https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607")
             })
     }
+    /**
+     * Call all internal timers and run them if they should run.
+     *
+     * @memberof Server
+     */
     runTimers() {
         for (var timer in this.Timers) {
             if (this.timerMod % this.Timers[timer].freq === 0) {
@@ -787,6 +878,11 @@ class Server {
         }
         this.timerMod++
     }
+    /**
+     * Shut down the instance
+     *
+     * @memberof Server
+     */
     end() {
         //console.log('Ending Session '+this.ID)
         this.Status = 'Shutting Down'
@@ -798,6 +894,11 @@ class Server {
         }, 1000)
     }
 
+    /**
+     * Update data about the server Globally, Update server pannel in Main Window
+     *
+     * @memberof Server
+     */
     update() {
 
         //console.log('USERS: ', this.Users)
@@ -809,6 +910,11 @@ class Server {
             this.displayStatusMessage = false
         }
     }
+    /**
+     * Open Server Console
+     *
+     * @memberof Server
+     */
     openWindow() {
         this.Console = new BrowserWindow({
             show: false,
@@ -825,6 +931,9 @@ class Server {
             protocol: 'file:',
             slashes: true,
         }) + `?id=${this.ID}`);
+        if (process.env.NODE_ENV === 'production') {
+            this.Console.setMenu(null)
+        }
         this.Console.once('ready-to-show', () => {
             this.Console.show()
         })
@@ -835,6 +944,6 @@ class Server {
 }
 //Server Pipe
 
-ipcMain.on('openManager', function(e, id) {
+ipcMain.on('openManager', function (e, id) {
     Instances[id].openWindow()
 })

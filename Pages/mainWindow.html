@@ -43,14 +43,13 @@
     </div>
     <script>
         setupThemes()
-        //addElement(parentId, elementTag, elementId, elementClass, html)
         const electron = require('electron')
         const {
             ipcRenderer
         } = electron;
         const Store = require('electron-store');
         const store = new Store();
-        //UpdateItems
+        /* Data Passing */
         ipcRenderer.on('Server:Update', (e, session) => {
             updateSession(session)
         })

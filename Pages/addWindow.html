@@ -1,7 +1,7 @@
 <html>
 
 <head id="head">
-        <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+    <script type="text/javascript" src="./Resources/DOMediting.js"></script>
     <title>New Server</title>
 </head>
 
@@ -22,7 +22,8 @@
                 <option value="LAN">LAN</option>
                 <option value="Private">Private</option>
             </select>
-            <label for="loadWorldURL">World Record URL <small class="text-info"><a href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is This?</a></small></label>
+            <label for="loadWorldURL">World Record URL <small class="text-info"><a href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is
+                        This?</a></small></label>
 
             <input type="text" id="loadWorldURL" class="form-control" placeholder="neosrec:///">
             <label for="loadWorldPresetName">Load World Preset Name</label>
@@ -75,10 +76,10 @@
         ipcRenderer.on('addWindowAdvanced:save', function(e, item) {
             advanced = item
         })
-
+        
         function submitForm(e) {
             e.preventDefault();
-            //console.log(e)
+
             ipcRenderer.send('server:new', {
                 'sessionName': (!document.querySelector('#sessionName').value ? 'DefaultWorld' : document.querySelector('#sessionName').value),
                 'description': document.querySelector('#description').value,

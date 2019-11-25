@@ -15,7 +15,7 @@
             <input type="text" class="form-control" id="neosCredential" aria-describedby="emailHelp" placeholder="Neos Login">
             <label for="NeosPassword">Neos Account Password</label>
             <input type="password" class="form-control" id="NeosPassword" placeholder="Neos Password">
-            <small id="emailHelp" class="form-text text-muted">Neos does not support OAuth (Yet)</small>
+            <small id="Error" class="form-text text-danger" style="display: none;">Invalid Login</small> <!--Hidden until Failed login-->
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" type="submit" onclick="attemptLogin()">Login</button>
@@ -28,6 +28,12 @@
         } = electron;
         const Store = require('electron-store');
         const store = new Store();
+        ipcRenderer.on('NEOS:Failed',()=>{
+            document.getElementById('Error').style.display = 'block'
+        })
+        /**
+         * Login to Neos, Handling is in start.js : NEOS:Login
+         */ 
         function attemptLogin(){
             if (document.getElementById('neosCredential').value&&document.getElementById('NeosPassword').value)
             ipcRenderer.send('NEOS:Login', {'neosCredential':document.getElementById('neosCredential').value,'neosPassword':document.getElementById('NeosPassword').value})

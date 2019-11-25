@@ -54,8 +54,6 @@
         <button type="button" class="btn btn-success" onclick="submitForm()">Save Advanced Settings</button>
     </form>
     <script>
-        //addElement(parentId, elementTag, elementId, elementClass, html)
-        //removeElement(elementId)
         function openURL(url) {
             ipcRenderer.send('openURL', url)
         }
@@ -65,12 +63,12 @@
         } = electron
         const form = document.querySelector('form');
         var roleID = 0
-
+        //add Role to Permission Container
         function newRole() {
             addElement('PERMISSIONS', 'div', `role-${roleID}`, 'list-group-item list-group-item-action', `<button type="button" style="width:10%;" onclick="removeElement(this.parentElement.id)" class="close"><span aria-hidden="true">&times;</span></button><span id="idDisp" class="badge badge-dark" style="float:left; width:10%">${roleID}</span><input class="form-control" style="float:left; width:50%" id="username-${roleID}" type="text" placeholder="Username"><select style="float:right; width:30%" class="form-control" id="roleVal-${roleID}"><option value="Spectator">Spectator</option><option value="Guest">Guest</option><option value="Moderator">Moderator</option><option value="Builder">Builder</option><option value="Admin">Admin</option></select>`)
             roleID++
         }
-
+        /* Display Permission Window and call start.js to Resize the window */
         function togglePermissions(val) {
             if (val) {
                 document.getElementById('permissionContainer').style.display = 'block'
@@ -88,7 +86,7 @@
         }
 
         function buildPermissions(perms) {}
-
+        /* Parse Permision window and generate JSON object */
         function parsePermissions() {
             if (!document.getElementById('keepOriginalRolesNOT').checked) {
                 return null
@@ -109,7 +107,7 @@
             document.getElementById('keepOriginalRolesNOT').checked = (!dat.keepOriginalRoles ? false : true)
             togglePermissions((!dat.keepOriginalRoles ? false : true))
         }
-
+        /* Send Data to start.js */
         function submitForm() {
             let ret = {
                 "forcePort": (!document.getElementById('forcePort').value ? null : document.getElementById('forcePort').value),
@@ -120,10 +118,11 @@
             }
             ipcRenderer.send('addWindowAdvanced:save', ret)
         }
-
+        /* call start.js for config data */
         function requestData() {
             ipcRenderer.send('addWindowAdvanced:request')
         }
+        /* Recieve Data from start.js */
         ipcRenderer.on('addWindowAdvanced:response', function(e, data) {
             setData(data)
         })
