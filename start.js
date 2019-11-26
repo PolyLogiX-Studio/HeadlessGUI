@@ -3,6 +3,7 @@ const url = require('url');
 const path = require('path');
 const uuidv4 = require('uuid/v4');
 const fetch = require('node-fetch');
+
 const {
     dialog,
     app,
@@ -70,7 +71,7 @@ if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new 
 
 
 //Disable SubMenu & Dev tools
-process.env.NODE_ENV = 'production';
+//process.env.NODE_ENV = 'production';
 
 if (!store.has('Themes')){
     store.set('currentTheme','Darkly')
@@ -673,7 +674,7 @@ class Server {
         this.Config.startWorlds[0].autoInviteMessage = autoInviteMessage
         this.Config.startWorlds[0].autoInviteUsernames = autoInviteUsernames
         this.Config.tickRate = parseInt(tickRate, 10)
-        this.Config.usernameOverride = (!usernameOverride ? store.get('usernameOverride') : usernameOverride)
+        this.Config.usernameOverride = (store.get('usernameOverride')===''? null : store.get('usernameOverride'))
         this.Config.loginCredential = store.get('loginCredentials')
         this.Config.loginPassword = store.get('loginPassword')
         this.Config.allowedUrlHosts = (!store.get('allowedUrlHosts') ? ['localhost', 'PolyLogiX.Studio', 'PolyLogiX.Tools'] : store.get('allowedUrlHosts'))
