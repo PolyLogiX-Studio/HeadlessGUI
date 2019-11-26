@@ -168,7 +168,7 @@
             addAlert('You are running a Pre-Release Build, If you encounter Issues, Please report them with <strong>F3</strong>','warning')
             break
             case 1:
-            addAlert(`A new version <strong>${json.tag_name}</strong> is available <a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">Here</a>`,'warning')
+            addAlert(`<h4 class="alert-heading">A new version <strong>${json.tag_name}</strong> is available <a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">Here</a></h4><p class="mb-0">${json.body}</p>`,'warning')
             break
         }
         })
