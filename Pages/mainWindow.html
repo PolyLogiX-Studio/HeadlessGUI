@@ -50,26 +50,7 @@
         const Store = require('electron-store');
         const store = new Store();
         const fetch = require('node-fetch')
-        const compareVersions = require('compare-versions');
-        const VERSION = require('root-require')('package.json').version
-        console.log(VERSION)
-        fetch('https://api.github.com/repos/bombitmanbomb/HeadlessCore/releases/latest').then(res => res.json())
-        .then(json => {console.log(json.tag_name)
-            console.log(VERSION)
-        let releaseTag = compareVersions(json.tag_name,VERSION)
-        switch (releaseTag){
-            case -1:
-            addAlert('You are running a Pre-Release Build, Please report all issues found with <strong>F3</strong>','warning')
-            break
-            case 1:
-            addAlert(`A new version <strong>${json.tag_name}</strong> is available <a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">Here</a>`,'warning')
-            
-            
-            break
-
-
-        }
-        })
+       
 
 
 
@@ -174,6 +155,23 @@
         if (!store.has('configSet')||!store.get('loginPassword')) {
             addAlert('<strong>Oh Snap!</strong> Make sure to set your config before starting a server! Do this in <strong>Main -> Config</strong> or with <strong>' + (process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P') + '</strong>', 'danger', 'noConfig')
         }
+
+
+
+        const compareVersions = require('compare-versions');
+        const VERSION = require('root-require')('package.json').version
+        fetch('https://api.github.com/repos/bombitmanbomb/HeadlessCore/releases/latest').then(res => res.json())
+        .then(json => {
+        let releaseTag = compareVersions(json.tag_name,VERSION)
+        switch (releaseTag){
+            case -1:
+            addAlert('You are running a Pre-Release Build, If you encounter Issues, Please report them with <strong>F3</strong>','warning')
+            break
+            case 1:
+            addAlert(`A new version <strong>${json.tag_name}</strong> is available <a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">Here</a>`,'warning')
+            break
+        }
+        })
     </script>
 </body>
 
