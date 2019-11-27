@@ -28,6 +28,6 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
-    "electron-packager": "^14.1.0"
+    "electron-packager": "^14.1.1"
   }
 }

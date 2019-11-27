@@ -3,7 +3,7 @@
 
 <head id="head">
     <script type="text/javascript" src="./Resources/DOMediting.js"></script>
-    <title>Headless Core 0.1.3-alpha.1</title>
+    <title>Headless Core</title>
     <style>
         .AlertWindow {
             position: fixed;
@@ -42,6 +42,7 @@
     <div id="ServerList" class="list-group card mb-3" style="flex-direction: row; flex-wrap:wrap; height: 100%;">
     </div>
     <script>
+        const VERSION = require('root-require')('package.json').version
         setupThemes()
         const electron = require('electron')
         const {
@@ -159,7 +160,8 @@
 
         /* Version Check */
         const compareVersions = require('compare-versions');
-        const VERSION = require('root-require')('package.json').version
+        
+        document.getElementsByTagName('head').innerHTML = `Headless Core ${VERSION}`
         fetch('https://api.github.com/repos/bombitmanbomb/HeadlessCore/releases/latest').then(res => res.json())
         .then(json => {
         let releaseTag = compareVersions(json.tag_name,VERSION)
