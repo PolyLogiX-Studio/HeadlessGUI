@@ -62,7 +62,7 @@
 
         /* Data Passing */
         ipcRenderer.on('NOCONNECTION', (e, session) => {
-            addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`,'danger')
+            removeAlert(addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`,'danger'),5000)
         })
         ipcRenderer.on('Server:Update', (e, session) => {
             updateSession(session)

@@ -66,9 +66,13 @@ if (!store.has('MachineId')) { //For API Calls
 }
 checkInternet(function(isConnected){
     if (isConnected){
+        store.set('isConnected',true)
         if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
+            
             login(store.get('loginCredentials'), store.get('loginPassword')) // Login to Neos (If Able)
         }
+    } else {
+        store.set('isConnected',false)
     }
 })
 
@@ -183,6 +187,10 @@ function ClearQuit() {
  */
 function createAddWindow() {
     if (addWindow !== null) {
+        return
+    }
+    if (!store.get('isConnected')){
+        mainWindow.webContents.send('NOCONNECTION')
         return
     }
     if (!store.get('configSet') || !store.get('loginPassword')) {
