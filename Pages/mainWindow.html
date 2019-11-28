@@ -54,9 +54,16 @@
        
 
 
-
+        checkInternet(function(isConnected){
+    if (!isConnected){
+            addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`,'danger')
+    } 
+})
 
         /* Data Passing */
+        ipcRenderer.on('NOCONNECTION', (e, session) => {
+            addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`,'danger')
+        })
         ipcRenderer.on('Server:Update', (e, session) => {
             updateSession(session)
         })
@@ -174,6 +181,15 @@
             break
         }
         })
+        function checkInternet(cb){
+    require('dns').lookup(`https://cloudx.azurewebsites.net/api/sessions`,function(err){
+        if (err && err.code== 'ENOTFOUND') {
+            cb(false);
+        } else {
+            cb(true);
+        }
+    });
+}
     </script>
 </body>
 

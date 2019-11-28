@@ -64,10 +64,14 @@ fs.removeSync(sessionsDir)
 if (!store.has('MachineId')) { //For API Calls
     store.set('MachineId', uuidv4())
 }
+checkInternet(function(isConnected){
+    if (isConnected){
+        if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
+            login(store.get('loginCredentials'), store.get('loginPassword')) // Login to Neos (If Able)
+        }
+    }
+})
 
-if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
-    login(store.get('loginCredentials'), store.get('loginPassword')) // Login to Neos (If Able)
-}
 
 
 //Disable SubMenu & Dev tools
@@ -410,11 +414,13 @@ function login(credential, password) {
             store.set('NEOS:token:expire', json.expire)
             return json
         }).catch((err) => {
+            if (!store.get('offlineMode')){ //Dont clear Credentials if offline
             store.delete('loginCredentials')
             store.delete('loginPassword')
             store.delete('NEOS:token')
             store.delete('NEOS:userId')
             store.delete('NEOS:token:expire')
+        }
             return {
                 err: true
             }
@@ -945,6 +951,19 @@ class Server {
         })
     }
 }
+function checkInternet(cb){
+    require('dns').lookup(`${CLOUDX_PRODUCTION_NEOS_API}api/sessions`,function(err){
+        if (err && err.code== 'ENOTFOUND') {
+            cb(false);
+        } else {
+            cb(true);
+        }
+    });
+}
+
+
+
+
 //Server Pipe
 
 ipcMain.on('openManager', function (e, id) {
