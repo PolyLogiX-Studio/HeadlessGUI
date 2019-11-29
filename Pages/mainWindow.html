@@ -182,10 +182,12 @@
         }
         })
         function checkInternet(cb){
-    require('dns').lookup(`https://cloudx.azurewebsites.net/api/sessions`,function(err){
-        if (err && err.code== 'ENOTFOUND') {
+        require('url-exists')(`https://neosvr.com/`,function(err,exists){
+        if (!exists) {
+            console.log(false)
             cb(false);
         } else {
+            console.log(true)
             cb(true);
         }
     });

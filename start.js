@@ -67,11 +67,13 @@ if (!store.has('MachineId')) { //For API Calls
 checkInternet(function(isConnected){
     if (isConnected){
         store.set('isConnected',true)
+        console.log('connected')
         if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
             
             login(store.get('loginCredentials'), store.get('loginPassword')) // Login to Neos (If Able)
         }
     } else {
+        console.log('no connection')
         store.set('isConnected',false)
     }
 })
@@ -960,8 +962,9 @@ class Server {
     }
 }
 function checkInternet(cb){
-    require('dns').lookup(`${CLOUDX_PRODUCTION_NEOS_API}api/sessions`,function(err){
-        if (err && err.code== 'ENOTFOUND') {
+    require('url-exists')(`https://neosvr.com/`,function(err,exists){
+        console.log(err,exists)
+        if (!exists) {
             cb(false);
         } else {
             cb(true);
