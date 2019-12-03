@@ -3,6 +3,7 @@
 
 <head id="head">
     <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+    <script>require('bootstrap')</script>
     <title>Headless Core</title>
     <style>
         .AlertWindow {
@@ -49,7 +50,9 @@
             ipcRenderer
         } = electron;
         const Store = require('electron-store');
-        const store = new Store();
+        const store = new Store({name: 'dat'});
+        const config = new Store({name: 'config'});
+        const themes = new Store({name: 'themes'});
         const fetch = require('node-fetch')
        
 

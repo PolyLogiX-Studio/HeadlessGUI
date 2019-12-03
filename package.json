@@ -18,12 +18,15 @@
   "author": "Ethan Snow",
   "license": "MIT",
   "dependencies": {
+    "bootstrap": "^4.4.1",
     "compare-versions": "^3.5.1",
     "electron": "^7.1.1",
     "electron-css-reload": "^1.0.8",
     "electron-store": "^5.1.0",
     "fs-extra": "^8.1.0",
+    "jquery": "^3.4.1",
     "node-fetch": "^2.6.0",
+    "popper.js": "^1.16.0",
     "root-require": "^0.3.1",
     "url-exists": "^1.0.3",
     "uuid": "^3.3.3"

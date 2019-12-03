@@ -3,6 +3,7 @@
 
 <head id="head">
         <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+        <script>require('bootstrap')</script>
     <title>Neos Login</title>
 </head>
 
@@ -26,8 +27,6 @@
         const {
             ipcRenderer
         } = electron;
-        const Store = require('electron-store');
-        const store = new Store();
         ipcRenderer.on('NEOS:Failed',()=>{
             document.getElementById('Error').style.display = 'block'
         })

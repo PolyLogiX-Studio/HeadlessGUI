@@ -2,6 +2,7 @@
 
 <head id="head">
     <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+    <script>require('bootstrap')</script>
     <title>New Server</title>
 </head>
 
@@ -60,7 +61,9 @@
         }
         const electron = require('electron');
         const Store = require('electron-store');
-        const store = new Store();
+        const store = new Store({name: 'dat'});
+        const config = new Store({name: 'config'});
+        const themes = new Store({name: 'themes'});
         const {
             ipcRenderer
         } = electron
@@ -92,7 +95,7 @@
                 'autoRecover': document.querySelector('#autoRecover').value === 'on',
                 'saveOnExit': document.querySelector('#saveOnExit').value === 'on',
                 'usernameOverride': undefined,
-                'tickRate': store.get('tickRate'),
+                'tickRate': config.get('tickRate'),
                 'keepOriginalRoles': advanced.keepOriginalRoles,
                 'defaultUserRoles': advanced.defaultUserRoles,
                 'idleRestartInterval': advanced.idleRestartInterval,

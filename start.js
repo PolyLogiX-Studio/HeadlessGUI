@@ -12,7 +12,9 @@ const {
     ipcMain
 } = electron;
 const Store = require('electron-store');
-const store = new Store();
+const store = new Store({name: 'dat'});
+const config = new Store({name: 'config'});
+const themes = new Store({name: 'themes'});
 //Predefine Windows in Global Space
 let mainWindow = null;
 let addWindow = null;
@@ -83,9 +85,9 @@ checkInternet(function(isConnected){
 //Disable SubMenu & Dev tools
 //process.env.NODE_ENV = 'production';
 
-if (!store.has('Themes')){
-    store.set('currentTheme','Darkly')
-    store.set('Themes',{
+if (!themes.has('Themes')){
+    themes.set('currentTheme','Darkly')
+    themes.set('Themes',{
         "Darkly":{"url":`./CSS/Darkly.css`,"type":"file","description":"Flatly in night mode"},
         "Flatly":{"url":`./CSS/Flatly.css`,"type":"file","description":"Flat and modern"},
         "Cyborg":{"url":`./CSS/Cyborg.css`,"type":"file","description":"Jet black and electric blue"},
@@ -278,7 +280,7 @@ function createConfigWindow() {
         return
     }
     configWindow = new BrowserWindow({
-        width: 400,
+        width: 1000,
         show: false,
         height: 810,
         title: "Config",
@@ -730,14 +732,14 @@ class Server {
         fs.mkdirSync(this.Config.cacheFolder)
         fs.writeFileSync(path.join(this.sessionDir, 'Config.json'), JSON.stringify(this.Config));
         if (process.platform === 'win32') { //Windows
-            this.Session = spawn(path.join(store.get('neosClientPath'), 'Neos.exe'), ['--config', path.join(this.sessionDir, 'Config.json')], {
+            this.Session = spawn(path.join(config.get('neosClientPath'), 'Neos.exe'), ['--config', path.join(this.sessionDir, 'Config.json')], {
                 windowsHide: true,
-                cwd: store.get('neosClientPath')
+                cwd: config.get('neosClientPath')
             })
         } else { //Linux requires Mono
-            this.Session = spawn('mono', [path.join(store.get('neosClientPath'), 'Neos.exe'), '--config', path.join(this.sessionDir, 'Config.json')], {
+            this.Session = spawn('mono', [path.join(config.get('neosClientPath'), 'Neos.exe'), '--config', path.join(this.sessionDir, 'Config.json')], {
                 windowsHide: true,
-                cwd: store.get('neosClientPath')
+                cwd: config.get('neosClientPath')
             })
         }
 

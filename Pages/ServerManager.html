@@ -3,6 +3,7 @@
 
 <head id="head">
     <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+    <script>require('bootstrap')</script>
     <title id="title">Server Config</title>
     <style>
         .AlertWindow {
@@ -111,8 +112,6 @@
         const {
             ipcRenderer
         } = electron;
-        const Store = require('electron-store');
-        const store = new Store();
         //UpdateItems
         ipcRenderer.on('Update:Raw', (e, session) => {
             updateSession(session)

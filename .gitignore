@@ -107,4 +107,4 @@ dist
 .vs/slnx.sqlite
 .vs/VSWorkspaceState.json
 .vscode/tasks.json
-
+.API/CloudX.Shared.cs

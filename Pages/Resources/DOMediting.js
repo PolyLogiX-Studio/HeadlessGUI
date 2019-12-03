@@ -55,17 +55,17 @@ function replacejscssfile(oldfilename, newfilename, filetype){
 }
 function setupThemes(){
     let Store = require('electron-store');
-    let store = new Store();
-    loadjscssfile(store.get(`Themes.${store.get('currentTheme')}.url`),'css')
+    const themes = new Store({name: 'themes'});
+    loadjscssfile(themes.get(`Themes.${themes.get('currentTheme')}.url`),'css')
     
 }
 
 
 function updateTheme(){
     const reload = require('electron-css-reload');
-    let Store = require('electron-store');
-    let store = new Store();
-    document.getElementById('Theme').href = store.get(`Themes.${store.get('currentTheme')}.url`)
+    const Store = require('electron-store');
+    const themes = new Store({name: 'themes'});
+    document.getElementById('Theme').href = themes.get(`Themes.${themes.get('currentTheme')}.url`)
     reload()
 }
 setupThemes()
