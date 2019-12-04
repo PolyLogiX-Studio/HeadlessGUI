@@ -57,9 +57,7 @@ function setupThemes(){
     let Store = require('electron-store');
     const themes = new Store({name: 'themes'});
     const config = new Store({name: 'config'});
-    const store = new Store({name: 'dat'});
     loadjscssfile(themes.get(`Themes.${config.get('currentTheme')}.url`),'css')
-    
 }
 
 

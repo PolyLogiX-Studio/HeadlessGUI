@@ -83,7 +83,7 @@ checkInternet(function(isConnected){
 
 
 //Disable SubMenu & Dev tools
-process.env.NODE_ENV = 'production';
+//process.env.NODE_ENV = 'production';
 
 if (!themes.has('Themes')){
     config.set('currentTheme','Darkly')
@@ -203,6 +203,7 @@ function createAddWindow() {
     }
     mainWindow.webContents.send('removeStart')
     addWindow = new BrowserWindow({
+        parent:mainWindow,
         show: false,
         width: 800,
         height: 800,
@@ -277,6 +278,7 @@ function createConfigWindow() {
         return
     }
     configWindow = new BrowserWindow({
+        parent: mainWindow,
         width: 1000,
         show: false,
         height: 810,
@@ -495,21 +497,21 @@ const mainMenuTemplate = [{
         label: 'Online Help',
         accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
         click() {
-            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki', 'OnlineHelp')
+            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki')
         }
     },
     {
         label: 'My PolyLogiX Account',
         accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
         click() {
-            createURLWindow('www.polylogix.studio/PolyLogiX-Account', 'MyAccount')
+            createURLWindow('www.polylogix.studio/PolyLogiX-Account')
         }
     },
     {
         label: 'Report a Bug',
         accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
         click() {
-            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues', 'BugReport')
+            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
         }
     },
     ]
@@ -879,6 +881,7 @@ class Server {
      */
     openWindow() {
         this.Console = new BrowserWindow({
+            parent:mainWindow,
             show: false,
             width: 1200,
             height: 800,
