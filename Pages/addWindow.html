@@ -90,7 +90,7 @@
 
                     </div>
              </div>
-             <div class="modal-footer"><button class="btn btn-success" type="submit">New Server</button></div>
+             <div class="modal-footer"><button id="newServerButton" class="btn btn-success" type="submit">New Server</button></div>
         
     <script>
         function openURL(url) {
@@ -104,7 +104,7 @@
         const {
             ipcRenderer
         } = electron
-        const form = $('#form').submit(function(event){submitForm(event)});
+        const form = $('#newServerButton').click(function(event){submitForm(event)});
         var advanced = {
             "forcePort": null,
             "idleRestartInterval": -1.0,
@@ -112,9 +112,6 @@
             "keepOriginalRoles": false,
             "defaultUserRoles": null
         }
-        ipcRenderer.on('addWindowAdvanced:save', function(e, item) {
-            advanced = item
-        })
         
         function submitForm(e) {
             e.preventDefault();
@@ -146,10 +143,6 @@
         }
         //Advanced Variable Definition
         let forcePort
-        ipcRenderer.on('addWindowAdvanced:request', function() {
-            ipcRenderer.send('addWindowAdvanced:response', advanced)
-        })
-
         //advanced
         var roleID = 0
         //add Role to Permission Container
@@ -172,33 +165,6 @@
             }
             return Permissions
         }
-
-        function setData(dat) {
-            document.getElementById('forcePort').value = (!dat.forcePort ? undefined : dat.forcePort)
-            document.getElementById('idleRestartInterval').value = (dat.idleRestartInterval === -1 ? undefined : dat.idleRestartInterval)
-            document.getElementById('forcedRestartInterval').value = (dat.forcedRestartInterval === -1 ? undefined : dat.forcedRestartInterval)
-            document.getElementById('keepOriginalRolesNOT').checked = (!dat.keepOriginalRoles ? false : true)
-            togglePermissions((!dat.keepOriginalRoles ? false : true))
-        }
-        /* Send Data to start.js */
-        function submitFormAdvaned() {
-            let ret = {
-                "forcePort": (!document.getElementById('forcePort').value ? null : document.getElementById('forcePort').value),
-                "idleRestartInterval": (!document.getElementById('idleRestartInterval').value ? -1.0 : document.getElementById('idleRestartInterval').value),
-                "forcedRestartInterval": (!document.getElementById('forcedRestartInterval').value ? -1.0 : document.getElementById('forcedRestartInterval').value),
-                "keepOriginalRoles": document.getElementById('keepOriginalRolesNOT').checked,
-                "defaultUserRoles": parsePermissions()
-            }
-            ipcRenderer.send('addWindowAdvanced:save', ret)
-        }
-        /* call start.js for config data */
-        function requestData() {
-            ipcRenderer.send('addWindowAdvanced:request')
-        }
-        /* Recieve Data from start.js */
-        ipcRenderer.on('addWindowAdvanced:response', function(e, data) {
-            setData(data)
-        })
         function openURL(url) {
             ipcRenderer.send('openURL', url)
         }

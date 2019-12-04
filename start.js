@@ -226,9 +226,6 @@ function createAddWindow() {
     })
     // GC Handle
     addWindow.on('close', function () {
-        if (addWindowAdvanced) {
-            addWindowAdvanced.close()
-        }
         addWindow = null
     })
 
@@ -307,46 +304,6 @@ function createConfigWindow() {
     })
 
 }
-
-/**
- * Build Advance Settings page of Config Menu
- *
- */
-function createAddWindowAdvanced() {
-    if (addWindowAdvanced !== null) {
-        return
-    } // 1 copy
-    addWindowAdvanced = new BrowserWindow({
-        show: false,
-        width: 500,
-        height: 340,
-        title: 'Advanced Settings',
-        icon: ICON_GLOBAL_PNG,
-        webPreferences: {
-            nodeIntegration: true
-        }
-    });
-    if (process.env.NODE_ENV === 'production') {
-        addWindowAdvanced.setMenu(null)
-    }
-
-    addWindowAdvanced.loadURL(url.format({
-        pathname: path.join(__dirname, '/Pages/addWindowAdvanced.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
-
-    addWindowAdvanced.once('ready-to-show', () => {
-        addWindowAdvanced.show()
-    })
-
-    addWindowAdvanced.on('close', function () {
-        addWindowAdvanced = null //GC Cleanup
-    })
-
-
-}
-
 
 
 
@@ -458,22 +415,13 @@ ipcMain.on('NEOS:Login', function (e, info) {
 ipcMain.on('callWindow:Login', function (e) {
     createLoginWindow()
 })
-ipcMain.on('addWindowAdvanced:save', function (e, ret) {
-    addWindow.webContents.send('addWindowAdvanced:save', ret)
-    addWindowAdvanced.close()
-})
-ipcMain.on('addWindowAdvanced:resize', function (e, size) {
-    addWindowAdvanced.setSize(size.x, size.y)
-})
 // User has changed the Config
 ipcMain.on('Config:Update', function (e, item) {
     //configWindow.close()
     mainWindow.webContents.send('removeConfig')
 })
 // Open Advanced Settings for New Server window
-ipcMain.on('server:new:advanced', function (e) {
-    createAddWindowAdvanced()
-})
+
 /* Create New Session */
 ipcMain.on('server:new', function (e, item) {
     //console.log(item)
@@ -486,13 +434,6 @@ ipcMain.on('server:new', function (e, item) {
 //Open a Browser
 ipcMain.on('openURL', function (e, item) {
     createURLWindow(item)
-})
-//Advanced Server requesting data
-ipcMain.on('addWindowAdvanced:request', function (e) {
-    addWindow.webContents.send('addWindowAdvanced:request')
-})
-ipcMain.on('addWindowAdvanced:response', function (e, data) {
-    addWindowAdvanced.webContents.send('addWindowAdvanced:response', data)
 })
 ipcMain.on('getUpdateRaw',function(e,session){
     Instances[session].update()

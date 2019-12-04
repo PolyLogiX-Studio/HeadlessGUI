@@ -32,6 +32,10 @@
           <!--SYSTEM-->
          <div class="tab-pane fade active show" id="system">
                <div class="form-group">
+                    <label for="usernameOverride">Display Name</label>
+                    <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp" placeholder="Display Username">
+                    <label for="allowedUrlHosts">Networking Hosts Allowed</label>
+                    <textarea rows=3 type="text" id="allowedUrlHosts" class="form-control" placeholder="URI Hosts; Comma Delimited"></textarea>
                   <label for="custom-file">Headless Client</label>
                   <div class="custom-file">
                      <input type="file" accept=".exe" class="custom-file-input" id="NeosClient" onchange="setFileDisplay(this.files[0].path)" webkitdirectory />
@@ -72,12 +76,9 @@
          </div>
          <!--SERVER-->
          <div class="tab-pane fade" id="server">
-            <label for="usernameOverride">Display Name</label>
-            <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp" placeholder="Display Username">
-            <label for="tickRate">Server Tick Rate</label>
-            <input type="number" id="tickRate" class="form-control" placeholder="Frame Rate" min="24" max="1024" value="60">
-            <label for="allowedUrlHosts">Networking Hosts Allowed</label>
-            <textarea rows=3 type="text" id="allowedUrlHosts" class="form-control" placeholder="URI Hosts; Comma Delimited"></textarea>
+            
+                <label for="tickRate">Server Tick Rate</label>
+                <input type="number" id="tickRate" class="form-control" placeholder="Frame Rate" min="24" max="1024" value="60">
             <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
          </div>
       </div>
