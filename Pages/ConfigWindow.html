@@ -27,8 +27,8 @@
          <li class="nav-item" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Coming Soon!">
             <a class="nav-link disabled" >Presets</a>
          </li>
-         <li class="nav-item" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Coming Soon!">
-            <a class="nav-link disabled">Misc</a>
+         <li class="nav-item">
+            <a class="nav-link text-danger" data-toggle="tab" href="#danger">Danger Zone</a>
          </li>
       </ul>
       <div id="myTabContent" class="tab-content">
@@ -49,16 +49,66 @@
                      <div id="PathFeedback" class="invalid-feedback"></div>
                   </div>
                </div>
-               <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
+               <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save System</button></div>
          </div>
          <!--VISUAL-->
          <div class="tab-pane fade" id="visual">
+            
             <div>
-               <label for="SelectTheme">Theme</label>
-               <select id="SelectTheme" class="custom-select" onchange="newThemeFunc()">
-               </select>
+                    <button type="button" class="btn btn-primary">Primary</button>
+                    <button type="button" class="btn btn-secondary">Secondary</button>
+                    <button type="button" class="btn btn-success">Success</button>
+                    <button type="button" class="btn btn-info">Info</button>
+                    <button type="button" class="btn btn-warning">Warning</button>
+                    <button type="button" class="btn btn-danger">Danger</button>
+                    <button type="button" class="btn btn-link">Link</button>
+                    <div class="alert alert-dismissible alert-warning">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <h4 class="alert-heading">Warning!</h4>
+                            <p class="mb-0">Best check yo self, you're not looking too good. Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, <a href="#" class="alert-link">vel scelerisque nisl consectetur et</a>.</p>
+                          </div>
+                          <div class="alert alert-dismissible alert-danger">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Oh snap!</strong> <a href="#" class="alert-link">Change a few things up</a> and try submitting again.
+                              </div>
+                              <div class="alert alert-dismissible alert-success">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <strong>Well done!</strong> You successfully read <a href="#" class="alert-link">this important alert message</a>.
+                                  </div>
+                                  <div class="alert alert-dismissible alert-info">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <strong>Heads up!</strong> This <a href="#" class="alert-link">alert needs your attention</a>, but it's not super important.
+                                      </div>
+                                      <span class="badge badge-primary">Primary</span>
+<span class="badge badge-secondary">Secondary</span>
+<span class="badge badge-success">Success</span>
+<span class="badge badge-danger">Danger</span>
+<span class="badge badge-warning">Warning</span>
+<span class="badge badge-info">Info</span>
+<span class="badge badge-light">Light</span>
+<span class="badge badge-dark">Dark</span>
+<ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Cras justo odio
+          <span class="badge badge-primary badge-pill">14</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Dapibus ac facilisis in
+          <span class="badge badge-primary badge-pill">2</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Morbi leo risus
+          <span class="badge badge-primary badge-pill">1</span>
+        </li>
+      </ul>
             </div>
-            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
+            <br>
+            <div>
+                    <label for="SelectTheme">Theme</label>
+                    <select id="SelectTheme" class="custom-select" onchange="newThemeFunc()">
+                    </select>
+                 </div>
+            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Visual</button></div>
          </div>
          <!--ACCOUNT-->
          <div class="tab-pane fade" id="account"> 
@@ -75,14 +125,18 @@
             <input type="password" class="form-control" id="apikey" placeholder="Optional">
             <small id="apikeyhelp" class="form-text text-muted">API Key for communicating with your PolyLogiX Account</small>
             <small id="apikeyhelp" class="form-text text-muted">NOT YET IMPLIMENTED</small>
-            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
+            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Account</button></div>
          </div>
          <!--SERVER-->
          <div class="tab-pane fade" id="server">
             
                 <label for="tickRate">Server Tick Rate</label>
                 <input type="number" id="tickRate" class="form-control" placeholder="Frame Rate" min="24" max="1024" value="60">
-            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
+            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Server</button></div>
+         </div>
+         <!--DANGER ZONE-->
+         <div class="tab-pane fade" id="danger">
+            <button type="button" class="btn btn-outline-danger disabled" type="submit" onclick="">Wipe HeadlessCore Data (Disabled)</button>
          </div>
       </div>
       <script>

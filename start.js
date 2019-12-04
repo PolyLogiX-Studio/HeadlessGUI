@@ -83,7 +83,7 @@ checkInternet(function(isConnected){
 
 
 //Disable SubMenu & Dev tools
-//process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'production';
 
 if (!themes.has('Themes')){
     config.set('currentTheme','Darkly')

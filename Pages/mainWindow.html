@@ -3,8 +3,11 @@
 
 <head id="head">
     <script type="text/javascript" src="./Resources/DOMediting.js"></script>
-    <script>require('bootstrap')</script>
-    <title>Headless Core</title>
+    <script>
+    const $ = require('jquery')
+         require('bootstrap')
+         </script>
+    <title id="title">Headless Core</title>
     <style>
         .AlertWindow {
             position: fixed;
@@ -171,7 +174,7 @@
         /* Version Check */
         const compareVersions = require('compare-versions');
         
-        document.getElementsByTagName('head').innerHTML = `Headless Core ${VERSION}`
+        $('#title').html(`Headless Core ${VERSION}`)
         fetch('https://api.github.com/repos/bombitmanbomb/HeadlessCore/releases/latest').then(res => res.json())
         .then(json => {
         let releaseTag = compareVersions(json.tag_name,VERSION)
