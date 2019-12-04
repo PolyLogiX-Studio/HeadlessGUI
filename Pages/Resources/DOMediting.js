@@ -56,16 +56,21 @@ function replacejscssfile(oldfilename, newfilename, filetype){
 function setupThemes(){
     let Store = require('electron-store');
     const themes = new Store({name: 'themes'});
-    loadjscssfile(themes.get(`Themes.${themes.get('currentTheme')}.url`),'css')
+    const config = new Store({name: 'config'});
+    const store = new Store({name: 'dat'});
+    loadjscssfile(themes.get(`Themes.${config.get('currentTheme')}.url`),'css')
     
 }
 
 
 function updateTheme(){
+    console.log("updateTheme")
     const reload = require('electron-css-reload');
     const Store = require('electron-store');
     const themes = new Store({name: 'themes'});
-    document.getElementById('Theme').href = themes.get(`Themes.${themes.get('currentTheme')}.url`)
+    const config = new Store({name: 'config'});
+    const store = new Store({name: 'dat'});
+    document.getElementById('Theme').href = themes.get(`Themes.${config.get('currentTheme')}.url`)
     reload()
 }
 setupThemes()

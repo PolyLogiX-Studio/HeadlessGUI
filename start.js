@@ -72,7 +72,7 @@ checkInternet(function(isConnected){
         console.log('connected')
         if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
             
-            login(store.get('loginCredentials'), store.get('loginPassword')) // Login to Neos (If Able)
+            login(config.get('loginCredentials'), config.get('loginPassword')) // Login to Neos (If Able)
         }
     } else {
         console.log('no connection')
@@ -83,10 +83,10 @@ checkInternet(function(isConnected){
 
 
 //Disable SubMenu & Dev tools
-//process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'production';
 
 if (!themes.has('Themes')){
-    themes.set('currentTheme','Darkly')
+    config.set('currentTheme','Darkly')
     themes.set('Themes',{
         "Darkly":{"url":`./CSS/Darkly.css`,"type":"file","description":"Flatly in night mode"},
         "Flatly":{"url":`./CSS/Flatly.css`,"type":"file","description":"Flat and modern"},
@@ -197,14 +197,14 @@ function createAddWindow() {
         mainWindow.webContents.send('NOCONNECTION')
         return
     }
-    if (!store.get('configSet') || !store.get('loginPassword')) {
+    if (!store.get('configSet') || !config.get('loginPassword')) {
         mainWindow.webContents.send('ConfigError')
         return
     }
     mainWindow.webContents.send('removeStart')
     addWindow = new BrowserWindow({
         show: false,
-        width: 400,
+        width: 800,
         height: 800,
         title: "New Server",
         icon: ICON_GLOBAL_PNG,
@@ -419,16 +419,16 @@ function login(credential, password) {
     })
         .then(res => res.json())
         .then(json => {
-            store.set('loginCredentials', credential)
-            store.set('loginPassword', (password ? password : store.get('loginPassword')))
+            config.set('loginCredentials', credential)
+            config.set('loginPassword', (password ? password : config.get('loginPassword')))
             store.set('NEOS:token', json.token)
             store.set('NEOS:userId', json.userId)
             store.set('NEOS:token:expire', json.expire)
             return json
         }).catch((err) => {
             if (!store.get('offlineMode')){ //Dont clear Credentials if offline
-            store.delete('loginCredentials')
-            store.delete('loginPassword')
+            config.delete('loginCredentials')
+            config.delete('loginPassword')
             store.delete('NEOS:token')
             store.delete('NEOS:userId')
             store.delete('NEOS:token:expire')
@@ -467,7 +467,7 @@ ipcMain.on('addWindowAdvanced:resize', function (e, size) {
 })
 // User has changed the Config
 ipcMain.on('Config:Update', function (e, item) {
-    configWindow.close()
+    //configWindow.close()
     mainWindow.webContents.send('removeConfig')
 })
 // Open Advanced Settings for New Server window
@@ -692,10 +692,10 @@ class Server {
         this.Config.startWorlds[0].autoInviteMessage = autoInviteMessage
         this.Config.startWorlds[0].autoInviteUsernames = autoInviteUsernames
         this.Config.tickRate = parseInt(tickRate, 10)
-        this.Config.usernameOverride = (store.get('usernameOverride')===''? null : store.get('usernameOverride'))
-        this.Config.loginCredential = store.get('loginCredentials')
-        this.Config.loginPassword = store.get('loginPassword')
-        this.Config.allowedUrlHosts = (!store.get('allowedUrlHosts') ? ['localhost', 'PolyLogiX.Studio', 'PolyLogiX.Tools'] : store.get('allowedUrlHosts'))
+        this.Config.usernameOverride = (config.get('usernameOverride')===''? null : config.get('usernameOverride'))
+        this.Config.loginCredential = config.get('loginCredentials')
+        this.Config.loginPassword = config.get('loginPassword')
+        this.Config.allowedUrlHosts = (!config.get('allowedUrlHosts') ? ['localhost'] : config.get('allowedUrlHosts'))
         this.Config.dataFolder = path.join(this.sessionDir, 'Data')
         this.Config.cacheFolder = path.join(this.sessionDir, 'Cache')
         this.Status = 'Starting'

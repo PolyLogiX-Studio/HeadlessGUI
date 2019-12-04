@@ -1,223 +1,245 @@
 <!DOCTYPE html>
 <html>
-
-<head id="head">
-    <script type="text/javascript" src="./Resources/DOMediting.js"></script>
-    <script>require('bootstrap')</script>
-    <title>Config</title>
-</head>
-
-<body>
-    <div id="alerts">
-    </div>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" href="#system">System</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#visual">Visual</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" data-toggle="tab" href="#">Accounts</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" data-toggle="tab" href="#">Defaults</a>
-          </li>
-          <li class="nav-item">
+   <head id="head">
+      <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+      <script>
+         const $ = require('jquery')
+         require('bootstrap')
+      </script>
+      <title>Config</title>
+   </head>
+   <body>
+      <div id="alerts">
+      </div>
+      <ul class="nav nav-tabs">
+         <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#system">System</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#visual">Visual</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#account">Account</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#server">Servers</a>
+         </li>
+         <li class="nav-item">
             <a class="nav-link disabled" data-toggle="tab" href="#">Misc</a>
-          </li>
+         </li>
       </ul>
       <div id="myTabContent" class="tab-content">
-        <div class="tab-pane fade active show" id="system">
-            <form>
-                <div class="form-group">
-                    <label for="ProfileDisplay">Neos Account</label>
-                    <div id='ProfileDisplay' style="display: none;">
-                        <img id="ProfilePicture" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" style="float:left; width:75px; height: 75px; padding-right: 5px; border-radius: 50%;">
-                        <h3 id="userNameProfile">[Loading...]</h3>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="callLogout()">Logout</button>
-                    </div>
-                    <div id="Login" style="display: none;">
-                        <button type="button" class="btn btn-info" onclick="callLogin()">Login to Neos</button>
-                    </div>
-                    <label for="usernameOverride">Display Name</label>
-                    <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp" placeholder="Display Username">
-        
-                    <label for="apikey">PolyLogiX Api Key</label>
-                    <input type="password" class="form-control" id="apikey" placeholder="Optional">
-                    <small id="apikeyhelp" class="form-text text-muted">API Key for communicating with your PolyLogiX Account</small>
-                    <small id="apikeyhelp" class="form-text text-muted">NOT YET IMPLIMENTED</small>
-                    <label for="tickRate">Server Tick Rate</label>
-                    <input type="number" id="tickRate" class="form-control" placeholder="User Limit" min="24" max="1024" value="60">
-                    <label for="custom-file">Headless Client</label>
-                    <div class="custom-file">=
-                        <input type="file" accept=".exe" class="custom-file-input" id="NeosClient" onchange="setFileDisplay(this.files[0].path)" webkitdirectory />
-                        <label class="custom-file-label" id="clientText" for="NeosClient">Browse for Folder</label>
-                    </div>
-                    <div class='form-group' id="PathFormGroup">
-                        <input type="text" class="form-control" id="NeosClientPath" aria-describedby="emailHelp" placeholder="Path" onchange="validatePath()">
-                        <div id="PathFeedback" class="invalid-feedback"></div>
-                    </div>
-                    <label for="allowedUrlHosts">Networking Hosts Allowed</label>
-                    <textarea rows=3 type="text" id="allowedUrlHosts" class="form-control" placeholder="URI Hosts; Comma Delimited"></textarea>
-                </div>
-        
-                <div>
-                    <div>
-                        <label for="SelectTheme">Theme</label>
-                        <select id="SelectTheme" class="custom-select" onchange="newThemeFunc()">
-                        </select>
-                    </div>
-                    <div class="modal-footer"></div>
-                    <button type="button" class="btn btn-primary" type="submit" onclick="saveConfig()">Save changes</button>
-                </div>
-            </form>
-        </div>
-        <div class="tab-pane fade" id="visual">
-             NYI
-        </div>
-        <div class="tab-pane fade" id="dropdown1">
-            NYI
-        </div>
-        <div class="tab-pane fade" id="dropdown2">
-            NYI
-        </div>
+          <!--SYSTEM-->
+         <div class="tab-pane fade active show" id="system">
+               <div class="form-group">
+                  <label for="custom-file">Headless Client</label>
+                  <div class="custom-file">
+                     <input type="file" accept=".exe" class="custom-file-input" id="NeosClient" onchange="setFileDisplay(this.files[0].path)" webkitdirectory />
+                     <label class="custom-file-label" id="clientText" for="NeosClient">Browse for Folder</label>
+                  </div>
+                  <div class='form-group' id="PathFormGroup">
+                     <input type="text" class="form-control" id="NeosClientPath" aria-describedby="emailHelp" placeholder="Path" onchange="validatePath()">
+                     <div id="PathFeedback" class="invalid-feedback"></div>
+                  </div>
+               </div>
+               <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
+         </div>
+         <!--VISUAL-->
+         <div class="tab-pane fade" id="visual">
+            <div>
+               <label for="SelectTheme">Theme</label>
+               <select id="SelectTheme" class="custom-select" onchange="newThemeFunc()">
+               </select>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
+         </div>
+         <!--ACCOUNT-->
+         <div class="tab-pane fade" id="account"> 
+            <label for="ProfileDisplay">Neos Account</label>
+            <div id='ProfileDisplay' style="display: none;">
+               <img id="ProfilePicture" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" style="float:left; width:75px; height: 75px; padding-right: 5px; border-radius: 50%;">
+               <h3 id="userNameProfile">[Loading...]</h3>
+               <button type="button" class="btn btn-outline-danger btn-sm" onclick="callLogout()">Logout</button>
+            </div>
+            <div id="Login" style="display: none;">
+               <button type="button" class="btn btn-info" onclick="callLogin()">Login to Neos</button>
+            </div>
+            <label for="apikey">PolyLogiX Api Key</label>
+            <input type="password" class="form-control" id="apikey" placeholder="Optional">
+            <small id="apikeyhelp" class="form-text text-muted">API Key for communicating with your PolyLogiX Account</small>
+            <small id="apikeyhelp" class="form-text text-muted">NOT YET IMPLIMENTED</small>
+            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
+         </div>
+         <!--SERVER-->
+         <div class="tab-pane fade" id="server">
+            <label for="usernameOverride">Display Name</label>
+            <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp" placeholder="Display Username">
+            <label for="tickRate">Server Tick Rate</label>
+            <input type="number" id="tickRate" class="form-control" placeholder="Frame Rate" min="24" max="1024" value="60">
+            <label for="allowedUrlHosts">Networking Hosts Allowed</label>
+            <textarea rows=3 type="text" id="allowedUrlHosts" class="form-control" placeholder="URI Hosts; Comma Delimited"></textarea>
+            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save changes</button></div>
+         </div>
       </div>
-    
-    <script>
-
-        const electron = require('electron')
-        const {
-            ipcRenderer
-        } = electron;
-        const Store = require('electron-store');
-        const store = new Store({name: 'dat'});
-        const config = new Store({name: 'config'});
-        const themes = new Store({name: 'themes'});
-        const fs = require('fs')
-        const path = require('path');
-        const fetch = require('node-fetch')
-        var pathValid = false
-
-        var neosToken = store.get('NEOS:token')
-
-        /* if no Token stored, display Login Button, Else get user info*/
-        if (!neosToken) {
-            document.getElementById('Login').style.display = 'block'
-        } else {
-            login()
-            document.getElementById('ProfileDisplay').style.display = 'block'
-        }
-
-        function callLogin() {
-            ipcRenderer.send('callWindow:Login')
-        }
-        ipcRenderer.on("NEOS:Login", (e) => {
-            login()
-            document.getElementById('ProfileDisplay').style.display = 'block'
-            document.getElementById('Login').style.display = 'none'
-        })
-
-        function callLogout() {
-
-            fetch(`api/userSessions/${store.get('NEOS:userId')}/${store.get('NEOS:token')}`,{method:"DELETE",headers:{'neos':`${store.get('NEOS:userId')}:${store.get('NEOS:token')}`}}) // Invalidate Token
-            store.delete('NEOS:token')
-            store.delete('NEOS:userId')
-            store.delete('NEOS:token:expire')
-            store.delete('loginCredentials')
-            store.delete('loginPassword')
-            document.getElementById('ProfileDisplay').style.display = 'none'
-            document.getElementById('Login').style.display = 'block'
-            ipcRenderer.send('NEOS:Logout')
-        }
-        /* Fetch Neos Account Profile Info */
-        function login() {
-            fetch(`https://cloudx.azurewebsites.net/api/users/${store.get('NEOS:userId')}`)
-                .then(res => res.json())
-                .then(json => {
-                    document.getElementById('userNameProfile').innerHTML = json.username
-                    let str = json.profile.iconUrl
-                    var hash = str.substring(
-                        str.lastIndexOf("/") + 1,
-                        str.lastIndexOf("."))
-                    document.getElementById('ProfilePicture').src = `https://cloudxstorage.blob.core.windows.net/assets/${hash}`
-
-                })
-
-        }
-        /* Cut File path and Validate */
-        function setFileDisplay(FilePath) {
-            let folder = FilePath.split('\\')
-            document.getElementById('NeosClientPath').value = FilePath.substring(0, FilePath.lastIndexOf('\\') + 1);
-            document.getElementById('clientText').innerHTML = folder[folder.length - 2]
-            validatePath()
-        }
-        //Make sure Valid directory to Neos.EXE
-        function validatePath() {
-            if (fs.existsSync(path.join(document.getElementById('NeosClientPath').value, 'Neos.exe'))) {
-                document.getElementById('NeosClientPath').setAttribute('class', 'form-control is-valid')
-                document.getElementById('PathFeedback').setAttribute('class', 'valid-feedback')
-                document.getElementById('PathFeedback').innerHTML = 'Headless Client Found!'
-                pathValid = true
-            } else {
-                document.getElementById('NeosClientPath').setAttribute('class', 'form-control is-invalid')
-                document.getElementById('PathFeedback').setAttribute('class', 'invalid-feedback')
-                document.getElementById('PathFeedback').innerHTML = 'Headless Client not found!'
-                pathValid = false
-            }
-
-        }
-
-        function getConfig() {
-            let hosts = store.get('allowedUrlHosts')
-
-            if (!store.has('configSet')) {
-                return
-            }
-            document.getElementById('tickRate').value = store.get('tickRate')
-            document.getElementById('NeosClientPath').value = config.get('neosClientPath')
-            document.getElementById('usernameOverride').value = store.get('usernameOverride')
-            document.getElementById('apikey').value = store.get('PolyLogiXAPI')
-            if (hosts) {
-                document.getElementById('allowedUrlHosts').value = hosts.join(',\r\n')
-            }
-            validatePath()
-        }
-
-        /* Theme Swapping */
-        var oldTheme = undefined
-        var newTheme = undefined
-
-        function newThemeFunc() {
-            oldTheme = (newTheme ? newTheme : themes.get('currentTheme'))
-            newTheme = document.getElementById("SelectTheme").value
-            replacejscssfile(store.get(`Themes.${oldTheme}.url`), store.get(`Themes.${newTheme}.url`), 'css')
-        }
-        /* Update Store with Info */
-        function saveConfig() {
-            store.set('configSet', true)
-            store.set('tickRate', document.getElementById('tickRate').value)
-            config.set('neosClientPath', document.getElementById('NeosClientPath').value)
-            store.set('usernameOverride', document.getElementById('usernameOverride').value)
-            store.set('PolyLogiXAPI', document.getElementById('apikey').value)
-            let hosts = document.getElementById('allowedUrlHosts').value
-            hosts = hosts.replace(/\s/g, '');
-            hosts = hosts.replace(/\r\n[\r]\n/g, '')
-            store.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
-
-            store.set('oldTheme', themes.get('currentTheme'))
-            themes.set('currentTheme', document.getElementById("SelectTheme").value)
-            ipcRenderer.send('Config:Update');
-        }
-        let select = document.getElementById("SelectTheme");
-        let table = themes.get('Themes');
-        let options = Object.keys(table);
-        /* Genetate Theme Options from Store */
-        for (let i = 0; i < options.length; i++) {
-            select.innerHTML += ("<option " + (options[i] == themes.get('currentTheme') ? 'selected ' : '') + "value=\"" + options[i] + "\">" + options[i] + "</option>");
-        }
-        getConfig();
-    </script>
-</body>
-
+      <script>
+         const electron = require('electron')
+         const {
+             ipcRenderer
+         } = electron;
+         const Store = require('electron-store');
+         const store = new Store({name: 'dat'});
+         const config = new Store({name: 'config'});
+         const themes = new Store({name: 'themes'});
+         const fs = require('fs')
+         const path = require('path');
+         const fetch = require('node-fetch')
+         var pathValid = false
+         var neosToken = store.get('NEOS:token')
+         
+         $(document).ready(function () {
+             generateThemeTable()
+             getConfig();
+         
+         /* if no Token stored, display Login Button, Else get user info*/
+         if (!neosToken) {
+             $('#Login').css("display",'block')
+         } else {
+             login()
+             $('#ProfileDisplay').css("display",'block')
+         }
+         
+         });
+         
+         
+         
+         
+         
+         function callLogin() {
+             ipcRenderer.send('callWindow:Login')
+         }
+         ipcRenderer.on("NEOS:Login", (e) => {
+             login()
+             $('#ProfileDisplay').css("display",'block')
+             $('#Login').css("display",'none')
+         })
+         
+         function callLogout() {
+             fetch(`api/userSessions/${store.get('NEOS:userId')}/${store.get('NEOS:token')}`,{method:"DELETE",headers:{'neos':`${store.get('NEOS:userId')}:${store.get('NEOS:token')}`}}) // Invalidate Token
+             store.delete('NEOS:token')
+             store.delete('NEOS:userId')
+             store.delete('NEOS:token:expire')
+             config.delete('loginCredentials')
+             config.delete('loginPassword')
+             $('#ProfileDisplay').css("display",'none')
+             $('#Login').css("display",'block')
+             ipcRenderer.send('NEOS:Logout')
+         }
+         /* Fetch Neos Account Profile Info */
+         function login() {
+             fetch(`https://cloudx.azurewebsites.net/api/users/${store.get('NEOS:userId')}`)
+                 .then(res => res.json())
+                 .then(json => {
+                     $('#userNameProfile').html(json.username)
+                     let str = json.profile.iconUrl
+                     var hash = str.substring(
+                         str.lastIndexOf("/") + 1,
+                         str.lastIndexOf("."))
+                     $('#ProfilePicture').attr('src',`https://cloudxstorage.blob.core.windows.net/assets/${hash}`)
+         
+                 })
+         
+         }
+         /* Cut File path and Validate */
+         function setFileDisplay(FilePath) {
+             let folder = FilePath.split('\\')
+             $('#NeosClientPath').val(FilePath.substring(0, FilePath.lastIndexOf('\\') + 1))
+             $('#clientText').innerHTML = folder[folder.length - 2]
+             validatePath()
+         }
+         //Make sure Valid directory to Neos.EXE
+         function validatePath() {
+             if (fs.existsSync(path.join($('#NeosClientPath').val(), 'Neos.exe'))) {
+                 $('#NeosClientPath').attr('class', 'form-control is-valid')
+                 $('#PathFeedback').attr('class', 'valid-feedback')
+                 $('#PathFeedback').html('Headless Client Found!')
+                 pathValid = true
+             } else {
+                 $('#NeosClientPath').attr('class', 'form-control is-invalid')
+                 $('#PathFeedback').attr('class', 'invalid-feedback')
+                 $('#PathFeedback').html('Headless Client not found!')
+                 pathValid = false
+             }
+         
+         }
+         
+         function getConfig() {
+             let hosts = config.get('allowedUrlHosts')
+         
+             if (!store.has('configSet')) {
+                 return
+             }
+             $('#tickRate').val(config.get('tickRate'))
+             $('#NeosClientPath').val(config.get('neosClientPath'))
+             $('#usernameOverride').val(config.get('usernameOverride'))
+             $('#apikey').val(config.get('PolyLogiXAPI'))
+             if (hosts) {
+                 $('#allowedUrlHosts').val(hosts.join(',\r\n'))
+             }
+             validatePath()
+         }
+         
+         /* Theme Swapping */
+         var oldTheme = undefined
+         var newTheme = undefined
+         
+         function newThemeFunc() {
+             oldTheme = (newTheme ? newTheme : config.get('currentTheme'))
+             newTheme = $("#SelectTheme").val()
+             replacejscssfile(themes.get(`Themes.${oldTheme}.url`), themes.get(`Themes.${newTheme}.url`), 'css')
+         }
+         /* Update Store with Info */
+         function saveConfig(element) {
+             switch(element){
+                 case 'system':
+                 config.set('neosClientPath', $('#NeosClientPath').val())
+                 break
+                 case 'visual':
+                 store.set('oldTheme', config.get('currentTheme'))
+                 config.set('currentTheme', $("#SelectTheme").val())
+                 break
+                 case 'account':
+                 config.set('PolyLogiXAPI', $('#apikey').val())
+                 break
+                 case 'server':
+                 config.set('tickRate', $('#tickRate').val())
+             
+                config.set('usernameOverride', $('#usernameOverride').val())
+             
+                let hosts = $('#allowedUrlHosts').val()
+                 hosts = hosts.replace(/\s/g, '');
+                 hosts = hosts.replace(/\r\n[\r]\n/g, '')
+                 config.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
+                 break
+             }
+             store.set('configSet', true)
+             
+         
+             
+             ipcRenderer.send('Config:Update');
+         }
+         function generateThemeTable(){
+             console.log('Generating Theme Table')
+             let table = themes.get('Themes');
+             console.log(table)
+             let options = Object.keys(table);
+         /* Genetate Theme Options from Store */
+         
+             let innerText = ``
+         for (let i = 0; i < options.length; i++) {
+             innerText+=("<option " + (options[i] == config.get('currentTheme') ? 'selected ' : '') + "value=\"" + options[i] + "\">" + options[i] + "</option>")
+         }
+         $("#SelectTheme").html(innerText)
+         }
+      </script>
+   </body>
 </html>

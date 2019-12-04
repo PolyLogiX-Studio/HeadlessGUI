@@ -2,59 +2,96 @@
 
 <head id="head">
     <script type="text/javascript" src="./Resources/DOMediting.js"></script>
-    <script>require('bootstrap')</script>
+    <script>
+    const $ = require('jquery')
+    require('bootstrap')</script>
     <title>New Server</title>
 </head>
 
 <body>
-    <form>
-        <div class="form-group">
-            <label for="sessionName">Session Name</label>
-            <input type="text" id="sessionName" class="form-control" placeholder="Default World">
-            <label for="description">Description</label>
-            <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
-            <label for="maxUsers">User Limit</label>
-            <input type="number" id="maxUsers" class="form-control" placeholder="User Limit" min="1" max="32" value="32">
-            <label for="accessLevel">Visibility</label>
-            <select class="custom-select" id="accessLevel">
-                <option value="Anyone" selected>Anyone</option>
-                <option value="RegisteredUsers">Registered Users</option>
-                <option value="Friends">Friends</option>
-                <option value="LAN">LAN</option>
-                <option value="Private">Private</option>
-            </select>
-            <label for="loadWorldURL">World Record URL <small class="text-info"><a href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is
-                        This?</a></small></label>
+        <ul class="nav nav-tabs">
+                <li class="nav-item">
+                   <a class="nav-link active" data-toggle="tab" href="#general">General</a>
+                </li>
+                <li class="nav-item">
+                   <a class="nav-link" data-toggle="tab" href="#advanced">Advanced</a>
+                </li>
+                <li class="nav-item">
+                   <a class="nav-link disabled" data-toggle="tab" href="#addons">Addons</a>
+                </li>
+                <li class="nav-item">
+                   <a class="nav-link disabled" data-toggle="tab" href="#">Misc</a>
+                </li>
+             </ul>
+             <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade active show" id="general">
+                            <label for="sessionName">Session Name</label>
+                            <input type="text" id="sessionName" class="form-control" placeholder="Default World">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
+                            <label for="maxUsers">User Limit</label>
+                            <input type="number" id="maxUsers" class="form-control" placeholder="User Limit" min="1" max="32" value="32">
+                            <label for="accessLevel">Visibility</label>
+                            <select class="custom-select" id="accessLevel">
+                                <option value="Anyone" selected>Anyone</option>
+                                <option value="RegisteredUsers">Registered Users</option>
+                                <option value="Friends">Friends</option>
+                                <option value="LAN">LAN</option>
+                                <option value="Private">Private</option>
+                            </select>
+                            <label for="loadWorldURL">World Record URL <small class="text-info"><a href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is
+                                        This?</a></small></label>
+                
+                            <input type="text" id="loadWorldURL" class="form-control" placeholder="neosrec:///">
+                            <label for="loadWorldPresetName">Load World Preset Name</label>
+                            <select class="custom-select" id="loadWorldPresetName">
+                                <option value="SpaceWorld" selected>SpaceWorld</option>
+                                <option value="Basic Empty">Basic Empty</option>
+                                <option value="GridSpace">GridSpace</option>
+                                <option value="Microworld">Microworld</option>
+                            </select>
+                
+                            <label for="autosaveInterval">Autosave Interval (Seconds)</label>
+                            <input type="number" id="autosaveInterval" class="form-control" placeholder="User Limit" min="-1.0" value="-1.0">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="mobileFriendly">
+                                <label class="custom-control-label" for="mobileFriendly">Mobile Friendly</label>
+                            </div>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="autoRecover">
+                                <label class="custom-control-label" for="autoRecover">Auto Recover</label>
+                            </div>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="saveOnExit">
+                                <label class="custom-control-label" for="saveOnExit">Save on Exit</label>
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="advanced">
+                            <label for="forcePort">Force Port</label>
+                            <input type="number" id="forcePort" class="form-control" placeholder="Port">
+                            <label for="idleRestartInterval">Restart on Idle</label>
+                            <input type="number" id="idleRestartInterval" class="form-control" placeholder="Time (Minutes)">
+                            <label for="forcedRestartInterval">Force Restart</label>
+                            <input type="number" id="forcedRestartInterval" class="form-control" placeholder="Time (Minutes)">
+                
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="keepOriginalRolesNOT" onchange="togglePermissions(this.checked)">
+                                <label class="custom-control-label" for="keepOriginalRolesNOT">Custom Permissions</label>
+                            </div>
+                            <div id="permissionContainer" style="display:none">
+                                <label for="PERMISSIONS">Permissions</label>
+                                <div id="PERMISSIONS" class="list-group" style="overflow: scroll; height: 200px; overflow-x: hidden;">
+                
+                                </div>
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="newRole()">+ New Role</button>
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="addons">
 
-            <input type="text" id="loadWorldURL" class="form-control" placeholder="neosrec:///">
-            <label for="loadWorldPresetName">Load World Preset Name</label>
-            <select class="custom-select" id="loadWorldPresetName">
-                <option value="SpaceWorld" selected>SpaceWorld</option>
-                <option value="Basic Empty">Basic Empty</option>
-                <option value="GridSpace">GridSpace</option>
-                <option value="Microworld">Microworld</option>
-            </select>
-
-            <label for="autosaveInterval">Autosave Interval (Minutes)</label>
-            <input type="number" id="autosaveInterval" class="form-control" placeholder="User Limit" min="-1.0" value="-1.0">
-            <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="mobileFriendly">
-                <label class="custom-control-label" for="mobileFriendly">Mobile Friendly</label>
-            </div>
-            <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="autoRecover">
-                <label class="custom-control-label" for="autoRecover">Auto Recover</label>
-            </div>
-            <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="saveOnExit">
-                <label class="custom-control-label" for="saveOnExit">Save on Exit</label>
-            </div>
-            <label for="addons"><small class="text-danger">Addons Not Yet Implemented</small></label><br>
-            <button id="addons" type="button" class="btn btn-secondary">Manage Addons</button>
-            <button id="advancedBtn" type="button" class="btn btn-outline-info" onclick="ipcRenderer.send('server:new:advanced')">Advanced Settings</button>
-        </div>
-        <button class="btn btn-success" type="submit">New Server</button>
-    </form>
+                    </div>
+             </div>
+             <div class="modal-footer"><button class="btn btn-success" type="submit">New Server</button></div>
+        
     <script>
         function openURL(url) {
             ipcRenderer.send('openURL', url)
@@ -67,8 +104,7 @@
         const {
             ipcRenderer
         } = electron
-        const form = document.querySelector('form');
-        form.addEventListener('submit', submitForm);
+        const form = $('#form').submit(function(event){submitForm(event)});
         var advanced = {
             "forcePort": null,
             "idleRestartInterval": -1.0,
@@ -84,23 +120,23 @@
             e.preventDefault();
 
             ipcRenderer.send('server:new', {
-                'sessionName': (!document.querySelector('#sessionName').value ? 'DefaultWorld' : document.querySelector('#sessionName').value),
-                'description': document.querySelector('#description').value,
-                'maxUsers': document.querySelector('#maxUsers').value,
-                'accessLevel': document.querySelector('#accessLevel').value,
-                'loadWorldURL': (document.querySelector('#loadWorldURL').value == '' ? null : document.querySelector('#loadWorldURL').value),
-                'loadWorldPresetName': document.querySelector('#loadWorldPresetName').value,
-                'autosaveInterval': document.querySelector('#autosaveInterval').value,
-                'mobileFriendly': document.querySelector('#mobileFriendly').value === 'on',
-                'autoRecover': document.querySelector('#autoRecover').value === 'on',
-                'saveOnExit': document.querySelector('#saveOnExit').value === 'on',
+                'sessionName': (!$('#sessionName').val() ? 'DefaultWorld' : $('#sessionName').val()),
+                'description': $('#description').val(),
+                'maxUsers': $('#maxUsers').val(),
+                'accessLevel': $('#accessLevel').val(),
+                'loadWorldURL': ($('#loadWorldURL').val() == '' ? null : $('#loadWorldURL').val()),
+                'loadWorldPresetName': $('#loadWorldPresetName').val(),
+                'autosaveInterval': $('#autosaveInterval').val(),
+                'mobileFriendly': $('#mobileFriendly').val() === 'on',
+                'autoRecover': $('#autoRecover').val() === 'on',
+                'saveOnExit': $('#saveOnExit').val() === 'on',
                 'usernameOverride': undefined,
                 'tickRate': config.get('tickRate'),
-                'keepOriginalRoles': advanced.keepOriginalRoles,
-                'defaultUserRoles': advanced.defaultUserRoles,
-                'idleRestartInterval': advanced.idleRestartInterval,
-                'forcedRestartInterval': advanced.forcedRestartInterval,
-                'forcePort': advanced.forcePort,
+                "forcePort": (!document.getElementById('forcePort').value ? null : document.getElementById('forcePort').value),
+                "idleRestartInterval": (!document.getElementById('idleRestartInterval').value ? -1.0 : document.getElementById('idleRestartInterval').value),
+                "forcedRestartInterval": (!document.getElementById('forcedRestartInterval').value ? -1.0 : document.getElementById('forcedRestartInterval').value),
+                "keepOriginalRoles": document.getElementById('keepOriginalRolesNOT').checked,
+                "defaultUserRoles": parsePermissions(),
                 'autoInviteMessage': undefined,
                 'autoInviteUsernames': undefined
             })
@@ -113,6 +149,67 @@
         ipcRenderer.on('addWindowAdvanced:request', function() {
             ipcRenderer.send('addWindowAdvanced:response', advanced)
         })
+
+        //advanced
+        var roleID = 0
+        //add Role to Permission Container
+        function newRole() {
+            addElement('PERMISSIONS', 'div', `role-${roleID}`, 'list-group-item list-group-item-action', `<button type="button" style="width:10%;" onclick="removeElement(this.parentElement.id)" class="close"><span aria-hidden="true">&times;</span></button><span id="idDisp" class="badge badge-dark" style="float:left; width:10%">${roleID}</span><input class="form-control" style="float:left; width:50%" id="username-${roleID}" type="text" placeholder="Username"><select style="float:right; width:30%" class="form-control" id="roleVal-${roleID}"><option value="Spectator">Spectator</option><option value="Guest">Guest</option><option value="Moderator">Moderator</option><option value="Builder">Builder</option><option value="Admin">Admin</option></select>`)
+            roleID++
+        }
+
+        function buildPermissions(perms) {}
+        /* Parse Permision window and generate JSON object */
+        function parsePermissions() {
+            if (!document.getElementById('keepOriginalRolesNOT').checked) {
+                return null
+            }
+            let Permissions = {}
+            for (let i = 0; i < roleID; i++) {
+                if (document.getElementById(`role-${i}`)) {
+                    Permissions[document.getElementById(`username-${i}`).value] = document.getElementById(`roleVal-${i}`).value;
+                }
+            }
+            return Permissions
+        }
+
+        function setData(dat) {
+            document.getElementById('forcePort').value = (!dat.forcePort ? undefined : dat.forcePort)
+            document.getElementById('idleRestartInterval').value = (dat.idleRestartInterval === -1 ? undefined : dat.idleRestartInterval)
+            document.getElementById('forcedRestartInterval').value = (dat.forcedRestartInterval === -1 ? undefined : dat.forcedRestartInterval)
+            document.getElementById('keepOriginalRolesNOT').checked = (!dat.keepOriginalRoles ? false : true)
+            togglePermissions((!dat.keepOriginalRoles ? false : true))
+        }
+        /* Send Data to start.js */
+        function submitFormAdvaned() {
+            let ret = {
+                "forcePort": (!document.getElementById('forcePort').value ? null : document.getElementById('forcePort').value),
+                "idleRestartInterval": (!document.getElementById('idleRestartInterval').value ? -1.0 : document.getElementById('idleRestartInterval').value),
+                "forcedRestartInterval": (!document.getElementById('forcedRestartInterval').value ? -1.0 : document.getElementById('forcedRestartInterval').value),
+                "keepOriginalRoles": document.getElementById('keepOriginalRolesNOT').checked,
+                "defaultUserRoles": parsePermissions()
+            }
+            ipcRenderer.send('addWindowAdvanced:save', ret)
+        }
+        /* call start.js for config data */
+        function requestData() {
+            ipcRenderer.send('addWindowAdvanced:request')
+        }
+        /* Recieve Data from start.js */
+        ipcRenderer.on('addWindowAdvanced:response', function(e, data) {
+            setData(data)
+        })
+        function openURL(url) {
+            ipcRenderer.send('openURL', url)
+        }
+        function togglePermissions(val) {
+            if (val) {
+                document.getElementById('permissionContainer').style.display = 'block'
+                
+            } else {
+                document.getElementById('permissionContainer').style.display = 'none'
+            }
+        }
     </script>
 </body>
 
