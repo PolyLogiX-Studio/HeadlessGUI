@@ -453,6 +453,13 @@ ipcMain.on('Console:Command', function (e, item) {
         return
     }
     Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
+    if (item.command==='shutdown'){
+        Instances[item.id].Status = 'Shutting Down'
+        Instances[item.id].event = 'ShuttingDown'
+        Instances[item.id].displayStatusMessage = true
+        Instances[item.id].update()
+        Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
+    }
 })
 
 // Main Menu Template
