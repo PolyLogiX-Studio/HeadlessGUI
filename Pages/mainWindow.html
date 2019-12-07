@@ -14,6 +14,15 @@
             z-index: 999;
             width: 100%;
         }
+        .LogoImage{
+            position: fixed;
+            z-index: -1;
+            bottom: 0;
+            right: 0;
+        }
+        body {
+            position: relative;
+        }
     </style>
     <style>
         /* width */
@@ -40,11 +49,12 @@
     </style>
 </head>
 
-<body>
+<body class="card">
     <div id="alerts" class="AlertWindow" width="100%">
     </div>
-    <div id="ServerList" class="list-group card mb-3" style="flex-direction: row; flex-wrap:wrap; height: 100%;">
+    <div id="ServerList" class="" style="flex-direction: row; flex-wrap:wrap; height: 100%;">
     </div>
+    <img class="LogoImage" src="../images/Thig_Transparent.png" width="200px" height="150px">
     <script>
         const VERSION = require('root-require')('package.json').version
         setupThemes()
@@ -87,7 +97,7 @@
         });
         ipcRenderer.on('Main:updateList', function(e, items) {
             addAlert('Session <strong>' + items.id + '</strong> Starting..', 'info', 'startAlert-' + items.id)
-            addElement('ServerList', "div", 'SERVER-' + items.id, "", '<div class="card mb-3" id=""  style="width: 300px;"><h3 id="Session Name" class="card-header">' + items.sessionName + '</h3><div class="card-body"><h5 id="WorldName-' + items.id + '" class="card-title">' + (!items.loadWorldURL ? items.loadWorldPresetName : 'Custom') + '</h5><h6 class="card-subtitle text-muted">' + items.id + '</h6></div><img id="previewImage-' + items.id + '" style="height: 200px; width: 100%; display: block;" src="https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607" alt="Card image"><div class="card-body"><p id="description-' + items.id + '" class="card-text">' + items.description + '</p></div><ul class="list-group list-group-flush"><li id="usercount-' + items.id + '" class="list-group-item">Players: undefined/' + items.maxUsers-- + '</li>  <li id="status-' + items.id + '" class="list-group-item">Status: Starting</li></ul><div class="card-body"><a href="javascript:openManager(\'' + items.id + '\')" class="card-link">Manage Server</a></div><div id="uptime" class="card-footer text-muted">' + new Date() + '</div></div>')
+            addElement('ServerList', "div", 'SERVER-' + items.id, "form-group", '<div class="card" id=""  style="width: 300px;"><h3 id="Session Name" class="card-header">' + items.sessionName + '</h3><div class="card-body"><h5 id="WorldName-' + items.id + '" class="card-title">' + (!items.loadWorldURL ? items.loadWorldPresetName : 'Custom') + '</h5><h6 class="card-subtitle text-muted">' + items.id + '</h6></div><img id="previewImage-' + items.id + '" style="height: 200px; width: 100%; display: block;" src="https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607" alt="Card image"><div class="card-body"><p id="description-' + items.id + '" class="card-text">' + items.description + '</p></div><ul class="list-group list-group-flush"><li id="usercount-' + items.id + '" class="list-group-item">Players: undefined/' + items.maxUsers-- + '</li>  <li id="status-' + items.id + '" class="list-group-item">Status: Starting</li></ul><div class="card-body"><a href="javascript:openManager(\'' + items.id + '\')" class="card-link">Manage Server</a></div><div id="uptime" class="card-footer text-muted">' + new Date() + '</div></div>')
         });
 
         function openManager(id) {
@@ -199,6 +209,8 @@
     });
 }
     </script>
+        
+    
 </body>
 
 </html>
