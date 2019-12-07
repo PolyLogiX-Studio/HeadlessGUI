@@ -4,3 +4,5 @@
 Primary Developer: Ethan Snow (Bitman#0669)
 
 Discord: [PolyLogiX Studio](https://discord.gg/6y2A4Pk)
+
+Feel free to contribute in any way following CONTRIBUTING.md
