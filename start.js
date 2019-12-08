@@ -504,7 +504,7 @@ const mainMenuTemplate = [{
         label: 'Online Help',
         accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
         click() {
-            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki')
+            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
         }
     },
     {
@@ -645,7 +645,7 @@ class Server {
         this.Config.usernameOverride = (config.get('usernameOverride')===''? null : config.get('usernameOverride'))
         this.Config.loginCredential = config.get('loginCredentials')
         this.Config.loginPassword = config.get('loginPassword')
-        this.Config.allowedUrlHosts = (!config.get('allowedUrlHosts') ? ['localhost'] : config.get('allowedUrlHosts'))
+        this.Config.allowedUrlHosts = (!config.get('allowedUrlHosts') ? ['127.0.0.1'] : config.get('allowedUrlHosts'))
         this.Config.dataFolder = path.join(this.sessionDir, 'Data')
         this.Config.cacheFolder = path.join(this.sessionDir, 'Cache')
         this.Status = 'Starting'
