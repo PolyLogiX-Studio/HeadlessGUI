@@ -12,9 +12,15 @@ const {
     ipcMain
 } = electron;
 const Store = require('electron-store');
-const store = new Store({name: 'dat'});
-const config = new Store({name: 'config'});
-const themes = new Store({name: 'themes'});
+const store = new Store({
+    name: 'dat'
+});
+const config = new Store({
+    name: 'config'
+});
+const themes = new Store({
+    name: 'themes'
+});
 //Predefine Windows in Global Space
 let mainWindow = null;
 let addWindow = null;
@@ -58,25 +64,41 @@ function closeAllWindows() {
 var Instances = {}
 
 var dataDir = app.getPath('userData') //AppData/Roaming
+var scriptsDir = path.join(dataDir, 'Scripts')
+var enabledScriptsDir = path.join(scriptsDir, 'Enabled')
+var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
 var sessionsDir = path.join(dataDir, "Active Sessions") //%AppData%/NeosHeadlessManager/Active Sessions
 fs.removeSync(sessionsDir)
-
-
+// Setup Scripts folder
+if (!fs.pathExistsSync(scriptsDir)) {
+    fs.mkdirSync(scriptsDir)
+} 
+const scriptsConfig = new Store({
+    name: 'scripts',
+    cwd: scriptsDir,
+    defaults: {
+        scripts:{
+            global:{},
+            server:{},
+            commands:{}
+        }
+    }
+});
 
 if (!store.has('MachineId')) { //For API Calls
     store.set('MachineId', uuidv4())
 }
-checkInternet(function(isConnected){
-    if (isConnected){
-        store.set('isConnected',true)
+checkInternet(function(isConnected) {
+    if (isConnected) {
+        store.set('isConnected', true)
         console.log('connected')
         if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
-            
+
             login(config.get('loginCredentials'), config.get('loginPassword')) // Login to Neos (If Able)
         }
     } else {
         console.log('no connection')
-        store.set('isConnected',false)
+        store.set('isConnected', false)
     }
 })
 
@@ -85,23 +107,51 @@ checkInternet(function(isConnected){
 //Disable SubMenu & Dev tools
 //process.env.NODE_ENV = 'production';
 
-if (!themes.has('Themes')){
-    config.set('currentTheme','Darkly')
-    themes.set('Themes',{
-        "Darkly":{"url":`./CSS/Darkly.css`,"type":"file","description":"Flatly in night mode"},
-        "Flatly":{"url":`./CSS/Flatly.css`,"type":"file","description":"Flat and modern"},
-        "Cyborg":{"url":`./CSS/Cyborg.css`,"type":"file","description":"Jet black and electric blue"},
-        "Minty":{"url":`./CSS/Minty.css`,"type":"file","description":"A fresh feel"},
-        "Sketchy":{"url":`./CSS/Sketchy.css`,"type":"file","description":"A hand-drawn look for mockups and mirth"},
-        "Solar":{"url":`./CSS/Solar.css`,"type":"file","description":"A spin on Solarized"},
-        "Superhero":{"url":`./CSS/Superhero.css`,"type":"file","description":"The brave and the blue"}
+if (!themes.has('Themes')) {
+    config.set('currentTheme', 'Darkly')
+    themes.set('Themes', {
+        "Darkly": {
+            "url": `./CSS/Darkly.css`,
+            "type": "file",
+            "description": "Flatly in night mode"
+        },
+        "Flatly": {
+            "url": `./CSS/Flatly.css`,
+            "type": "file",
+            "description": "Flat and modern"
+        },
+        "Cyborg": {
+            "url": `./CSS/Cyborg.css`,
+            "type": "file",
+            "description": "Jet black and electric blue"
+        },
+        "Minty": {
+            "url": `./CSS/Minty.css`,
+            "type": "file",
+            "description": "A fresh feel"
+        },
+        "Sketchy": {
+            "url": `./CSS/Sketchy.css`,
+            "type": "file",
+            "description": "A hand-drawn look for mockups and mirth"
+        },
+        "Solar": {
+            "url": `./CSS/Solar.css`,
+            "type": "file",
+            "description": "A spin on Solarized"
+        },
+        "Superhero": {
+            "url": `./CSS/Superhero.css`,
+            "type": "file",
+            "description": "The brave and the blue"
+        }
     })
 }
 
 
 // Listen for App to be ready
 
-app.on('ready', function () {
+app.on('ready', function() {
     // Create new Window
     mainWindow = new BrowserWindow({
         show: false,
@@ -122,7 +172,7 @@ app.on('ready', function () {
         mainWindow.show()
     })
     // Quit app when main closed
-    mainWindow.on('closed', function () {
+    mainWindow.on('closed', function() {
         safeQuit()
     })
     // Build Menu from Template
@@ -193,7 +243,7 @@ function createAddWindow() {
     if (addWindow !== null) {
         return
     }
-    if (!store.get('isConnected')){
+    if (!store.get('isConnected')) {
         mainWindow.webContents.send('NOCONNECTION')
         return
     }
@@ -203,7 +253,7 @@ function createAddWindow() {
     }
     mainWindow.webContents.send('removeStart')
     addWindow = new BrowserWindow({
-        parent:mainWindow,
+        parent: mainWindow,
         show: false,
         width: 800,
         height: 800,
@@ -226,7 +276,7 @@ function createAddWindow() {
         addWindow.show()
     })
     // GC Handle
-    addWindow.on('close', function () {
+    addWindow.on('close', function() {
         addWindow = null
     })
 
@@ -263,7 +313,7 @@ function createLoginWindow() {
         loginWindow.setMenu(null)
     }
     // GC Handle
-    loginWindow.on('close', function () {
+    loginWindow.on('close', function() {
         loginWindow = null
     })
 
@@ -301,7 +351,7 @@ function createConfigWindow() {
         configWindow.show()
     })
     // GC Handle
-    configWindow.on('close', function () {
+    configWindow.on('close', function() {
         configWindow = null
     })
 
@@ -338,7 +388,7 @@ function createURLWindow(URL, width = 1080, height = 1080) {
         slashes: true,
     }))
     // GC Handle
-    URLwindow.on('close', function () {
+    URLwindow.on('close', function() {
         URLwindow = null
     })
     URLwindow.once('ready-to-show', () => {
@@ -370,12 +420,12 @@ function login(credential, password) {
     loginPayload.rememberMe = true
     /* Login User and return Session Token */
     return fetch(CLOUDX_PRODUCTION_NEOS_API + 'api/userSessions', {
-        method: "POST",
-        body: JSON.stringify(loginPayload),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+            method: "POST",
+            body: JSON.stringify(loginPayload),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         .then(res => res.json())
         .then(json => {
             config.set('loginCredentials', credential)
@@ -385,13 +435,13 @@ function login(credential, password) {
             store.set('NEOS:token:expire', json.expire)
             return json
         }).catch((err) => {
-            if (!store.get('offlineMode')){ //Dont clear Credentials if offline
-            config.delete('loginCredentials')
-            config.delete('loginPassword')
-            store.delete('NEOS:token')
-            store.delete('NEOS:userId')
-            store.delete('NEOS:token:expire')
-        }
+            if (!store.get('offlineMode')) { //Dont clear Credentials if offline
+                config.delete('loginCredentials')
+                config.delete('loginPassword')
+                store.delete('NEOS:token')
+                store.delete('NEOS:userId')
+                store.delete('NEOS:token:expire')
+            }
             return {
                 err: true
             }
@@ -400,7 +450,7 @@ function login(credential, password) {
 
 }
 /* Data Calls from Windows */
-ipcMain.on('NEOS:Login', function (e, info) {
+ipcMain.on('NEOS:Login', function(e, info) {
     login(info.neosCredential, info.neosPassword).then((test) => {
         if (!test.err) {
             configWindow.webContents.send('NEOS:Login')
@@ -414,18 +464,18 @@ ipcMain.on('NEOS:Login', function (e, info) {
     })
 
 })
-ipcMain.on('callWindow:Login', function (e) {
+ipcMain.on('callWindow:Login', function(e) {
     createLoginWindow()
 })
 // User has changed the Config
-ipcMain.on('Config:Update', function (e, item) {
+ipcMain.on('Config:Update', function(e, item) {
     //configWindow.close()
     mainWindow.webContents.send('removeConfig')
 })
 // Open Advanced Settings for New Server window
 
 /* Create New Session */
-ipcMain.on('server:new', function (e, item) {
+ipcMain.on('server:new', function(e, item) {
     //console.log(item)
     //Create server
     item.id = uuidv4()
@@ -434,13 +484,13 @@ ipcMain.on('server:new', function (e, item) {
     Instances[item.id] = new Server(item.id, item.usernameOverride, item.sessionName, item.loadWorldURL, item.maxUsers, item.description, item.saveOnExit, item.autosaveInterval, item.accessLevel, item.loadWorldPresetName, item.autoRecover, item.mobileFriendly, item.tickRate, item.keepOriginalRoles, item.defaultUserRoles, item.idleRestartInterval, item.forcedRestartInterval, item.forcePort, item.autoInviteUsernames, item.autoInviteMessage)
 })
 //Open a Browser
-ipcMain.on('openURL', function (e, item) {
+ipcMain.on('openURL', function(e, item) {
     createURLWindow(item)
 })
-ipcMain.on('getUpdateRaw',function(e,session){
+ipcMain.on('getUpdateRaw', function(e, session) {
     Instances[session].update()
 })
-ipcMain.on('Console:Command', function (e, item) {
+ipcMain.on('Console:Command', function(e, item) {
     if (!Instances[item.id]) {
         dialog.showMessageBox(null, {
             type: 'error',
@@ -453,7 +503,7 @@ ipcMain.on('Console:Command', function (e, item) {
         return
     }
     Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
-    if (item.command==='shutdown'){
+    if (item.command === 'shutdown') {
         Instances[item.id].Status = 'Shutting Down'
         Instances[item.id].event = 'ShuttingDown'
         Instances[item.id].displayStatusMessage = true
@@ -464,72 +514,72 @@ ipcMain.on('Console:Command', function (e, item) {
 
 // Main Menu Template
 const mainMenuTemplate = [{
-    label: 'Main',
-    submenu: [{
-        label: 'New Server',
-        accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
-        click() {
-            createAddWindow()
-        }
+        label: 'Main',
+        submenu: [{
+                label: 'New Server',
+                accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
+                click() {
+                    createAddWindow()
+                }
+            },
+            {
+                label: "Config",
+                accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
+                click() {
+                    createConfigWindow()
+                }
+            },
+            {
+                label: "Refresh",
+                accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
+                click() {
+                    RefreshAll()
+                }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Quit',
+                accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+                click() {
+                    safeQuit()
+                }
+            }
+        ]
     },
     {
-        label: "Config",
-        accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
-        click() {
-            createConfigWindow()
-        }
-    },
-    {
-        label: "Refresh",
-        accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
-        click() {
-            RefreshAll()
-        }
-    },
-    {
-        type: 'separator'
-    },
-    {
-        label: 'Quit',
-        accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-        click() {
-            safeQuit()
-        }
-    }
-    ]
-},
-{
-    label: 'Help',
-    submenu: [{
-        label: 'Online Help',
-        accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
-        click() {
-            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
-        }
-    },
-    {
-        label: 'My PolyLogiX Account',
-        accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
-        click() {
-            createURLWindow('www.polylogix.studio/PolyLogiX-Account')
-        }
-    },
-    {
-        label: 'Report a Bug',
-        accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
-        click() {
-            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
-        }
-    },
-    ]
+        label: 'Help',
+        submenu: [{
+                label: 'Online Help',
+                accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
+                click() {
+                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
+                }
+            },
+            {
+                label: 'My PolyLogiX Account',
+                accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
+                click() {
+                    createURLWindow('www.polylogix.studio/PolyLogiX-Account')
+                }
+            },
+            {
+                label: 'Report a Bug',
+                accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
+                click() {
+                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
+                }
+            },
+        ]
 
-},
-{
-    label: "Support Us on Patreon!",
-    click() {
-        createURLWindow('www.patreon.com/PolyLogiX_VR')
+    },
+    {
+        label: "Support Us on Patreon!",
+        click() {
+            createURLWindow('www.patreon.com/PolyLogiX_VR')
+        }
     }
-}
 ]
 
 // Dev tools so i know when i fuck up
@@ -537,15 +587,15 @@ if (process.env.NODE_ENV !== 'production') {
     mainMenuTemplate.push({
         label: 'Developer Tools',
         submenu: [{
-            label: 'Toggle DevTools',
-            accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
-            click(item, focusedWindow) {
-                focusedWindow.toggleDevTools();
+                label: 'Toggle DevTools',
+                accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
+                click(item, focusedWindow) {
+                    focusedWindow.toggleDevTools();
+                }
+            },
+            {
+                role: 'reload'
             }
-        },
-        {
-            role: 'reload'
-        }
         ]
     })
 }
@@ -642,7 +692,7 @@ class Server {
         this.Config.startWorlds[0].autoInviteMessage = autoInviteMessage
         this.Config.startWorlds[0].autoInviteUsernames = autoInviteUsernames
         this.Config.tickRate = parseInt(tickRate, 10)
-        this.Config.usernameOverride = (config.get('usernameOverride')===''? null : config.get('usernameOverride'))
+        this.Config.usernameOverride = (config.get('usernameOverride') === '' ? null : config.get('usernameOverride'))
         this.Config.loginCredential = config.get('loginCredentials')
         this.Config.loginPassword = config.get('loginPassword')
         this.Config.allowedUrlHosts = (!config.get('allowedUrlHosts') ? ['127.0.0.1'] : config.get('allowedUrlHosts'))
@@ -666,6 +716,7 @@ class Server {
                 func: () => {
                     this.log('updateCloudXID')
                     this.updateCloudXID()
+                    this.update()
                 },
                 freq: 60
             }
@@ -790,7 +841,7 @@ class Server {
                 var foundIndex = this.Users.findIndex(x => x.ip == ip);
                 let user = this.Users[foundIndex]
                 this.eventContext = [user.userID, user.username]
-                this.Users = this.Users.filter(function (returnableObjects) {
+                this.Users = this.Users.filter(function(returnableObjects) {
                     return returnableObjects.ip !== ip;
                 });
 
@@ -872,7 +923,7 @@ class Server {
      * @memberof Server
      */
     update() {
-
+        this.log('Updating Server Info')
         if (this.Console) {
             this.Console.webContents.send("Update:Raw", this)
         }
@@ -888,7 +939,7 @@ class Server {
      */
     openWindow() {
         this.Console = new BrowserWindow({
-            parent:mainWindow,
+            parent: mainWindow,
             show: false,
             width: 1200,
             height: 800,
@@ -914,9 +965,10 @@ class Server {
         })
     }
 }
-function checkInternet(cb){
-    require('url-exists')(`https://neosvr.com/`,function(err,exists){
-        console.log(err,exists)
+
+function checkInternet(cb) {
+    require('url-exists')(`https://neosvr.com/`, function(err, exists) {
+        console.log(err, exists)
         if (!exists) {
             cb(false);
         } else {
@@ -930,6 +982,6 @@ function checkInternet(cb){
 
 //Server Pipe
 
-ipcMain.on('openManager', function (e, id) {
+ipcMain.on('openManager', function(e, id) {
     Instances[id].openWindow()
 })

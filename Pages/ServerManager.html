@@ -73,7 +73,17 @@
       <script>
          const urlParams = new URLSearchParams(window.location.search);
          const SESSION_ID = urlParams.get('id');
-         updateElementHTML('title', `Console: ${SESSION_ID}`)
+         const electron = require('electron')
+         const {
+             ipcRenderer
+         } = electron;
+         //UpdateItems
+         $(document).ready(function(){
+            updateElementHTML('title', `Console: ${SESSION_ID}`)
+            ipcRenderer.send('getUpdateRaw',SESSION_ID)
+         })
+            
+         
          //ipcRenderer.send('getUpdateRaw',SESSION_ID)
          function shutdown(){
              sendCommand('shutdown',false)
@@ -100,15 +110,18 @@
              if (display){
                 addElement('Console', 'div', '0', 'list-group-item', `>${command}`)
              }
-             
+             if (!parseCommand(command)) {
              ipcRenderer.send('Console:Command', {
                  'id': SESSION_ID,
                  'command': command
              })
+            }
              
          }
-         
-         
+         //Custom Commands
+         function parseCommand(command){
+            
+         }
          
          
          var scrolled = false
@@ -129,11 +142,7 @@
          
          
          //addElement(parentId, elementTag, elementId, elementClass, html)
-         const electron = require('electron')
-         const {
-             ipcRenderer
-         } = electron;
-         //UpdateItems
+         
          ipcRenderer.on('Update:Raw', (e, session) => {
              updateSession(session)
          })
