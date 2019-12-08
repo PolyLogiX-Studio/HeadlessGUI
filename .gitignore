@@ -108,3 +108,4 @@ dist
 .vs/VSWorkspaceState.json
 .vscode/tasks.json
 .API/CloudX.Shared.cs
+.vscode/launch.json
