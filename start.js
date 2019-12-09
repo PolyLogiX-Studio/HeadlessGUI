@@ -65,7 +65,9 @@ var Instances = {}
 
 var dataDir = app.getPath('userData') //AppData/Roaming
 var scriptsDir = path.join(dataDir, 'Scripts')
-var enabledScriptsDir = path.join(scriptsDir, 'Enabled')
+var globalScriptsDir = path.join(scriptsDir, 'Global')
+var serverScriptsDir = path.join(scriptsDir, 'Server')
+var commandScriptsDir = path.join(scriptsDir, 'Commands')
 var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
 var sessionsDir = path.join(dataDir, "Active Sessions") //%AppData%/NeosHeadlessManager/Active Sessions
 fs.removeSync(sessionsDir)
