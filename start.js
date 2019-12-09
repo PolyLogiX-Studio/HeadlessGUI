@@ -398,7 +398,37 @@ function createURLWindow(URL, width = 1080, height = 1080) {
     })
 
 }
+function createEditorWindow() {
+    editorWindow = new BrowserWindow({
+        parent:configWindow,
+        show: false,
+        darkTheme: true,
+        width: 1000,
+        height: 1000,
+        title: "Editor",
+        icon: path.join(__dirname, '/images/polylogix.jpg'),
+        webPreferences: {
+            nodeIntegration: true
+        }
+    });
+    if (process.env.NODE_ENV === 'production') {
+        editorWindow.setMenu(null)
+    }
+    // Load HTML file
+    editorWindow.loadURL(url.format({
+        pathname: path.join(__dirname,'Pages/ScriptEditor.html'),
+        protocol: 'file:',
+        slashes: true,
+    }))
+    // GC Handle
+    editorWindow.on('close', function() {
+        editorWindow = null
+    })
+    editorWindow.once('ready-to-show', () => {
+        editorWindow.show()
+    })
 
+}
 /**
  * Login to Neos
  *
@@ -484,6 +514,9 @@ ipcMain.on('server:new', function(e, item) {
     mainWindow.webContents.send('Main:updateList', item);
     addWindow.close();
     Instances[item.id] = new Server(item.id, item.usernameOverride, item.sessionName, item.loadWorldURL, item.maxUsers, item.description, item.saveOnExit, item.autosaveInterval, item.accessLevel, item.loadWorldPresetName, item.autoRecover, item.mobileFriendly, item.tickRate, item.keepOriginalRoles, item.defaultUserRoles, item.idleRestartInterval, item.forcedRestartInterval, item.forcePort, item.autoInviteUsernames, item.autoInviteMessage)
+})
+ipcMain.on('new:editor', function(e, item) {
+    createEditorWindow()
 })
 //Open a Browser
 ipcMain.on('openURL', function(e, item) {

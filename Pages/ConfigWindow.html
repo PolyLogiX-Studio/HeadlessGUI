@@ -159,7 +159,7 @@
             <div id="disabledScripts" class="card border-light mb-3">
 
             </div>
-            <button type="button" class="btn btn-outline-success btn-sm" onclick="newInvite()">+ New Script</button>
+            <button type="button" class="btn btn-outline-success btn-sm" onclick="newScript()">+ New Script</button>
          </div>
       </div>
       <script>
@@ -190,7 +190,9 @@
          }
          
          });
-         
+         function newScript(){
+            ipcRenderer.send('new:editor')
+         }
          function callLogin() {
              ipcRenderer.send('callWindow:Login')
          }
