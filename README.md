@@ -1,4 +1,4 @@
-# Neos Headless Manager [![Maintainability](https://api.codeclimate.com/v1/badges/69cd0dabe98ce6ccace9/maintainability)](https://codeclimate.com/github/bombitmanbomb/HeadlessCore/maintainability)
+# Neos Headless Manager [![Build Status](https://travis-ci.org/bombitmanbomb/HeadlessCore.svg?branch=master)](https://travis-ci.org/bombitmanbomb/HeadlessCore) [![Maintainability](https://api.codeclimate.com/v1/badges/69cd0dabe98ce6ccace9/maintainability)](https://codeclimate.com/github/bombitmanbomb/HeadlessCore/maintainability)
 
  Headless Manager for Neos Headless Client
 
