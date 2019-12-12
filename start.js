@@ -539,9 +539,9 @@ ipcMain.on('Console:Command', function(e, item) {
     }
     Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
     if (item.command === 'shutdown') {
-        Instances[item.id].Status = 'Shutting Down'
-        Instances[item.id].event = 'ShuttingDown'
-        Instances[item.id].displayStatusMessage = true
+        Instances[item.id].Vars.Status = 'Shutting Down'
+        Instances[item.id].Vars.event = 'ShuttingDown'
+        Instances[item.id].Vars.displayStatusMessage = true
         Instances[item.id].update()
         Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
     }
@@ -733,28 +733,32 @@ class Server {
         this.Config.allowedUrlHosts = (!config.get('allowedUrlHosts') ? ['127.0.0.1'] : config.get('allowedUrlHosts'))
         this.Config.dataFolder = path.join(this.sessionDir, 'Data')
         this.Config.cacheFolder = path.join(this.sessionDir, 'Cache')
-        this.Status = 'Starting'
+        this.Console = null;
+        this.Vars = {
+            Status:'Starting',
+            
+            event:null,
+            CloudXID:null,
+            SessionPreview:'https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607',
+            eventContext:null,
+            displayStatusMessage:false,
+            UserCount:1,
+            Users:[],
+            timerMod:0,
+            Timers:{
+                'UpdatePreview': {
+                    func: () => {
+                        this.log('updateCloudXID')
+                        this.updateCloudXID()
+                        this.update()
+                    },
+                    freq: 60
+                }
+            },
+
+        }
         this.log = (message) => {
             console.log(`${this.ID}:${message}`)
-        }
-        this.Console = null
-        this.event = null
-        this.CloudXID = null
-        this.SessionPreview = 'https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607'
-        this.eventContext = null
-        this.displayStatusMessage = false
-        this.UserCount = 1
-        this.Users = []
-        this.timerMod = 0
-        this.Timers = {
-            'UpdatePreview': {
-                func: () => {
-                    this.log('updateCloudXID')
-                    this.updateCloudXID()
-                    this.update()
-                },
-                freq: 60
-            }
         }
         this.PolyLogiXAPI = null
         this.configWindow = new Object()
@@ -782,8 +786,8 @@ class Server {
         this.Session.stdin.write('log\n')
         this.Session.on('exit', () => {
             this.Session.stdin.pause();
-            this.event = 'ShutDown';
-            this.displayStatusMessage = true;
+            this.Vars.event = 'ShutDown';
+            this.Vars.displayStatusMessage = true;
             this.update();
             if (this.Console !== null) {
                 this.Console.close();
@@ -793,7 +797,6 @@ class Server {
             this.Session.kill();
             this.Session = null
             clearCache(this.ID);
-
         })
         // Handle Events
         this.Session.stdout.on('data', (data) => {
@@ -801,49 +804,49 @@ class Server {
                 return
             }
             if (data.toString().startsWith('World running')) {
-                this.Status = 'Running';
-                this.event = 'Started'
-                this.displayStatusMessage = true;
+                this.Vars.Status = 'Running';
+                this.Vars.event = 'Started'
+                this.Vars.displayStatusMessage = true;
                 this.update()
                 setTimeout(() => {
                     this.TimerProc()
                 }, 10000) // Start Internal Timers
             }
             if (data.toString().startsWith('World Saving') || data.toString().startsWith('Autosaving')) {
-                this.event = 'Saving';
-                this.Status = 'Saving';
-                this.displayStatusMessage = true;
+                this.Vars.event = 'Saving';
+                this.Vars.Status = 'Saving';
+                this.Vars.displayStatusMessage = true;
                 this.update()
             }
             if (data.toString().startsWith('World Saved')) {
-                this.event = 'Saved';
-                this.Status = 'Saved';
-                this.displayStatusMessage = true;
+                this.Vars.event = 'Saved';
+                this.Vars.Status = 'Saved';
+                this.Vars.displayStatusMessage = true;
                 this.update()
             }
             if (data.toString().startsWith('Starting sync')) {
-                this.event = 'Syncing';
-                this.Status = 'Syncing';
-                this.displayStatusMessage = true;
+                this.Vars.event = 'Syncing';
+                this.Vars.Status = 'Syncing';
+                this.Vars.displayStatusMessage = true;
                 this.update()
             }
             if (data.toString().startsWith('Finished sync')) {
-                this.event = 'Synced';
-                this.Status = 'Running';
+                this.Vars.event = 'Synced';
+                this.Vars.Status = 'Running';
                 this.displayStatusMessage = true;
                 this.update()
             }
             if (data.toString().startsWith('Shutting Down')) {
-                this.event = 'ShuttingDown';
-                this.Status = 'Shutting Down';
-                this.displayStatusMessage = true;
+                this.Vars.event = 'ShuttingDown';
+                this.Vars.Status = 'Shutting Down';
+                this.Vars.displayStatusMessage = true;
                 this.update()
             }
             if (data.toString().startsWith('Peer Connected')) {
-                this.event = 'UserJoin';
-                this.UserCount++;
-                this.displayStatusMessage = true;
-                this.Users.push({
+                this.Vars.event = 'UserJoin';
+                this.Vars.UserCount++;
+                this.Vars.displayStatusMessage = true;
+                this.Vars.Users.push({
                     'ip': data.toString().substring(15).trim(),
                     'username': undefined,
                     'userID': undefined
@@ -852,31 +855,31 @@ class Server {
             }
             if (data.toString().startsWith('http://cloudx.azurewebsites.net/open/session/')) {
                 let id = data.toString().substring(45)
-                this.CloudXID = id
+                this.Vars.CloudXID = id
                 this.updatePreview()
                 return
             }
             if (data.toString().startsWith('Join Granted For')) {
-                this.event = 'UserJoinContext';
-                this.displayStatusMessage = true;
+                this.Vars.event = 'UserJoinContext';
+                this.Vars.displayStatusMessage = true;
                 let message = data.toString().substring(25).replace('\r\n', '')
-                this.eventContext = [message.substring(0, message.indexOf(',')), message.substring(message.indexOf(',') + 12)]
+                this.Vars.eventContext = [message.substring(0, message.indexOf(',')), message.substring(message.indexOf(',') + 12)]
                 var foundIndex = this.Users.findIndex(x => x.username == undefined);
 
-                this.Users[foundIndex].username = this.eventContext[1]
-                this.Users[foundIndex].userID = this.eventContext[0]
+                this.Vars.Users[foundIndex].username = this.Vars.eventContext[1]
+                this.Vars.Users[foundIndex].userID = this.Vars.eventContext[0]
                 this.update()
             }
             if (data.toString().startsWith('Peer Disconnected')) {
-                this.event = 'UserLeft';
-                this.UserCount--;
-                this.displayStatusMessage = true;
+                this.Vars.event = 'UserLeft';
+                this.Vars.UserCount--;
+                this.Vars.displayStatusMessage = true;
                 let message = data.toString().substring(19).replace('\r\n', '')
                 let ip = message.substring(0, message.indexOf(','))
                 var foundIndex = this.Users.findIndex(x => x.ip == ip);
                 let user = this.Users[foundIndex]
-                this.eventContext = [user.userID, user.username]
-                this.Users = this.Users.filter(function(returnableObjects) {
+                this.Vars.eventContext = [user.userID, user.username]
+                this.Vars.Users = this.Users.filter(function(returnableObjects) {
                     return returnableObjects.ip !== ip;
                 });
 
@@ -898,7 +901,7 @@ class Server {
      * @memberof Server
      */
     updateCloudXID() {
-        if (this.CloudXID === null) {
+        if (this.Vars.CloudXID === null) {
             if (this.Session === null || this.Session == undefined) {
                 return
             }
@@ -914,14 +917,14 @@ class Server {
      * @memberof Server
      */
     updatePreview() {
-        if (this.CloudXID === null) {
+        if (this.Vars.CloudXID === null) {
             return
         }
-        let url = 'https://cloudx.azurewebsites.net/api/sessions/' + this.CloudXID
+        let url = 'https://cloudx.azurewebsites.net/api/sessions/' + this.Vars.CloudXID
         fetch(url)
             .then(res => res.json())
             .then(json => {
-                this.SessionPreview = (json.thumbnail ? json.thumbnail : "https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607")
+                this.Vars.SessionPreview = (json.thumbnail ? json.thumbnail : "https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607")
             })
     }
     /**
@@ -930,12 +933,12 @@ class Server {
      * @memberof Server
      */
     runTimers() {
-        for (var timer in this.Timers) {
-            if (this.timerMod % this.Timers[timer].freq === 0) {
-                this.Timers[timer].func.call()
+        for (var timer in this.Vars.Timers) {
+            if (this.Vars.timerMod % this.Vars.Timers[timer].freq === 0) {
+                this.Vars.Timers[timer].func.call()
             }
         }
-        this.timerMod++
+        this.Vars.timerMod++
     }
     /**
      * Shut down the instance
@@ -943,9 +946,9 @@ class Server {
      * @memberof Server
      */
     end() {
-        this.Status = 'Shutting Down'
-        this.event = 'ShuttingDown'
-        this.displayStatusMessage = true
+        this.Vars.Status = 'Shutting Down'
+        this.Vars.event = 'ShuttingDown'
+        this.Vars.displayStatusMessage = true
         this.update()
         setTimeout(() => {
             this.Session.stdin.write('\nshutdown\n');
@@ -963,8 +966,8 @@ class Server {
             this.Console.webContents.send("Update:Raw", this)
         }
         mainWindow.webContents.send('Server:Update', this)
-        if (this.displayStatusMessage) {
-            this.displayStatusMessage = false
+        if (this.Vars.displayStatusMessage) {
+            this.Vars.displayStatusMessage = false
         }
     }
     /**

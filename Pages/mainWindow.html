@@ -114,14 +114,14 @@
 
         function updateSession(session) {
             console.log('Update: ' + session.ID)
-            if (session.Status === 'Running') {
+            if (session.Vars.Status === 'Running') {
                 removeAlert('startAlert-' + session.ID)
             }
-            updateElementSrc('previewImage-' + session.ID, session.SessionPreview)
-            updateElementHTML('usercount-' + session.ID, 'Players: ' + (session.UserCount - 1) + '/' + (session.Config.startWorlds[0].maxUsers - 1))
-            updateElementHTML("status-" + session.ID, 'Status: ' + session.Status)
-            console.log(session.displayStatusMessage)
-            if (session.displayStatusMessage) {
+            updateElementSrc('previewImage-' + session.ID, session.Vars.SessionPreview)
+            updateElementHTML('usercount-' + session.ID, 'Players: ' + (session.vars.UserCount - 1) + '/' + (session.Config.startWorlds[0].maxUsers - 1))
+            updateElementHTML("status-" + session.ID, 'Status: ' + session.Vars.Status)
+            console.log(session.Vars.displayStatusMessage)
+            if (session.Vars.displayStatusMessage) {
                 console.log('alert')
                 switch (session.event) {
                     case 'Saving':
@@ -147,10 +147,10 @@
                         removeElement('SERVER-' + session.ID)
                         break
                     case 'UserJoinContext':
-                        removeAlert(addAlert(`User <strong>${session.eventContext[1]}</strong> connected to ${session.ID}!`, 'primary'), 5000)
+                        removeAlert(addAlert(`User <strong>${session.Vars.eventContext[1]}</strong> connected to ${session.ID}!`, 'primary'), 5000)
                         break
                     case 'UserLeft':
-                        removeAlert(addAlert(`User <strong>${session.eventContext[1]}</strong> disconnected from ${session.ID}!`, 'warning'), 5000)
+                        removeAlert(addAlert(`User <strong>${session.Vars.eventContext[1]}</strong> disconnected from ${session.ID}!`, 'warning'), 5000)
                         break
                     default:
                 }
