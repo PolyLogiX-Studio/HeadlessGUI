@@ -1,4 +1,5 @@
-# Neos Headless Manager
+# Neos Headless Manager [![Maintainability](https://api.codeclimate.com/v1/badges/69cd0dabe98ce6ccace9/maintainability)](https://codeclimate.com/github/bombitmanbomb/HeadlessCore/maintainability)
+
  Headless Manager for Neos Headless Client
 
 Primary Developer: Ethan Snow (Bitman#0669)
