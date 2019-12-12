@@ -165,7 +165,8 @@
       <script>
          const electron = require('electron')
          const {
-             ipcRenderer
+             ipcRenderer,
+             app
          } = electron;
          const Store = require('electron-store');
          const store = new Store({name: 'dat'});
@@ -176,10 +177,16 @@
          const fetch = require('node-fetch')
          var pathValid = false
          var neosToken = store.get('NEOS:token')
-         
+         var dataDir = app.getPath('userData') //AppData/Roaming
+         var scriptsDir = path.join(dataDir, 'Scripts')
+         var globalScriptsDir = path.join(scriptsDir, 'Global')
+         var serverScriptsDir = path.join(scriptsDir, 'Server')
+         var commandScriptsDir = path.join(scriptsDir, 'Commands')
+         var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
          $(document).ready(function () {
              generateThemeTable()
              getConfig();
+             generateScriptsTable()
          
          /* if no Token stored, display Login Button, Else get user info*/
          if (!neosToken) {
@@ -196,6 +203,9 @@
          function callLogin() {
              ipcRenderer.send('callWindow:Login')
          }
+
+         
+
          ipcRenderer.on("NEOS:Login", (e) => {
              login()
              $('#ProfileDisplay').css("display",'block')
@@ -250,7 +260,10 @@
              }
          
          }
-         
+         function generateScriptsTable() {
+
+
+         }
          function getConfig() {
              let hosts = config.get('allowedUrlHosts')
          
