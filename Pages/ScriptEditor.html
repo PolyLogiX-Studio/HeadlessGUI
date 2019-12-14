@@ -22,12 +22,11 @@
         <script src="./ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
       <script>
          const electron = require('electron')
-         const {
+         var {
              ipcRenderer
          } = electron;
          const fs = require('fs')
          const path = require('path');
-         
          $(document).ready(function () {
             var editor = ace.edit("editor");
             editor.setTheme("ace/theme/terminal");
@@ -36,15 +35,21 @@
          
       </script>
 
-<div id="editor">/* EXAMPLE COMMAND */
+<div id="editor" style="width:75%; float: left;" >/* EXAMPLE COMMAND */
 function run(CORE,EVENT,SESSION_ID,COMMAND_STRING){
     let user = CORE.Instances[SESSION_ID].Vars.Users.find(e => e.username === COMMAND_STRING.substring(6))
     if (!user){return {success:true,output:"No User Found",callUpdate:false,Vars:CORE.Instances[SESSION_ID].Vars}}
     CORE.Instances[SESSION_ID].Vars.IP_Banlist.push(user.ip)
     return {success:true,output:`IP ${user.ip} Banned!`,callUpdate:true,Vars:CORE.Instances[SESSION_ID].Vars} 
-}
-module.exports = {run, commandName:"ipban"}</div>
-        
+}</div>
+<div class="card border-primary mb-3" style="width:25%; max-width: 20rem; float: right; height: 100%;">
+      <div class="card-header">API Refrence</div>
+      <div class="card-body">
+        <h4 class="card-title">Functions</h4>
+        <div id="functions">
+        </div>
+      </div>
+    </div>
 
    </body>
 </html>

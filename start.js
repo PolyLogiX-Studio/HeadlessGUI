@@ -65,9 +65,7 @@ var Instances = {}
 
 var dataDir = app.getPath('userData') //AppData/Roaming
 var scriptsDir = path.join(dataDir, 'Scripts')
-var globalScriptsDir = path.join(scriptsDir, 'Global')
-var serverScriptsDir = path.join(scriptsDir, 'Server')
-var commandScriptsDir = path.join(scriptsDir, 'Commands')
+var enabledScriptsDir = path.join(scriptsDir, 'Enabled')
 var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
 var sessionsDir = path.join(dataDir, "Active Sessions") //%AppData%/NeosHeadlessManager/Active Sessions
 fs.removeSync(sessionsDir)
@@ -75,9 +73,15 @@ fs.removeSync(sessionsDir)
 if (!fs.pathExistsSync(scriptsDir)) {
     fs.mkdirSync(scriptsDir)
 } 
+if (!fs.pathExistsSync(disabledScriptsDir)) {
+    fs.mkdirSync(disabledScriptsDir)
+} 
+if (!fs.pathExistsSync(enabledScriptsDir)) {
+    fs.mkdirSync(enabledScriptsDir)
+} 
 const scriptsConfig = new Store({
     name: 'scripts',
-    cwd: scriptsDir,
+    cwd: dataDir,
     defaults: {
         scripts:{
             global:{},
@@ -86,7 +90,11 @@ const scriptsConfig = new Store({
         }
     }
 });
-
+const API = new Store({
+    name: 'api',
+    cwd: dataDir,
+    defaults: JSON.parse(fs.readFileSync("./Pages/Resources/API_Default.json"))
+    });
 if (!store.has('MachineId')) { //For API Calls
     store.set('MachineId', uuidv4())
 }

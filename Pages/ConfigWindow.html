@@ -139,26 +139,16 @@
          </div>
          <!--Scripts-->
          <div class="tab-pane fade" id="scripts">
-            <label for="globalScripts">Global Scripts</label>
-            <div id="globalScripts" class="card border-success mb-3">
+            <label for="enabledScripts">Enabled Scripts</label>
+            <div id="enabledScripts" class="card border-success mb-3">
 
             </div>
-            <hr class="my-4">
-            <label for="serverScripts">Server Scripts</label>
-            <div id="serverScripts" class="card border-info mb-3">
-
-            </div>
-            <hr class="my-4">
-            <label for="commandScripts">Commands</label>
-            <div id="commandScripts" class="card border-warning mb-3">
-
-            </div>
-            
             <hr class="my-4">
             <label for="disabledScripts">Disabled Scripts</label>
             <div id="disabledScripts" class="card border-light mb-3">
 
             </div>
+            <hr class="my-4">
             <button type="button" class="btn btn-outline-success btn-sm" onclick="newScript()">+ New Script</button>
          </div>
       </div>
@@ -179,9 +169,7 @@
          var neosToken = store.get('NEOS:token')
          var dataDir = app.getPath('userData') //AppData/Roaming
          var scriptsDir = path.join(dataDir, 'Scripts')
-         var globalScriptsDir = path.join(scriptsDir, 'Global')
-         var serverScriptsDir = path.join(scriptsDir, 'Server')
-         var commandScriptsDir = path.join(scriptsDir, 'Commands')
+         var enabledScriptsDir = path.join(scriptsDir, 'Enabled')
          var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
          $(document).ready(function () {
              generateThemeTable()
