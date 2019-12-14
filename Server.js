@@ -33,7 +33,7 @@ const {
     spawn
 } = require('child_process');
 const fs = require('fs-extra'); //Recursive Folder Delete
-
+const uuidv4 = require('uuid/v4');
 
 class Server {
     /**
@@ -93,17 +93,16 @@ class Server {
         this.Config.cacheFolder = path.join(this.sessionDir, 'Cache')
         this.Console = null;
         this.Vars = {
-            Status:'Starting',
-            
-            event:null,
-            CloudXID:null,
-            SessionPreview:'https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607',
-            eventContext:null,
-            displayStatusMessage:false,
-            UserCount:1,
-            Users:[],
-            timerMod:0,
-            Timers:{
+            _Status:'Starting',
+            _event:null,
+            _CloudXID:null,
+            _SessionPreview:'https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607',
+            _eventContext:null,
+            _displayStatusMessage:false,
+            _UserCount:1,
+            _Users:[],
+            _timerMod:0,
+            _Timers:{
                 'UpdatePreview': {
                     func: () => {
                         this.log('updateCloudXID')
@@ -113,7 +112,9 @@ class Server {
                     freq: 60
                 }
             },
-
+            set Status(v){this.Vars.Status = v},
+            set event(v){this.Vars.event = v},
+            set displayStatusMessage(v){this.Vars.displayStatusMessage = v}
         }
         this.log = (message) => {
             console.log(`${this.ID}:${message}`)
@@ -155,7 +156,9 @@ class Server {
             this.Session.kill();
             this.Session = null
             clearCache(this.ID);
+            //NEED TO MANAGE WITH MANAGER TO CALL ENDING
         })
+        
         // Handle Events
         this.Session.stdout.on('data', (data) => {
             if (data.toString().startsWith('Enabling logging output.')) {
@@ -312,7 +315,12 @@ class Server {
             this.Session.stdin.write('\nshutdown\n');
         }, 1000)
     }
-
+    /* Getters */
+    get val(){
+        return this
+    }
+    /* Setters */
+    set 
     /**
      * Update data about the server Globally, Update server pannel in Main Window
      *
@@ -375,7 +383,10 @@ class Instances {
     endAll(){
 
     }
-
+    newSession(session){
+        if (!session.UUID){session.UUID = uuidv4()}
+       this.Instances[session.UUID] = new Server(session.UUID, session.usernameOverride, session.sessionName, session.loadWorldURL, session.maxUsers, session.description, session.saveOnExit, session.autosaveInterval, session.accessLevel, session.loadWorldPresetName, session.autoRecover, session.mobileFriendly, session.tickRate, session.keepOriginalRoles, session.defaultUserRoles, session.idleRestartInterval, session.forcedRestartInterval, session.forcePort, session.autoInviteUsernames, session.autoInviteMessage)
     
+    }
 }
 module.exports = {Instances,Server}

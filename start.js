@@ -12,6 +12,8 @@ const {
     ipcMain
 } = electron;
 const Store = require('electron-store');
+const Window = require('./WindowManager').WindowManager;
+const window = new Window(BrowserWindow);
 const store = new Store({
     name: 'dat'
 });
@@ -22,11 +24,6 @@ const themes = new Store({
     name: 'themes'
 });
 //Predefine Windows in Global Space
-let mainWindow = null;
-let addWindow = null;
-let configWindow = null;
-let addWindowAdvanced = null;
-let loginWindow = null
 const fs = require('fs-extra'); //Recursive Folder Delete
 
 /**
@@ -46,18 +43,7 @@ const ICON_GLOBAL_ICO = path.join(__dirname, '/images/icon.ico')
  * (Excluding Console Windows, Handling Later)
  */
 function closeAllWindows() {
-    if (addWindow) {
-        addWindow.close()
-    }
-    if (configWindow) {
-        configWindow.close()
-    }
-    if (addWindowAdvanced) {
-        addWindowAdvanced.close()
-    }
-    if (loginWindow) {
-        loginWindow.close()
-    }
+    window.closeAllWindows()
 }
 //Init
 
@@ -213,8 +199,8 @@ app.on('ready', function() {
 shuttingDown = false
 
 function safeQuit() {
-    closeAllWindows()
     shuttingDown = true
+    window.closeAllWindows()
     Instances.endAll()
 }
 
@@ -224,11 +210,7 @@ function safeQuit() {
  * @param {string} id ID of Instances to clear
  */
 function clearCache(id) {
-    fs.removeSync(Instances.get(id).val().sessionDir)
-    delete Instances[id]
-    if (shuttingDown && JSON.stringify(Instances) === '{}') {
-        ClearQuit()
-    }
+    
 }
 
 /**
@@ -517,7 +499,7 @@ ipcMain.on('server:new', function(e, item) {
     item.id = uuidv4()
     mainWindow.webContents.send('Main:updateList', item);
     addWindow.close();
-    Instances[item.id] = new Server(item.id, item.usernameOverride, item.sessionName, item.loadWorldURL, item.maxUsers, item.description, item.saveOnExit, item.autosaveInterval, item.accessLevel, item.loadWorldPresetName, item.autoRecover, item.mobileFriendly, item.tickRate, item.keepOriginalRoles, item.defaultUserRoles, item.idleRestartInterval, item.forcedRestartInterval, item.forcePort, item.autoInviteUsernames, item.autoInviteMessage)
+    Instances.newSession({UUID:item.id, usernameOverride:item.usernameOverride, sessionName:item.sessionName, loadWorldURL:item.loadWorldURL, maxUsers:item.maxUsers, description:item.description, saveOnExit:item.saveOnExit, autosaveInterval:item.autosaveInterval, accesslevel:item.accessLevel, loadWorldPresetName:item.loadWorldPresetName, autoRecover:item.autoRecover, mobileFriendly:item.mobileFriendly, tickRate:item.tickRate, keeporiginalRoles:item.keepOriginalRoles, defaultUserRoles:item.defaultUserRoles, idleRestartInterval:item.idleRestartInterval, forcedRestartInterval:item.forcedRestartInterval, forcePort:item.forcePort, autoInviteUsernames:item.autoInviteUsernames, autoInviteMessage:item.autoInviteMessage})
 })
 ipcMain.on('new:editor', function(e, item) {
     createEditorWindow()
