@@ -4,7 +4,7 @@ class WindowManager {
         this.Windows = {}
     }
     createWindow(ID,prop,data,menu=null){
-        if (this.Windows[ID] !== undefined) {
+        if (this.Windows[ID] != undefined) {
             return false
         }
         prop.show = false

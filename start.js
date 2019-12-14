@@ -57,21 +57,21 @@ fs.removeSync(sessionsDir)
 // Setup Scripts folder
 if (!fs.pathExistsSync(scriptsDir)) {
     fs.mkdirSync(scriptsDir)
-} 
+}
 if (!fs.pathExistsSync(disabledScriptsDir)) {
     fs.mkdirSync(disabledScriptsDir)
-} 
+}
 if (!fs.pathExistsSync(enabledScriptsDir)) {
     fs.mkdirSync(enabledScriptsDir)
-} 
+}
 const scriptsConfig = new Store({
     name: 'scripts',
     cwd: dataDir,
     defaults: {
-        scripts:{
-            global:{},
-            server:{},
-            commands:{}
+        scripts: {
+            global: {},
+            server: {},
+            commands: {}
         }
     }
 });
@@ -79,7 +79,7 @@ const API = new Store({
     name: 'api',
     cwd: dataDir,
     defaults: JSON.parse(fs.readFileSync("./Pages/Resources/API_Default.json"))
-    });
+});
 if (!store.has('MachineId')) { //For API Calls
     store.set('MachineId', uuidv4())
 }
@@ -210,7 +210,7 @@ function safeQuit() {
  * @param {string} id ID of Instances to clear
  */
 function clearCache(id) {
-    
+
 }
 
 /**
@@ -354,39 +354,28 @@ function createConfigWindow() {
  * @param {number} [width=1080] Window Width
  * @param {number} [height=1080] Window Height
  */
-function createURLWindow(URL, width = 1080, height = 1080) {
-    let URLwindow = new BrowserWindow({
+function createURLWindow(URL) {
+    window.createWindow('URLWINDOW' + uuidv4(), {
+        parent: 'MainWindow',
         show: false,
         darkTheme: true,
-        width: width,
-        height: height,
-        title: "Config",
+        width: 1080,
+        height: 1080,
+        title: "WINDOW",
         icon: path.join(__dirname, '/images/polylogix.jpg'),
         webPreferences: {
             nodeIntegration: false
         }
-    });
-    if (process.env.NODE_ENV === 'production') {
-        URLwindow.setMenu(null)
-    }
-    // Load HTML file
-    URLwindow.loadURL(url.format({
+    }, {
         pathname: URL,
         protocol: 'https:',
         slashes: true,
-    }))
-    // GC Handle
-    URLwindow.on('close', function() {
-        URLwindow = null
     })
-    URLwindow.once('ready-to-show', () => {
-        URLwindow.show()
-    })
-
 }
+
 function createEditorWindow() {
-    editorWindow = new BrowserWindow({
-        parent:configWindow,
+    window.createWindow('EditorWindow', {
+        parent: 'ConfigWindow',
         show: false,
         darkTheme: true,
         width: 1000,
@@ -396,24 +385,11 @@ function createEditorWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    });
-    if (process.env.NODE_ENV === 'production') {
-        editorWindow.setMenu(null)
-    }
-    // Load HTML file
-    editorWindow.loadURL(url.format({
-        pathname: path.join(__dirname,'Pages/ScriptEditor.html'),
+    }, {
+        pathname: path.join(__dirname, 'Pages/ScriptEditor.html'),
         protocol: 'file:',
         slashes: true,
-    }))
-    // GC Handle
-    editorWindow.on('close', function() {
-        editorWindow = null
-    })
-    editorWindow.once('ready-to-show', () => {
-        editorWindow.show()
-    })
-
+    }, null)
 }
 /**
  * Login to Neos
@@ -437,6 +413,10 @@ function login(credential, password) {
     }
     loginPayload.rememberMe = true
     /* Login User and return Session Token */
+    return sendLoginPost(loginPayload)
+}
+
+function sendLoginPost(loginPayload) {
     return fetch(CLOUDX_PRODUCTION_NEOS_API + 'api/userSessions', {
             method: "POST",
             body: JSON.stringify(loginPayload),
@@ -446,8 +426,8 @@ function login(credential, password) {
         })
         .then(res => res.json())
         .then(json => {
-            config.set('loginCredentials', credential)
-            config.set('loginPassword', (password ? password : config.get('loginPassword')))
+            config.set('loginCredentials', (loginPayload.email ? loginPayload.email : loginPayload.username))
+            config.set('loginPassword', (loginPayload.password ? loginPayload.password : config.get('loginPassword')))
             store.set('NEOS:token', json.token)
             store.set('NEOS:userId', json.userId)
             store.set('NEOS:token:expire', json.expire)
@@ -464,8 +444,6 @@ function login(credential, password) {
                 err: true
             }
         })
-
-
 }
 /* Data Calls from Windows */
 ipcMain.on('NEOS:Login', function(e, info) {
@@ -499,7 +477,28 @@ ipcMain.on('server:new', function(e, item) {
     item.id = uuidv4()
     mainWindow.webContents.send('Main:updateList', item);
     addWindow.close();
-    Instances.newSession({UUID:item.id, usernameOverride:item.usernameOverride, sessionName:item.sessionName, loadWorldURL:item.loadWorldURL, maxUsers:item.maxUsers, description:item.description, saveOnExit:item.saveOnExit, autosaveInterval:item.autosaveInterval, accesslevel:item.accessLevel, loadWorldPresetName:item.loadWorldPresetName, autoRecover:item.autoRecover, mobileFriendly:item.mobileFriendly, tickRate:item.tickRate, keeporiginalRoles:item.keepOriginalRoles, defaultUserRoles:item.defaultUserRoles, idleRestartInterval:item.idleRestartInterval, forcedRestartInterval:item.forcedRestartInterval, forcePort:item.forcePort, autoInviteUsernames:item.autoInviteUsernames, autoInviteMessage:item.autoInviteMessage})
+    Instances.newSession({
+        UUID: item.id,
+        usernameOverride: item.usernameOverride,
+        sessionName: item.sessionName,
+        loadWorldURL: item.loadWorldURL,
+        maxUsers: item.maxUsers,
+        description: item.description,
+        saveOnExit: item.saveOnExit,
+        autosaveInterval: item.autosaveInterval,
+        accesslevel: item.accessLevel,
+        loadWorldPresetName: item.loadWorldPresetName,
+        autoRecover: item.autoRecover,
+        mobileFriendly: item.mobileFriendly,
+        tickRate: item.tickRate,
+        keeporiginalRoles: item.keepOriginalRoles,
+        defaultUserRoles: item.defaultUserRoles,
+        idleRestartInterval: item.idleRestartInterval,
+        forcedRestartInterval: item.forcedRestartInterval,
+        forcePort: item.forcePort,
+        autoInviteUsernames: item.autoInviteUsernames,
+        autoInviteMessage: item.autoInviteMessage
+    })
 })
 ipcMain.on('new:editor', function(e, item) {
     createEditorWindow()
