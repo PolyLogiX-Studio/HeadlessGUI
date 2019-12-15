@@ -64,6 +64,8 @@ if (!fs.pathExistsSync(disabledScriptsDir)) {
 if (!fs.pathExistsSync(enabledScriptsDir)) {
     fs.mkdirSync(enabledScriptsDir)
 }
+const {Instances} = require("./Server.js")
+const instances = new Instances()
 const scriptsConfig = new Store({
     name: 'scripts',
     cwd: dataDir,
@@ -147,35 +149,29 @@ if (!themes.has('Themes')) {
 // Listen for App to be ready
 
 app.on('ready', function() {
+    Menu.setApplicationMenu(Menu.buildFromTemplate(mainMenuTemplate))
     // Create new Window
-    mainWindow = new BrowserWindow({
-        show: false,
+    window.createWindow('MainWindow', {
+        parent: 'MainWindow',
         width: 1920,
         height: 1080,
+        title: "Main Window",
         icon: ICON_GLOBAL_PNG,
         webPreferences: {
             nodeIntegration: true
         }
-    });
-    // Load HTML file
-    mainWindow.loadURL(url.format({
+    }, {page:{
         pathname: path.join(__dirname, '/Pages/mainWindow.html'),
         protocol: 'file:',
         slashes: true,
-    }));
-    mainWindow.once('ready-to-show', () => {
-        mainWindow.show()
-    })
+    }})
     // Quit app when main closed
-    mainWindow.on('closed', function() {
+    window.Windows['MainWindow'].setMenu(Menu.buildFromTemplate(mainMenuTemplate))
+    window.Windows['MainWindow'].on('closed', function() {
         safeQuit()
     })
-    // Build Menu from Template
-    const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-    // Insert Menu
-    Menu.setApplicationMenu(mainMenu);
-    mainWindow.on('close', (e) => {
-        if (JSON.stringify(Instances.all()) === '{}') {
+    window.Windows['MainWindow'].on('close', (e) => {
+        if (JSON.stringify(instances.all()) === '{}') {
             return false
         } else {
             e.preventDefault()
@@ -201,13 +197,13 @@ shuttingDown = false
 function safeQuit() {
     shuttingDown = true
     window.closeAllWindows()
-    Instances.endAll()
+    instances.endAll()
 }
 
 /**
  * Remove Instance, Clear Local Files, and Nullify for GC
  *
- * @param {string} id ID of Instances to clear
+ * @param {string} id ID of instances to clear
  */
 function clearCache(id) {
 
@@ -228,21 +224,20 @@ function ClearQuit() {
  *
  */
 function createAddWindow() {
-    if (addWindow !== null) {
-        return
-    }
     if (!store.get('isConnected')) {
-        mainWindow.webContents.send('NOCONNECTION')
+        window.sendData('MainWindow','NOCONNECTION')
         return
     }
     if (!store.get('configSet') || !config.get('loginPassword')) {
-        mainWindow.webContents.send('ConfigError')
+        window.sendData('MainWindow','ConfigError')
         return
     }
-    mainWindow.webContents.send('removeStart')
-    addWindow = new BrowserWindow({
-        parent: mainWindow,
+    window.sendData('MainWindow','removeStart')
+    
+    window.createWindow('addWindow', {
+        parent: 'MainWindow',
         show: false,
+        darkTheme: true,
         width: 800,
         height: 800,
         title: "New Server",
@@ -250,24 +245,11 @@ function createAddWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    });
-    if (process.env.NODE_ENV === 'production') {
-        addWindow.setMenu(null)
-    }
-    // Load HTML file
-    addWindow.loadURL(url.format({
+    }, {page:{
         pathname: path.join(__dirname, '/Pages/addWindow.html'),
         protocol: 'file:',
         slashes: true,
-    }))
-    addWindow.once('ready-to-show', () => {
-        addWindow.show()
-    })
-    // GC Handle
-    addWindow.on('close', function() {
-        addWindow = null
-    })
-
+    }})
 }
 
 /**
@@ -275,10 +257,8 @@ function createAddWindow() {
  *
  */
 function createLoginWindow() {
-    if (loginWindow !== null) {
-        return
-    }
-    loginWindow = new BrowserWindow({
+    window.createWindow('LoginWindow', {
+        parent: 'ConfigWindow',
         show: false,
         darkTheme: true,
         width: 500,
@@ -288,23 +268,11 @@ function createLoginWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    });
-    loginWindow.loadURL(url.format({
+    }, {page:{
         pathname: path.join(__dirname, 'Pages/NeosLogin.html'),
         protocol: 'file:',
         slashes: true,
-    }))
-    loginWindow.once('ready-to-show', () => {
-        loginWindow.show()
-    })
-    if (process.env.NODE_ENV === 'production') {
-        loginWindow.setMenu(null)
-    }
-    // GC Handle
-    loginWindow.on('close', function() {
-        loginWindow = null
-    })
-
+    }})
 }
 
 /**
@@ -312,11 +280,8 @@ function createLoginWindow() {
  *
  */
 function createConfigWindow() {
-    if (configWindow !== null) {
-        return
-    }
-    configWindow = new BrowserWindow({
-        parent: mainWindow,
+    window.createWindow('ConfigWindow', {
+        parent: 'MainWindow',
         width: 1000,
         show: false,
         height: 810,
@@ -325,24 +290,11 @@ function createConfigWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    });
-    if (process.env.NODE_ENV === 'production') {
-        configWindow.setMenu(null)
-    }
-    // Load HTML file
-    configWindow.loadURL(url.format({
+    }, {page:{
         pathname: path.join(__dirname, '/Pages/ConfigWindow.html'),
         protocol: 'file:',
         slashes: true,
-    }))
-    configWindow.once('ready-to-show', () => {
-        configWindow.show()
-    })
-    // GC Handle
-    configWindow.on('close', function() {
-        configWindow = null
-    })
-
+    },children:['LoginWindow']})
 }
 
 
@@ -449,13 +401,13 @@ function sendLoginPost(loginPayload) {
 ipcMain.on('NEOS:Login', function(e, info) {
     login(info.neosCredential, info.neosPassword).then((test) => {
         if (!test.err) {
-            configWindow.webContents.send('NEOS:Login')
-            if (loginWindow) {
-                loginWindow.close()
+            window.sendData('ConfigWindow','NEOS:Login')
+            if (window.isOpen('LoginWindow')) {
+                window.closeWindow('LoginWindow')
             }
 
         } else {
-            loginWindow.webContents.send('NEOS:Failed', test)
+            window.sendData('LoginWindow','NEOS:Failed', test)
         }
     })
 
@@ -466,7 +418,7 @@ ipcMain.on('callWindow:Login', function(e) {
 // User has changed the Config
 ipcMain.on('Config:Update', function(e, item) {
     //configWindow.close()
-    mainWindow.webContents.send('removeConfig')
+    window.sendData('MainWindow','removeConfig')
 })
 // Open Advanced Settings for New Server window
 
@@ -475,9 +427,9 @@ ipcMain.on('server:new', function(e, item) {
     //console.log(item)
     //Create server
     item.id = uuidv4()
-    mainWindow.webContents.send('Main:updateList', item);
-    addWindow.close();
-    Instances.newSession({
+    window.sendData('MainWindow','Main:updateList', item);
+    window.closeWindow('AddWindow')
+    instances.newSession({
         UUID: item.id,
         usernameOverride: item.usernameOverride,
         sessionName: item.sessionName,
@@ -508,10 +460,10 @@ ipcMain.on('openURL', function(e, item) {
     createURLWindow(item)
 })
 ipcMain.on('getUpdateRaw', function(e, session) {
-    Instances.get(session).update()
+    instances.get(session).update()
 })
 ipcMain.on('Console:Command', function(e, item) {
-    if (!Instances.get(item.id).val()) {
+    if (!instances.get(item.id).val()) {
         dialog.showMessageBox(null, {
             type: 'error',
             buttons: ['Ok'],
@@ -522,13 +474,13 @@ ipcMain.on('Console:Command', function(e, item) {
         })
         return
     }
-    Instances.get(item.id).runCommand(`\n${item.command}\nlog\n`)
+    instances.get(item.id).runCommand(`\n${item.command}\nlog\n`)
     if (item.command === 'shutdown') {
-        Instances[item.id].Vars.Status = 'Shutting Down'
-        Instances[item.id].Vars.event = 'ShuttingDown'
-        Instances[item.id].Vars.displayStatusMessage = true
-        Instances[item.id].update()
-        Instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
+        instances[item.id].Vars.Status = 'Shutting Down'
+        instances[item.id].Vars.event = 'ShuttingDown'
+        instances[item.id].Vars.displayStatusMessage = true
+        instances[item.id].update()
+        instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
     }
 })
 
@@ -640,5 +592,5 @@ function checkInternet(cb) {
 //Server Pipe
 
 ipcMain.on('openManager', function(e, id) {
-    Instances.get(id).openWindow()
+    instances.get(id).openWindow()
 })

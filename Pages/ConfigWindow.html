@@ -167,10 +167,12 @@
          const fetch = require('node-fetch')
          var pathValid = false
          var neosToken = store.get('NEOS:token')
+         /*
          var dataDir = app.getPath('userData') //AppData/Roaming
          var scriptsDir = path.join(dataDir, 'Scripts')
          var enabledScriptsDir = path.join(scriptsDir, 'Enabled')
          var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
+         */
          $(document).ready(function () {
              generateThemeTable()
              getConfig();

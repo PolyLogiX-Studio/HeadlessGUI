@@ -316,11 +316,11 @@ class Server {
         }, 1000)
     }
     /* Getters */
-    get val(){
+    val(){
         return this
     }
     /* Setters */
-    set 
+    
     /**
      * Update data about the server Globally, Update server pannel in Main Window
      *
@@ -382,6 +382,9 @@ class Instances {
     }
     endAll(){
 
+    }
+    all(){
+        return this.Instances
     }
     newSession(session){
         if (!session.UUID){session.UUID = uuidv4()}
