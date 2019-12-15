@@ -1,10 +1,60 @@
 const url = require('url');
+const uuidv4 = require('uuid/v4');
+
+/**
+ * @typedef WindowProperties
+ * @type {Object}
+ */
+/**
+ * @typedef WindowData
+ * @type {Object}
+ */
+
+/**
+ * @class WindowManager
+ * @classdesc Window Manager to manage all HeadlessCore Windows.
+ */
 class WindowManager {
+    /**
+     * @param {Object} BrowserWindow Electron Browser Window Object
+     */
     constructor(BrowserWindow){
         this.BrowserWindow = BrowserWindow
+        /**
+         * All Open Windows
+         * @returns Object
+         */
         this.Windows = {}
     }
-    createWindow(ID,prop,data,menu=null){
+
+    /**
+     * Create a new Electron Window
+     * @param {String} [ID] Unique ID to use
+     * @param {WindowProperties} prop 
+     * @param {WindowData} data 
+     * @param {Object} [menu=null]
+     * @example WindowManager.createWindow('addWindow', {
+        parent: 'MainWindow',
+        show: false,
+        darkTheme: true,
+        width: 800,
+        height: 800,
+        title: "New Server",
+        icon: ICON_GLOBAL_PNG,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    }, {page:{
+        pathname: path.join(__dirname, '/Pages/addWindow.html'),
+        protocol: 'file:',
+        slashes: true,
+    },children:['ConfigWindow']})
+     * @returns {String} Unique Window ID
+     */
+    createWindow(ID = uuidv4(),prop,data,menu=null){
+
+
+        this.ID = ID
         console.log('New Window Call,',ID)
         if (this.Windows[ID] != undefined) {
             return false
@@ -12,6 +62,7 @@ class WindowManager {
         prop.show = false
         if (prop.parent){
             if (this.Windows[prop.parent]){
+                //Exclude Top Level
                 if (ID!=='MainWindow'){
                     if (this.Windows[prop.parent].Children.includes(ID)){
                         this.Windows[prop.parent].Children.push(ID)
@@ -46,18 +97,41 @@ class WindowManager {
         this.Windows[ID].onClosed = (this.Windows[ID].on('closed', ()=>{
             console.log(`Window ${ID}: Closed.`)
         }))
+        return ID
     }
+    /**
+     * 
+     * @param {String} ID 
+     * @param {String} tag 
+     * @param {*} data 
+     * @example WindowManager.sendData('MainWindow','NEOS:Login', {'neosCredential':someLogin,'neosPassword':somepassword})
+     */
     sendData(ID,tag,data){
         if (!this.Windows[ID]){return false}
         this.Windows[ID].webContents.send(tag,data)
     }
+    /**
+     * Check if a window ID exists
+     * @param {String} ID Unique Window ID
+     * @example if(WindowManager.isOpen('ConfigWindow')){
+     *  //Some code
+     * }
+     * @returns {Boolean} Is Window Open
+     */
     isOpen(ID){
         return !(!this.Windows[ID])
     }
+    /**
+     * Close a Window if it exists
+     * @param {String} ID Unique Window ID
+     */
     closeWindow(ID){
         if (!this.Windows[ID]){return false}
         this.Windows[ID].close()
     }
+    /**
+     * Close all Windows
+     */
     closeAllWindows(){
         
     }

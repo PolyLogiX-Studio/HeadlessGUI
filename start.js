@@ -13,13 +13,25 @@ const {
 } = electron;
 const Store = require('electron-store');
 const Window = require('./WindowManager').WindowManager;
+/**
+ * Window Manager
+ */
 const window = new Window(BrowserWindow);
+/**
+ * General Data Store
+ */
 const store = new Store({
     name: 'dat'
 });
+/**
+ * App Config Store
+ */
 const config = new Store({
     name: 'config'
 });
+/**
+ * Themes Store
+ */
 const themes = new Store({
     name: 'themes'
 });
@@ -47,12 +59,16 @@ function closeAllWindows() {
 }
 //Init
 
-
+/**@const %AppData%/Roaming/Headless Core/*/
 var dataDir = app.getPath('userData') //AppData/Roaming
+/**@const %AppData%/Roaming/Headless Core/Scripts/*/
 var scriptsDir = path.join(dataDir, 'Scripts')
+/**@const %AppData%/Roaming/Headless Core/Scripts/Enabled */
 var enabledScriptsDir = path.join(scriptsDir, 'Enabled')
+/**@const %AppData%/Roaming/Headless Core/Scripts/Disabled */
 var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
-var sessionsDir = path.join(dataDir, "Active Sessions") //%AppData%/NeosHeadlessManager/Active Sessions
+/**@const %AppData%/NeosHeadlessManager/Active Sessions */
+var sessionsDir = path.join(dataDir, "Active Sessions") 
 fs.removeSync(sessionsDir)
 // Setup Scripts folder
 if (!fs.pathExistsSync(scriptsDir)) {
@@ -85,6 +101,8 @@ const API = new Store({
 if (!store.has('MachineId')) { //For API Calls
     store.set('MachineId', uuidv4())
 }
+//Check if there is an internet connection, and set values accordingly
+
 checkInternet(function(isConnected) {
     if (isConnected) {
         store.set('isConnected', true)
@@ -193,21 +211,16 @@ app.on('ready', function() {
 //QUIT HANDELING
 
 shuttingDown = false
-
+/**
+ * Safely quit the program
+ */
 function safeQuit() {
     shuttingDown = true
     window.closeAllWindows()
     instances.endAll()
 }
 
-/**
- * Remove Instance, Clear Local Files, and Nullify for GC
- *
- * @param {string} id ID of instances to clear
- */
-function clearCache(id) {
 
-}
 
 /**
  * Remove Session Directory and quit app
@@ -220,7 +233,7 @@ function ClearQuit() {
     }, 5000) // Need a better way to do this
 }
 /**
- * Create the New Server window
+ * Open the New Server window
  *
  */
 function createAddWindow() {
@@ -253,7 +266,7 @@ function createAddWindow() {
 }
 
 /**
- * Create the Login Window
+ * Open the Login Window
  *
  */
 function createLoginWindow() {
@@ -276,8 +289,7 @@ function createLoginWindow() {
 }
 
 /**
- * Create the Config Menu
- *
+ * Open the Config Menu
  */
 function createConfigWindow() {
     window.createWindow('ConfigWindow', {
@@ -300,11 +312,9 @@ function createConfigWindow() {
 
 
 /**
- * Open a Window to a URL with height and width dimentions
+ * Open a Window to a URL
  *
- * @param {*} URL www.host.com
- * @param {number} [width=1080] Window Width
- * @param {number} [height=1080] Window Height
+ * @param {URL} URL www.host.com
  */
 function createURLWindow(URL) {
     window.createWindow('URLWINDOW' + uuidv4(), {
@@ -324,7 +334,9 @@ function createURLWindow(URL) {
         slashes: true,
     })
 }
-
+/**
+ * Open the Script Editor Window
+ */
 function createEditorWindow() {
     window.createWindow('EditorWindow', {
         parent: 'ConfigWindow',
@@ -345,7 +357,7 @@ function createEditorWindow() {
 }
 /**
  * Login to Neos
- *
+ * @async
  * @param {string} credential username, or email
  * @param {string} password password
  * @returns {JSON} Session Object
@@ -367,7 +379,11 @@ function login(credential, password) {
     /* Login User and return Session Token */
     return sendLoginPost(loginPayload)
 }
-
+/**
+ * Send a login request to the Neos Server
+ * @param {{secretMachineId:String,email:String,password:String,rememberMe:boolean}} loginPayload Login Info
+ * @return {JSON} Session Object
+ */
 function sendLoginPost(loginPayload) {
     return fetch(CLOUDX_PRODUCTION_NEOS_API + 'api/userSessions', {
             method: "POST",
@@ -476,15 +492,14 @@ ipcMain.on('Console:Command', function(e, item) {
     }
     instances.get(item.id).runCommand(`\n${item.command}\nlog\n`)
     if (item.command === 'shutdown') {
-        instances[item.id].Vars.Status = 'Shutting Down'
-        instances[item.id].Vars.event = 'ShuttingDown'
-        instances[item.id].Vars.displayStatusMessage = true
+        instances[item.id].Vars._Status = 'Shutting Down'
+        instances[item.id].Vars._event = 'ShuttingDown'
+        instances[item.id].Vars._displayStatusMessage = true
         instances[item.id].update()
         instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
     }
 })
 
-// Main Menu Template
 const mainMenuTemplate = [{
         label: 'Main',
         submenu: [{
@@ -572,8 +587,10 @@ if (process.env.NODE_ENV !== 'production') {
     })
 }
 
-
-
+/**
+ * @async
+ * @param {CheckInternetCallback} cb Callback Function
+ */
 
 function checkInternet(cb) {
     require('url-exists')(`https://neosvr.com/`, function(err, exists) {
@@ -585,7 +602,10 @@ function checkInternet(cb) {
         }
     });
 }
-
+/**
+ * @callback CheckInternetCallback
+ * @param {boolean} isConnected Has internet Connection
+ */
 
 
 
