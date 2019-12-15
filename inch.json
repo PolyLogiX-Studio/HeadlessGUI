@@ -1,0 +1,14 @@
+{
+    "files": {
+      "included": [
+        "*.js",
+        "Pages/*.html",
+        "Pages/Resources/*.js"
+      ],
+      "excluded": [
+        ".API/",
+        "Pages/ace-builds/",
+        "node_modules/"
+      ]
+    }
+  }
