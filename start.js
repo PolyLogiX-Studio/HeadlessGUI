@@ -4,6 +4,12 @@ const path = require('path');
 const uuidv4 = require('uuid/v4');
 const fetch = require('node-fetch');
 const jsdoc2md = require('jsdoc-to-markdown')
+/**EventBus;
+ * This is a standard Event Emitter linking the Server, Windows, and main process
+ * @namespace {Object} bus
+ * @listens {{Server:Update|Server:Log|Console:Close}}
+ * @see EventEmitter
+ */
 var bus = require('./eventBus')
 var md = require('markdown-it')();
 const {
@@ -71,16 +77,29 @@ function closeAllWindows() {
     window.closeAllWindows()
 }
 //Init
+/** System Path
+ * @typedef {String} path
+ */
 
-/**@const %AppData%/Roaming/Headless Core/*/
-var dataDir = app.getPath('userData') //AppData/Roaming
-/**@const %AppData%/Roaming/Headless Core/Scripts/*/
+/** Path to %AppData%/Headless Core/
+ * @const {path} dataDir
+ */
+var dataDir = app.getPath('userData') 
+/** Path to %AppData%/Headless Core/Scripts/
+ * @const {path} scriptsDir
+ */
 var scriptsDir = path.join(dataDir, 'Scripts')
-/**@const %AppData%/Roaming/Headless Core/Scripts/Enabled */
+/** Path to %AppData%/Headless Core/Scripts/Enabled
+ * @const {path} enabledScriptsDir
+ */
 var enabledScriptsDir = path.join(scriptsDir, 'Enabled')
-/**@const %AppData%/Roaming/Headless Core/Scripts/Disabled */
+/** Path to %AppData%/Headless Core/Scripts/Disabled
+ * @const {path} disabledScriptsDir
+ */
 var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
-/**@const %AppData%/NeosHeadlessManager/Active Sessions */
+/** Path to %AppData%/Headless Core/Active Sessions/
+ * @const {path} sessionsDir
+ */
 var sessionsDir = path.join(dataDir, "Active Sessions") 
 fs.removeSync(sessionsDir)
 // Setup Scripts folder
@@ -370,6 +389,7 @@ function createEditorWindow() {
 }
 /**
  * Login to Neos
+ * @ignore 
  * @async
  * @param {string} credential username, or email
  * @param {string} password password
@@ -394,6 +414,7 @@ function login(credential, password) {
 }
 /**
  * Send a login request to the Neos Server
+ * @ignore
  * @param {{secretMachineId:String,email:String,password:String,rememberMe:boolean}} loginPayload Login Info
  * @return {JSON} Session Object
  */
@@ -605,6 +626,13 @@ if (process.env.NODE_ENV !== 'production') {
 /**
  * @async
  * @param {CheckInternetCallback} cb Callback Function
+ * @example checkInternet(function(connected){
+ * if(connected){
+ *  //do
+ * } else {
+ *  //not
+ * }
+ * })
  */
 
 function checkInternet(cb) {

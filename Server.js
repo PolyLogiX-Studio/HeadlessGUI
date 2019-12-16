@@ -1,9 +1,10 @@
+var bus
+const fetch = require('node-fetch');
 /**
  * Neos Config
  * @param {Object} DefaultConfig
  */
-var bus
-const fetch = require('node-fetch');
+
 const DefaultConfig = {
     "tickRate": 60.0,
     "usernameOverride": null,
