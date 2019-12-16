@@ -81,15 +81,22 @@ class WindowManager {
         this.Windows[ID].setMenu(menu)
         this.Windows[ID].Children = (data.children? data.children : []);
         //console.log('menu',menu)
-        
-        this.Windows[ID].loadURL(url.format(data.page))
+        let windowURL = url.format(data.page)
+        if(data.query){
+            let t_query = ""
+            for (const [key, value] of Object.entries(data.query)){
+                t_query += `${key}=${encodeURIComponent(value)}&`
+            }
+            windowURL += `?${t_query}`
+        }
+        this.Windows[ID].loadURL(windowURL)
         this.Windows[ID].once('ready-to-show', () => {
             this.Windows[ID].show()
         })
         // GC Handle
         this.Windows[ID].onClose = (this.Windows[ID].on('close', ()=> {
             console.log(`Manual Close on ${ID}`)
-            for (let i=0;this.Windows[ID].Children.length; i++){
+            for (let i=0;i<this.Windows[ID].Children.length; i++){
                 this.closeWindow(this.Windows[ID].Children[i])
             }
             delete this.Windows[ID]

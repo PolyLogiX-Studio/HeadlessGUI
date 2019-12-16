@@ -3,7 +3,8 @@ const url = require('url');
 const path = require('path');
 const uuidv4 = require('uuid/v4');
 const fetch = require('node-fetch');
-
+const jsdoc2md = require('jsdoc-to-markdown')
+var md = require('markdown-it')();
 const {
     dialog,
     app,
@@ -216,7 +217,7 @@ shuttingDown = false
  */
 function safeQuit() {
     shuttingDown = true
-    window.closeAllWindows()
+    window.closeWindow('MainWindow')
     instances.endAll()
 }
 
@@ -349,11 +350,11 @@ function createEditorWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    }, {
+    }, {page:{
         pathname: path.join(__dirname, 'Pages/ScriptEditor.html'),
         protocol: 'file:',
         slashes: true,
-    }, null)
+    }}, null)
 }
 /**
  * Login to Neos
@@ -446,6 +447,7 @@ ipcMain.on('server:new', function(e, item) {
     window.sendData('MainWindow','Main:updateList', item);
     window.closeWindow('AddWindow')
     instances.newSession({
+        sessionsDir:sessionsDir,
         UUID: item.id,
         usernameOverride: item.usernameOverride,
         sessionName: item.sessionName,
@@ -610,7 +612,30 @@ function checkInternet(cb) {
 
 
 //Server Pipe
-
+ipcMain.on('Server:Update',function(e, serverObject) {
+    window.sendData(`ServerManager-${serverObject.ID}`,'Update:Raw',serverObject)
+})
+ipcMain.on("Console:Close", function(e, id){
+    window.closeWindow(`ServerManager-${id}`)
+})
 ipcMain.on('openManager', function(e, id) {
     instances.get(id).openWindow()
+    window.createWindow(`ServerManager-${id}`, {
+        parent: 'MainWindow',
+        show: false,
+        darkTheme: true,
+        width: 1200,
+        height: 800,
+        title: "Console",
+        icon: ICON_GLOBAL_PNG,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    }, {page:{
+        pathname: path.join(__dirname, `/Pages/ServerManager.html`),
+        protocol: 'file:',
+        slashes: true,
+    },query:{"id":this.ID}})
+
+    
 })

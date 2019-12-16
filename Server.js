@@ -35,6 +35,18 @@ const DefaultConfig = {
 const {
     spawn
 } = require('child_process');
+const Store = require('electron-store');
+/**
+ * App Config Store
+ */
+const electron = require('electron')
+         const {
+             ipcRenderer
+         } = electron;
+const config = new Store({
+    name: 'config'
+});
+const path = require('path')
 const fs = require('fs-extra'); //Recursive Folder Delete
 const uuidv4 = require('uuid/v4');
 /**
@@ -44,6 +56,7 @@ const uuidv4 = require('uuid/v4');
 class Server {
     /**
      *Creates an instance of Server.
+     * @param {string} sessionsDir Directory
      * @param {string} [UUID=uuidv4()] Instance Session ID, Generate if none specified
      * @param {string} [usernameOverride=null] Username for server to use
      * @param {string} [sessionName="DefaultWorld"] Name of Session
@@ -66,7 +79,7 @@ class Server {
      * @param {string} [autoInviteMessage=null] Message to send with Invite
      * @memberof Server
      */
-    constructor(UUID = uuidv4(), usernameOverride = null, sessionName = "DefaultWorld", loadWorldURL = null, maxUsers = 32, description = null, saveOnExit = false, autosaveInterval = -1.0, accessLevel = "Anyone", loadWorldPresetName = "SpaceWorld", autoRecover = false, mobileFriendly = false, tickRate = 60, keepOriginalRoles = false, defaultUserRoles = null, idleRestartInterval = -1.0, forcedRestartInterval = -1.0, forcePort = null, autoInviteUsernames = null, autoInviteMessage = null) {
+    constructor(sessionsDir,UUID = uuidv4(), usernameOverride = null, sessionName = "DefaultWorld", loadWorldURL = null, maxUsers = 32, description = null, saveOnExit = false, autosaveInterval = -1.0, accessLevel = "Anyone", loadWorldPresetName = "SpaceWorld", autoRecover = false, mobileFriendly = false, tickRate = 60, keepOriginalRoles = false, defaultUserRoles = null, idleRestartInterval = -1.0, forcedRestartInterval = -1.0, forcePort = null, autoInviteUsernames = null, autoInviteMessage = null) {
         if (!fs.existsSync(sessionsDir)) {
             fs.mkdirSync(sessionsDir)
         }
@@ -161,7 +174,7 @@ class Server {
             this.Vars._displayStatusMessage = true;
             this.update();
             if (this.Console !== null) {
-                this.Console.close();
+                ipcRenderer.send("Console:Close",this.ID)
                 this.Console = null
             }
 
@@ -342,10 +355,7 @@ class Server {
      */
     update() {
         this.log('Updating Server Info')
-        if (this.Console) {
-            this.Console.webContents.send("Update:Raw", this)
-        }
-        mainWindow.webContents.send('Server:Update', this)
+        ipcRenderer.send('Server:Update', this)
         if (this.Vars._displayStatusMessage) {
             this.Vars._displayStatusMessage = false
         }
@@ -354,33 +364,13 @@ class Server {
      * Open Server Console
      *
      * @memberof Server
+     * @return {string} Window ID
      */
     openWindow() {
-        this.Console = new BrowserWindow({
-            parent: mainWindow,
-            show: false,
-            width: 1200,
-            height: 800,
-            title: "Console",
-            icon: ICON_GLOBAL_PNG,
-            webPreferences: {
-                nodeIntegration: true
-            }
-        });
-        this.Console.loadURL(url.format({
-            pathname: path.join(__dirname, `/Pages/ServerManager.html`),
-            protocol: 'file:',
-            slashes: true,
-        }) + `?id=${this.ID}`);
-        if (process.env.NODE_ENV === 'production') {
-            this.Console.setMenu(null)
-        }
-        this.Console.once('ready-to-show', () => {
-            this.Console.show()
-        })
-        this.Console.on('close', () => {
-            this.Console = null
-        })
+        return "ServerManager-"+this.ID
+    }
+    consoleClosed(){
+        this.Console = null
     }
     /**
      * Run a Neos Command
@@ -427,7 +417,7 @@ class Instances {
      */
     newSession(session){
         if (!session.UUID){session.UUID = uuidv4()}
-       this.Instances[session.UUID] = new Server(session.UUID, session.usernameOverride, session.sessionName, session.loadWorldURL, session.maxUsers, session.description, session.saveOnExit, session.autosaveInterval, session.accessLevel, session.loadWorldPresetName, session.autoRecover, session.mobileFriendly, session.tickRate, session.keepOriginalRoles, session.defaultUserRoles, session.idleRestartInterval, session.forcedRestartInterval, session.forcePort, session.autoInviteUsernames, session.autoInviteMessage)
+       this.Instances[session.UUID] = new Server(session.sessionsDir,session.UUID, session.usernameOverride, session.sessionName, session.loadWorldURL, session.maxUsers, session.description, session.saveOnExit, session.autosaveInterval, session.accessLevel, session.loadWorldPresetName, session.autoRecover, session.mobileFriendly, session.tickRate, session.keepOriginalRoles, session.defaultUserRoles, session.idleRestartInterval, session.forcedRestartInterval, session.forcePort, session.autoInviteUsernames, session.autoInviteMessage)
     
     }
 }
