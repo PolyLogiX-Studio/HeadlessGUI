@@ -2,6 +2,8 @@
  * Neos Config
  * @param {Object} DefaultConfig
  */
+var bus
+const fetch = require('node-fetch');
 const DefaultConfig = {
     "tickRate": 60.0,
     "usernameOverride": null,
@@ -39,10 +41,6 @@ const Store = require('electron-store');
 /**
  * App Config Store
  */
-const electron = require('electron')
-         const {
-             ipcRenderer
-         } = electron;
 const config = new Store({
     name: 'config'
 });
@@ -174,7 +172,7 @@ class Server {
             this.Vars._displayStatusMessage = true;
             this.update();
             if (this.Console !== null) {
-                ipcRenderer.send("Console:Close",this.ID)
+                bus.emit("Console:Close",this.ID)
                 this.Console = null
             }
 
@@ -276,7 +274,7 @@ class Server {
                 return
             }
             if (this.Console !== null) {
-                this.Console.webContents.send('Server:Log', data.toString())
+                bus.emit('Server:Log',this.ID, data.toString())
             }
         });
         return this
@@ -355,19 +353,10 @@ class Server {
      */
     update() {
         this.log('Updating Server Info')
-        ipcRenderer.send('Server:Update', this)
+        bus.emit('Server:Update', this)
         if (this.Vars._displayStatusMessage) {
             this.Vars._displayStatusMessage = false
         }
-    }
-    /**
-     * Open Server Console
-     *
-     * @memberof Server
-     * @return {string} Window ID
-     */
-    openWindow() {
-        return "ServerManager-"+this.ID
     }
     consoleClosed(){
         this.Console = null
@@ -398,6 +387,26 @@ class Instances {
         if (!this.Instances[id]) {return undefined}
         return this.Instances[id]
     }
+    runCommand(id,command){
+        this.Instances[id].Session.stdin.write(`\n${command}\nlog\n`)
+    }
+    /**
+     * 
+     * @param {String} id Server ID
+     */
+    openWindow(id){
+        if (!this.Instances[id]) {return undefined}
+        this.Instances[id].Console = true
+    }
+    /**
+     * Call Instance Update
+     * @memberof Server
+     * @param {String} id Server ID
+     */
+    update(id){
+        if (!this.Instances[id]) {return}
+        this.Instances[id].update()
+    }
     /**
      * Close all servers
      */
@@ -421,4 +430,4 @@ class Instances {
     
     }
 }
-module.exports = {Instances,Server}
+module.exports = function(b){bus = b; return {Instances,Server}}

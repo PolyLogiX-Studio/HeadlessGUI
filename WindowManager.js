@@ -1,6 +1,6 @@
 const url = require('url');
 const uuidv4 = require('uuid/v4');
-
+var bus
 /**
  * @typedef WindowProperties
  * @type {Object}
@@ -82,13 +82,16 @@ class WindowManager {
         this.Windows[ID].Children = (data.children? data.children : []);
         //console.log('menu',menu)
         let windowURL = url.format(data.page)
+        console.log('query',data.query)
         if(data.query){
             let t_query = ""
             for (const [key, value] of Object.entries(data.query)){
                 t_query += `${key}=${encodeURIComponent(value)}&`
             }
             windowURL += `?${t_query}`
+
         }
+        console.log('windowURL',windowURL)
         this.Windows[ID].loadURL(windowURL)
         this.Windows[ID].once('ready-to-show', () => {
             this.Windows[ID].show()
@@ -145,4 +148,4 @@ class WindowManager {
 }
 
 
-module.exports = {WindowManager}
+module.exports = function(b){ bus = b; return {WindowManager}}

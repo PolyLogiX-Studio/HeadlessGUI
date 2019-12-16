@@ -4,6 +4,7 @@ const path = require('path');
 const uuidv4 = require('uuid/v4');
 const fetch = require('node-fetch');
 const jsdoc2md = require('jsdoc-to-markdown')
+var bus = require('./eventBus')
 var md = require('markdown-it')();
 const {
     dialog,
@@ -13,9 +14,20 @@ const {
     ipcMain
 } = electron;
 const Store = require('electron-store');
-const Window = require('./WindowManager').WindowManager;
+const Window = require('./WindowManager')(bus).WindowManager;
+ipcMain.on('fetchDocs', function(e){
+    console.log('Generating Documentation')
+    var Docs = jsdoc2md.renderSync({ files: './*.js' })
+    console.log('Converting to HTML')
+    window.sendData('EditorWindow','Documentation:Update',Docs)
+})
+
+
+
+
+
 /**
- * Window Manager
+ * System Window Manager
  */
 const window = new Window(BrowserWindow);
 /**
@@ -81,7 +93,7 @@ if (!fs.pathExistsSync(disabledScriptsDir)) {
 if (!fs.pathExistsSync(enabledScriptsDir)) {
     fs.mkdirSync(enabledScriptsDir)
 }
-const {Instances} = require("./Server.js")
+const {Instances} = require("./Server.js")(bus)
 const instances = new Instances()
 const scriptsConfig = new Store({
     name: 'scripts',
@@ -248,7 +260,7 @@ function createAddWindow() {
     }
     window.sendData('MainWindow','removeStart')
     
-    window.createWindow('addWindow', {
+    window.createWindow('AddWindow', {
         parent: 'MainWindow',
         show: false,
         darkTheme: true,
@@ -343,8 +355,8 @@ function createEditorWindow() {
         parent: 'ConfigWindow',
         show: false,
         darkTheme: true,
-        width: 1000,
-        height: 1000,
+        width: 1920,
+        height: 1080,
         title: "Editor",
         icon: path.join(__dirname, '/images/polylogix.jpg'),
         webPreferences: {
@@ -478,7 +490,8 @@ ipcMain.on('openURL', function(e, item) {
     createURLWindow(item)
 })
 ipcMain.on('getUpdateRaw', function(e, session) {
-    instances.get(session).update()
+    console.log(session)
+    instances.update(session)
 })
 ipcMain.on('Console:Command', function(e, item) {
     if (!instances.get(item.id).val()) {
@@ -492,7 +505,7 @@ ipcMain.on('Console:Command', function(e, item) {
         })
         return
     }
-    instances.get(item.id).runCommand(`\n${item.command}\nlog\n`)
+    instances.runCommand(item.id,item.command)
     if (item.command === 'shutdown') {
         instances[item.id].Vars._Status = 'Shutting Down'
         instances[item.id].Vars._event = 'ShuttingDown'
@@ -610,16 +623,21 @@ function checkInternet(cb) {
  */
 
 
-
 //Server Pipe
-ipcMain.on('Server:Update',function(e, serverObject) {
+bus.on('Server:Update',function(serverObject) {
+    console.log('Server:Update')
     window.sendData(`ServerManager-${serverObject.ID}`,'Update:Raw',serverObject)
 })
-ipcMain.on("Console:Close", function(e, id){
+bus.on("Console:Close", function(id){
+    console.log('console:close:',id)
     window.closeWindow(`ServerManager-${id}`)
 })
+bus.on('Server:Log',function(id,message){
+    console.log(`${id}:${message}`)
+    window.sendData(`ServerManager-${id}`,'Server:Log',message)
+})
 ipcMain.on('openManager', function(e, id) {
-    instances.get(id).openWindow()
+    instances.openWindow(id)
     window.createWindow(`ServerManager-${id}`, {
         parent: 'MainWindow',
         show: false,
@@ -635,7 +653,7 @@ ipcMain.on('openManager', function(e, id) {
         pathname: path.join(__dirname, `/Pages/ServerManager.html`),
         protocol: 'file:',
         slashes: true,
-    },query:{"id":this.ID}})
+    },query:{"id":id}})
 
     
 })

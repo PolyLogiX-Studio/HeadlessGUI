@@ -15,41 +15,66 @@
             bottom: 0;
             left: 0;
         }
+        html, body{height:100%}
+        /* width */
+        ::-webkit-scrollbar {
+         width: 20px;
+         }
+         /* Track */
+         ::-webkit-scrollbar-track {
+         box-shadow: inset 0 0 5px grey;
+         border-radius: 10px;
+         }
+         /* Handle */
+         ::-webkit-scrollbar-thumb {
+         background: #00afed;
+         border-radius: 10px;
+         }
+         /* Handle on hover */
+         ::-webkit-scrollbar-thumb:hover {
+         background: #00afed;
+         }
     </style>
    </head>
    <body>
        
         <script src="./ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-      <script>
+        <script>
          const electron = require('electron')
          var {
              ipcRenderer
          } = electron;
          const fs = require('fs')
          const path = require('path');
+         
+         var md = require('markdown-it')('commonmark');
          $(document).ready(function () {
             var editor = ace.edit("editor");
             editor.setTheme("ace/theme/terminal");
             editor.session.setMode("ace/mode/javascript");
+            ipcRenderer.send('fetchDocs')
+            
          })
-         
+         ipcRenderer.on('Documentation:Update',(e,docs)=>{
+            document.getElementById('functions').innerHTML = md.render(docs)
+         })
       </script>
 
-<div id="editor" style="width:75%; float: left;" >/* EXAMPLE COMMAND */
+<div id="editor" style="width:70%; float: left;" >/* EXAMPLE COMMAND */
 function run(CORE,EVENT,SESSION_ID,COMMAND_STRING){
     let user = CORE.Instances[SESSION_ID].Vars.Users.find(e => e.username === COMMAND_STRING.substring(6))
     if (!user){return {success:true,output:"No User Found",callUpdate:false,Vars:CORE.Instances[SESSION_ID].Vars}}
     CORE.Instances[SESSION_ID].Vars.IP_Banlist.push(user.ip)
     return {success:true,output:`IP ${user.ip} Banned!`,callUpdate:true,Vars:CORE.Instances[SESSION_ID].Vars} 
 }</div>
-<div class="card border-primary mb-3" style="width:25%; max-width: 20rem; float: right; height: 100%;">
+<div class="card border-primary mb-3" style="width:30%; float: right; height: 100%;">
       <div class="card-header">API Refrence</div>
       <div class="card-body">
         <h4 class="card-title">Functions</h4>
-        <div id="functions">
+        <div id="functions" style="height:100%; overflow-y: scroll;">
         </div>
       </div>
     </div>
-
+    
    </body>
 </html>
