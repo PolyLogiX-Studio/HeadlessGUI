@@ -69,7 +69,7 @@
         const fetch = require('node-fetch')
         const LocalizedStrings = require('localized-strings').default
         var lang = ipcRenderer.sendSync('fetchLang')
-        var strings = new LocalizedStrings(lang)
+        var strings = new LocalizedStrings(lang, {pseudo: true})
         strings.setLanguage(config.get('lang'))
 
 

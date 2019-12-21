@@ -127,7 +127,7 @@ var lang = {}
 console.log(lang)
 
 const LocalizedStrings = require('localized-strings').default
-var strings = new LocalizedStrings(lang)
+var strings = new LocalizedStrings(lang, {pseudo: true})
     strings.setLanguage(config.get('lang'))
 
 
