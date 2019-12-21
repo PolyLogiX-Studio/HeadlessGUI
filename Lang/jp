@@ -1,0 +1,13 @@
+{
+    "Main":"メイン",
+    "New_Server":"新しいサーバー",
+    "Config"："構成",
+    "Refresh"："更新",
+    "Quit"："終了",
+    "Help":"助けて",
+    "Online_Help"： "オンラインヘルプ",
+    "MyPXAccount"： "My PolyLogiXアカウント",
+    "ReportBug"： "バグの報告",
+    "SupportUs"： "Patreonでサポートしてください！",
+    "ConfigError"： "<b>Oh Snap！</b>サーバーを起動する前に構成を設定してください！<b>メイン->構成</b>または<b>{0}</ b> ","PreReleaseNotif"： "プレリリースビルドを実行しています。問題が発生した場合は、<b>F3</b>で報告してください","NewServerNotif"： "<b>メイン->新しいサーバー</b>から、または<b>Ctrl + N </b>を押して新しいサーバーを起動します。"
+}

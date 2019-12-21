@@ -67,7 +67,10 @@
         const config = new Store({name: 'config'});
         const themes = new Store({name: 'themes'});
         const fetch = require('node-fetch')
-       
+        const LocalizedStrings = require('localized-strings').default
+        var lang = ipcRenderer.sendSync('fetchLang')
+        var strings = new LocalizedStrings(lang)
+        strings.setLanguage(config.get('lang'))
 
 
         checkInternet(function(isConnected){
@@ -84,7 +87,7 @@
             updateSession(session)
         })
         ipcRenderer.on('ConfigError', function(e, items) {
-            removeAlert(addAlert('<strong>Oh Snap!</strong> Make sure to set your config before starting a server! Do this in <strong>Main -> Config</strong> or with <strong>' + (process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P') + '</strong>', 'danger', 'noConfig'), 5000)
+            removeAlert(addAlert(strings.formatString(strings.getString("ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig'), 5000)
         });
         ipcRenderer.on('removeStart', function(e, items) {
             removeAlert('StartupAlert')
@@ -175,9 +178,10 @@
         }
 
 
-        addAlert('Start a New Server through <strong>Main -> New Server</strong> Or by pressing <strong>Ctrl+N</strong>.', 'info', 'StartupAlert')
+        addAlert(strings.getString('NewServerNotif'), 'info', 'StartupAlert')
+
         if (!store.has('configSet')||!config.get('loginPassword')) {
-            addAlert('<strong>Oh Snap!</strong> Make sure to set your config before starting a server! Do this in <strong>Main -> Config</strong> or with <strong>' + (process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P') + '</strong>', 'danger', 'noConfig')
+            addAlert(strings.formatString(strings.getString("ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig')
         }
 
 
@@ -190,7 +194,7 @@
         let releaseTag = compareVersions(json.tag_name,VERSION)
         switch (releaseTag){
             case -1:
-            addAlert('You are running a Pre-Release Build, If you encounter Issues, Please report them with <strong>F3</strong>','warning')
+            addAlert(strings.getString('PreReleaseNotif'),'warning')
             break
             case 1:
             addAlert(`<h4 class="alert-heading">A new version <strong>${json.tag_name}</strong> is available <a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">Here</a></h4><p class="mb-0">${json.body}</p>`,'warning')

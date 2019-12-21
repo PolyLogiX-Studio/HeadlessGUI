@@ -127,9 +127,15 @@
          const store = new Store({name: 'dat'});
          const config = new Store({name: 'config'});
          const themes = new Store({name: 'themes'});
+         var strings
          const {
              ipcRenderer
          } = electron
+         $(document).ready(function () {
+            const LocalizedStrings = require('localized-strings').default;
+            strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'))
+            strings.setLanguage(config.get('language'))
+         })
          const form = $('#newServerButton').click(function(event){submitForm(event)});
          var advanced = {
              "forcePort": null,

@@ -4,6 +4,7 @@ const path = require('path');
 const uuidv4 = require('uuid/v4');
 const fetch = require('node-fetch');
 const jsdoc2md = require('jsdoc-to-markdown')
+
 /**EventBus;
  * This is a standard Event Emitter linking the Server, Windows, and main process
  * @namespace {Object} bus
@@ -29,9 +30,6 @@ ipcMain.on('fetchDocs', function(e){
 })
 
 
-
-
-
 /**
  * System Window Manager
  */
@@ -46,7 +44,8 @@ const store = new Store({
  * App Config Store
  */
 const config = new Store({
-    name: 'config'
+    name: 'config',
+    defaults:{lang:'en'}
 });
 /**
  * Themes Store
@@ -112,6 +111,35 @@ if (!fs.pathExistsSync(disabledScriptsDir)) {
 if (!fs.pathExistsSync(enabledScriptsDir)) {
     fs.mkdirSync(enabledScriptsDir)
 }
+/** Path to %AppData%/Headless Core/Lang/
+ * @const {path} langDir
+ */
+var langDir = path.join(dataDir, 'Lang')
+if (!fs.pathExistsSync(langDir)) {
+    fs.copySync("./Lang",langDir)
+}
+var lang = {}
+        let filenames = fs.readdirSync(langDir)
+      filenames.forEach(function(filename) {
+        let content = fs.readFileSync(path.join(langDir,filename))
+          lang[filename] = JSON.parse(content);
+      })
+console.log(lang)
+
+const LocalizedStrings = require('localized-strings').default
+var strings = new LocalizedStrings(lang)
+    strings.setLanguage(config.get('lang'))
+
+
+
+
+
+
+
+
+
+
+
 const {Instances} = require("./Server.js")(bus)
 const instances = new Instances()
 const scriptsConfig = new Store({
@@ -360,11 +388,11 @@ function createURLWindow(URL) {
         webPreferences: {
             nodeIntegration: false
         }
-    }, {
+    },{page: {
         pathname: URL,
         protocol: 'https:',
         slashes: true,
-    })
+    }})
 }
 /**
  * Open the Script Editor Window
@@ -537,23 +565,23 @@ ipcMain.on('Console:Command', function(e, item) {
 })
 
 const mainMenuTemplate = [{
-        label: 'Main',
+        label: strings.getString('Main'),
         submenu: [{
-                label: 'New Server',
+                label: strings.getString('New_Server'),
                 accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
                 click() {
                     createAddWindow()
                 }
             },
             {
-                label: "Config",
+                label: strings.getString('Config'),
                 accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
                 click() {
                     createConfigWindow()
                 }
             },
             {
-                label: "Refresh",
+                label: strings.getString('Refresh'),
                 accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
                 click() {
                     RefreshAll()
@@ -563,7 +591,7 @@ const mainMenuTemplate = [{
                 type: 'separator'
             },
             {
-                label: 'Quit',
+                label: strings.getString('Quit'),
                 accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
                 click() {
                     safeQuit()
@@ -572,23 +600,23 @@ const mainMenuTemplate = [{
         ]
     },
     {
-        label: 'Help',
+        label: strings.getString('Help'),
         submenu: [{
-                label: 'Online Help',
+                label: strings.getString('Online_Help'),
                 accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
                 click() {
                     createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
                 }
             },
             {
-                label: 'My PolyLogiX Account',
+                label: strings.getString('MyPXAccount'),
                 accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
                 click() {
                     createURLWindow('www.polylogix.studio/PolyLogiX-Account')
                 }
             },
             {
-                label: 'Report a Bug',
+                label: strings.getString('ReportBug'),
                 accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
                 click() {
                     createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
@@ -598,7 +626,7 @@ const mainMenuTemplate = [{
 
     },
     {
-        label: "Support Us on Patreon!",
+        label: strings.getString('SupportUs'),
         click() {
             createURLWindow('www.patreon.com/PolyLogiX_VR')
         }
@@ -663,6 +691,9 @@ bus.on("Console:Close", function(id){
 bus.on('Server:Log',function(id,message){
     console.log(`${id}:${message}`)
     window.sendData(`ServerManager-${id}`,'Server:Log',message)
+})
+ipcMain.on('fetchLang', (event)=>{
+    event.returnValue = strings.getContent()
 })
 ipcMain.on('openManager', function(e, id) {
     instances.openWindow(id)
