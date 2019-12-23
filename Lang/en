@@ -1,15 +1,74 @@
 {
-    "Main":"Main",
-    "New_Server": "New Server",
-    "Config":"Config",
-    "Refresh":"Refresh",
-    "Quit": "Quit",
-    "Help": "Help",
-    "Online_Help":"Online Help",
-    "MyPXAccount":"My PolyLogiX Account",
-    "ReportBug":"Report A Bug",
-    "SupportUs":"Support Us on Patreon!",
-    "ConfigError":"<b>Oh Snap!</b> Make sure to set your config before starting a server! Do this in <b>Main -> Config</b> or with <b>{0}</b>",
-    "PreReleaseNotif":"You are running a Pre-Release Build, If you encounter Issues, Please report them with <b>F3</b>",
-    "NewServerNotif":"Start a New Server through <b>Main -> New Server</b> Or by pressing <b>Ctrl+N</b>."
-}
+    "Menu": {
+       "Main": "Main",
+       "New_Server": "New Server",
+       "Config": "Config",
+       "Refresh": "Refresh",
+       "Quit": "Quit",
+       "Help": "Help",
+       "Online_Help": "Online Help",
+       "MyPXAccount": "My PolyLogiX Account",
+       "ReportBug": "Report A Bug",
+       "SupportUs": "Support Us on Patreon!",
+       "General":"General",
+       "Advanced":"Advanced",
+       "Addons":"Addons",
+       "Misc":"Misc"
+
+    },
+    "Notifications": {
+       "ConfigError": "<b>Oh Snap!</b> Make sure to set your config before starting a server! Do this in <b>Main -> Config</b> or with <b>{0}</b>",
+       "PreReleaseNotif": "You are running a Pre-Release Build, If you encounter Issues, Please report them with <b>F3</b>",
+       "NewServerNotif": "Start a New Server through <b>{0} -> {1}</b> Or by pressing <b>Ctrl+N</b>.",
+       "NewVersionNotif":"A new version <b>{0}</b> is available {1}Here{2}"
+    },
+    "Roles":{
+       "Spectator":"Spectator",
+       "Guest":"Guest",
+       "Moderator":"Moderator",
+       "Builder":"Builder",
+       "Admin":"Admin"
+    },
+    "WorldTypes":{
+       "SpaceWorld":"SpaceWorld",
+       "BasicEmpty":"Basic Empty",
+       "GridSpace":"GridSpace",
+       "Microworld":"Microworld"
+    },
+    "AccessLevel":{
+       "Anyone":"Anyone",
+       "RegisteredUsers":"Registered Users",
+       "Friends":"Friends",
+       "LAN":"LAN",
+       "Private":"Private"
+    },
+    "Config":{
+        "Username":"Username",
+        "Password":"Password",
+        "sessionName":"Session Name",
+        "description":"Description",
+        "maxUsers":"User Limit",
+        "accessLevel":"Visibility",
+        "loadWorldURL":"World Record URL",
+        "helpContext":"What is This?",
+        "loadWorldPresetName":"Load World Preset Name",
+        "autosaveInterval":"Autosave Interval ({0})",
+        "mobileFriendly":"Mobile Friendly",
+        "autoRecover":"Auto Recover",
+        "saveOnExit":"Save on Exit",
+        "forcePort":"Force Port",
+        "Port":"Port",
+        "idleRestartInterval":"Restart on Idle",
+        "forcedRestartInterval":"Force Restart",
+        "Time":"Time ({0})",
+        "keepOriginalRolesNOT":"Custom Permissions",
+        "PERMISSIONS":"Permissions",
+        "NewRoleButton":"New Role",
+        "togleInvites":"Invite Users",
+        "INVITES":"Invites",
+        "NewInviteButton":"New Invite"
+    },
+    "Terms":{
+       "Seconds":"Seconds"
+    }
+ }

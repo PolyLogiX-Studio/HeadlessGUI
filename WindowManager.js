@@ -78,7 +78,7 @@ class WindowManager {
         //console.log(prop)
         
         this.Windows[ID] = new this.BrowserWindow(prop);
-        this.Windows[ID].setMenu(menu)
+        //this.Windows[ID].setMenu(menu)
         this.Windows[ID].Children = (data.children? data.children : []);
         //console.log('menu',menu)
         let windowURL = url.format(data.page)

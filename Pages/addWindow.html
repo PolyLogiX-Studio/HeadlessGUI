@@ -33,85 +33,85 @@
    <body>
       <ul class="nav nav-tabs">
          <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#general">General</a>
+            <a id="GeneralL" class="nav-link active" data-toggle="tab" href="#general">General</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#advanced">Advanced</a>
+            <a id="AdvancedL" class="nav-link" data-toggle="tab" href="#advanced">Advanced</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link disabled" data-toggle="tab" href="#addons">Addons</a>
+            <a id="AddonsL" class="nav-link disabled" data-toggle="tab" href="#addons">Addons</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link disabled" data-toggle="tab" href="#">Misc</a>
+            <a id="MiscL" class="nav-link disabled" data-toggle="tab" href="#">Misc</a>
          </li>
       </ul>
       <div id="myTabContent" class="tab-content">
          <div class="tab-pane fade active show" id="general">
-            <label for="sessionName">Session Name</label>
+            <label id="sessionNameL" for="sessionName">Session Name</label>
             <input type="text" id="sessionName" class="form-control" placeholder="Default World">
-            <label for="description">Description</label>
+            <label id="descriptionL" for="description">Description</label>
             <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
-            <label for="maxUsers">User Limit</label>
+            <label id="maxUsersL" for="maxUsers">User Limit</label>
             <input type="number" id="maxUsers" class="form-control" placeholder="User Limit" min="1" max="32" value="32">
-            <label for="accessLevel">Visibility</label>
+            <label id="accessLevelL" for="accessLevel">Visibility</label>
             <select class="custom-select" id="accessLevel">
-               <option value="Anyone" selected>Anyone</option>
-               <option value="RegisteredUsers">Registered Users</option>
-               <option value="Friends">Friends</option>
-               <option value="LAN">LAN</option>
-               <option value="Private">Private</option>
+               <option id="AnyoneL" value="Anyone" selected>Anyone</option>
+               <option id="RegisteredUsersL" value="RegisteredUsers">Registered Users</option>
+               <option id="FriendsL" value="Friends">Friends</option>
+               <option id="LANL" value="LAN">LAN</option>
+               <option id="PrivateL" value="Private">Private</option>
             </select>
-            <label for="loadWorldURL">World Record URL <small class="text-info"><a href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is
+            <label id="loadWorldURLL" for="loadWorldURL">World Record URL <small class="text-info"><a id="helpContextL" href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is
             This?</a></small></label>
             <input type="text" id="loadWorldURL" class="form-control" placeholder="neosrec:///">
-            <label for="loadWorldPresetName">Load World Preset Name</label>
+            <label id="loadWorldPresetNameL" for="loadWorldPresetName">Load World Preset Name</label>
             <select class="custom-select" id="loadWorldPresetName">
-               <option value="SpaceWorld" selected>SpaceWorld</option>
-               <option value="Basic Empty">Basic Empty</option>
-               <option value="GridSpace">GridSpace</option>
-               <option value="Microworld">Microworld</option>
+               <option id="SpaceWorldL" value="SpaceWorld" selected>SpaceWorld</option>
+               <option id="BasicEmptyL" value="Basic Empty">Basic Empty</option>
+               <option id="GridSpaceL" value="GridSpace">GridSpace</option>
+               <option id="MicroworldL" value="Microworld">Microworld</option>
             </select>
-            <label for="autosaveInterval">Autosave Interval (Seconds)</label>
-            <input type="number" id="autosaveInterval" class="form-control" placeholder="User Limit" min="-1.0" value="-1.0">
+            <label id="autosaveIntervalL" for="autosaveInterval">Autosave Interval (Seconds)</label>
+            <input type="number" id="autosaveInterval" class="form-control" min="-1.0" value="-1.0">
             <div class="custom-control custom-switch">
                <input type="checkbox" class="custom-control-input" id="mobileFriendly">
-               <label class="custom-control-label" for="mobileFriendly">Mobile Friendly</label>
+               <label id="mobileFriendlyL" class="custom-control-label" for="mobileFriendly">Mobile Friendly</label>
             </div>
             <div class="custom-control custom-switch">
                <input type="checkbox" class="custom-control-input" id="autoRecover">
-               <label class="custom-control-label" for="autoRecover">Auto Recover</label>
+               <label id="autoRecoverL" class="custom-control-label" for="autoRecover">Auto Recover</label>
             </div>
             <div class="custom-control custom-switch">
                <input type="checkbox" class="custom-control-input" id="saveOnExit">
-               <label class="custom-control-label" for="saveOnExit">Save on Exit</label>
+               <label id="saveOnExitL" class="custom-control-label" for="saveOnExit">Save on Exit</label>
             </div>
          </div>
          <div class="tab-pane fade" id="advanced">
-            <label for="forcePort">Force Port</label>
+            <label id="forcePortL" for="forcePort">Force Port</label>
             <input type="number" id="forcePort" class="form-control" placeholder="Port">
-            <label for="idleRestartInterval">Restart on Idle</label>
+            <label id="idleRestartIntervalL" for="idleRestartInterval">Restart on Idle</label>
             <input type="number" id="idleRestartInterval" class="form-control" placeholder="Time (Minutes)">
-            <label for="forcedRestartInterval">Force Restart</label>
+            <label id="forcedRestartIntervalL"for="forcedRestartInterval">Force Restart</label>
             <input type="number" id="forcedRestartInterval" class="form-control" placeholder="Time (Minutes)">
             <div class="custom-control custom-switch">
                <input type="checkbox" class="custom-control-input" id="keepOriginalRolesNOT" onchange="togglePermissions(this.checked)">
-               <label class="custom-control-label" for="keepOriginalRolesNOT">Custom Permissions</label>
+               <label id="keepOriginalRolesNOTL" class="custom-control-label" for="keepOriginalRolesNOT">Custom Permissions</label>
             </div>
             <div id="permissionContainer" style="display:none">
-               <label for="PERMISSIONS">Permissions</label>
+               <label id="PERMISSIONSL" for="PERMISSIONS">Permissions</label>
                <div id="PERMISSIONS" class="list-group" style="overflow: scroll; height: 200px; overflow-x: hidden;">
                </div>
-               <button type="button" class="btn btn-outline-success btn-sm" onclick="newRole()">+ New Role</button>
+               <button id="NewRoleButton" type="button" class="btn btn-outline-success btn-sm" onclick="newRole()">+ New Role</button>
             </div>
             <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="togleInvites" onchange="toggleInvites(this.checked)">
-                <label class="custom-control-label" for="togleInvites">Invite Users</label>
+                <label id="togleInvitesL" class="custom-control-label" for="togleInvites">Invite Users</label>
              </div>
              <div id="inviteContainer" style="display:none">
-                <label for="INVITES">Invites</label>
+                <label id="INVITESL" for="INVITES">Invites</label>
                 <div id="INVITES" class="list-group" style="overflow: scroll; height: 200px; overflow-x: hidden;">
                 </div>
-                <button type="button" class="btn btn-outline-success btn-sm" onclick="newInvite()">+ New Invite</button>
+                <button id="NewInviteButton" type="button" class="btn btn-outline-success btn-sm" onclick="newInvite()">+ New Invite</button>
              </div>
          </div>
          <div class="tab-pane fade" id="addons">
@@ -127,15 +127,63 @@
          const store = new Store({name: 'dat'});
          const config = new Store({name: 'config'});
          const themes = new Store({name: 'themes'});
-         var strings
+         var strings = {}
          const {
              ipcRenderer
          } = electron
-         $(document).ready(function () {
-            const LocalizedStrings = require('localized-strings').default;
-            strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'))
-            strings.setLanguage(config.get('language'))
+
+         console.log("Loading Localized Strings")
+         const LocalizedStrings = require('localized-strings').default;
+         strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), {pseudo:store.get("pseudo")})
+         strings.setLanguage(config.get('lang'))
+
+
+         $(document).ready(function(){
+             $('Title').text(strings.getString('Menu.New_Server'))
+             $('#newServerButton').text(strings.getString('Menu.New_Server'))
+             $('#GeneralL').text(strings.getString('Menu.General'))
+             $('#AdvancedL').text(strings.getString('Menu.Advanced'))
+             $('#AddonsL').text(strings.getString('Menu.Addons'))
+             $('#MiscL').text(strings.getString('Menu.Misc'))
+             $('#sessionNameL').text(strings.getString('Config.sessionName'))
+             $('#descriptionL').text(strings.getString('Config.description'))
+             $('#description').attr("placeholder",strings.getString('Config.description'))
+             $('#maxUsersL').text(strings.getString('Config.maxUsers'))
+             $('#maxUsers').attr("placeholder",strings.getString('Config.maxUsers'))
+             $('#accessLevelL').text(strings.getString('Config.accessLevel'))
+             $('#loadWorldURLL').text(strings.getString('Config.loadWorldURL'))
+             $('#helpContextL').text(strings.getString('Config.helpContext'))
+             $('#loadWorldPresetNameL').text(strings.getString('Config.loadWorldPresetName'))
+             $('#autosaveIntervalL').text(strings.formatString(strings.getString('Config.autosaveInterval'),strings.getString('Terms.Seconds')))
+             $('#saveOnExitL').text(strings.getString('Config.saveOnExit'))
+             $('#forcePortL').text(strings.getString('Config.forcePort'))
+             $('#forcePort').attr("placeholder",strings.getString('Config.Port'))
+             $('#idleRestartIntervalL').text(strings.getString('Config.idleRestartInterval'))
+             $('#idleRestartInterval').attr("placeholder",strings.formatString(strings.getString('Config.Time'),strings.getString('Terms.Seconds')))
+             $('#forcedRestartIntervalL').text(strings.getString('Config.forcedRestartInterval'))
+             $('#forcedRestartInterval').attr("placeholder",strings.formatString(strings.getString('Config.Time'),strings.getString('Terms.Seconds')))
+             $('#PERMISSIONSL').text(strings.getString('Config.PERMISSIONS'))
+             $('#NewRoleButtonL').text("+ "+strings.getString('Config.NewRoleButton'))
+             $('#togleInvitesL').text(strings.getString('Config.togleInvites'))
+             $('#INVITESL').text(strings.getString('Config.INVITES'))
+             $('#NewInviteButton').text("+ "+strings.getString('Config.NewInviteButton'))
+             $('#keepOriginalRolesNOTL').text(strings.getString('Config.keepOriginalRolesNOT'))
+             $('#mobileFriendlyL').text(strings.getString('Config.mobileFriendly'))
+             $('#autoRecoverL').text(strings.getString('Config.autoRecover'))
+             $('#SpaceWorldL').text(strings.getString('WorldTypes.SpaceWorld'))
+             $('#BasicEmptyL').text(strings.getString('WorldTypes.BasicEmpty'))
+             $('#GridSpaceL').text(strings.getString('WorldTypes.GridSpace'))
+             $('#MicroworldL').text(strings.getString('WorldTypes.Microworld'))
+             $('#AnyoneL').text(strings.getString('AccessLevel.Anyone'))
+             $('#RegisteredUsersL').text(strings.getString('AccessLevel.RegisteredUsers'))
+             $('#FriendsL').text(strings.getString('AccessLevel.Friends'))
+             $('#LANL').text(strings.getString('AccessLevel.LAN'))
+             $('#PrivateL').text(strings.getString('AccessLevel.Private'))
          })
+
+
+
+
          const form = $('#newServerButton').click(function(event){submitForm(event)});
          var advanced = {
              "forcePort": null,
@@ -180,11 +228,11 @@
          var inviteID = 0
          //add Role to Permission Container
          function newRole() {
-             addElement('PERMISSIONS', 'div', `role-${roleID}`, 'list-group-item list-group-item-action', `<button type="button" style="width:10%;" onclick="removeElement(this.parentElement.id)" class="close"><span aria-hidden="true">&times;</span></button><span id="idDisp" class="badge badge-dark" style="float:left; width:10%">${roleID}</span><input class="form-control" style="float:left; width:50%" id="username-${roleID}" type="text" placeholder="Username"><select style="float:right; width:30%" class="form-control" id="roleVal-${roleID}"><option value="Spectator">Spectator</option><option value="Guest">Guest</option><option value="Moderator">Moderator</option><option value="Builder">Builder</option><option value="Admin">Admin</option></select>`)
+             addElement('PERMISSIONS', 'div', `role-${roleID}`, 'list-group-item list-group-item-action', `<button type="button" style="width:10%;" onclick="removeElement(this.parentElement.id)" class="close"><span aria-hidden="true">&times;</span></button><span id="idDisp" class="badge badge-dark" style="float:left; width:10%">${roleID}</span><input class="form-control" style="float:left; width:50%" id="username-${roleID}" type="text" placeholder="${strings.getString('Config.Username')}"><select style="float:right; width:30%" class="form-control" id="roleVal-${roleID}"><option value="Spectator">${strings.getString('Roles.Spectator')}</option><option value="Guest">${strings.getString('Roles.Guest')}</option><option value="Moderator">${strings.getString('Roles.Moderator')}</option><option value="Builder">${strings.getString('Roles.Builder')}</option><option value="Admin">${strings.getString('Roles.Admin')}</option></select>`)
              roleID++
          }
          function newInvite() {
-             addElement('INVITES', 'div', `inviterole-${inviteID}`, 'list-group-item list-group-item-action', `<button type="button" style="width:10%;" onclick="removeElement(this.parentElement.id)" class="close"><span aria-hidden="true">&times;</span></button><span id="idDisp" class="badge badge-dark" style="float:left; width:10%">${inviteID}</span><input class="form-control" style="float:left; width:80%" id="invite-${inviteID}" type="text" placeholder="Username">`)
+             addElement('INVITES', 'div', `inviterole-${inviteID}`, 'list-group-item list-group-item-action', `<button type="button" style="width:10%;" onclick="removeElement(this.parentElement.id)" class="close"><span aria-hidden="true">&times;</span></button><span id="idDisp" class="badge badge-dark" style="float:left; width:10%">${inviteID}</span><input class="form-control" style="float:left; width:80%" id="invite-${inviteID}" type="text" placeholder="${strings.getString('Config.Username')}">`)
              inviteID++
          }
          function buildPermissions(perms) {}

@@ -49,6 +49,10 @@
                   <input type="text" class="form-control" id="NeosClientPath" aria-describedby="emailHelp" placeholder="Path" onchange="validatePath()">
                   <div id="PathFeedback" class="invalid-feedback"></div>
                </div>
+               <label for="Languages">Language (Requires Restart)</label>
+               <select class="custom-select" id="Languages">
+                  <option value="en" selected>en</option>
+               </select>
             </div>
             <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save System</button></div>
          </div>
@@ -283,7 +287,13 @@
          function saveConfig(element) {
              switch(element){
                  case 'system':
+                 config.set('lang', $('#Languages').val())
                  config.set('neosClientPath', $('#NeosClientPath').val())
+                 config.set('usernameOverride', $('#usernameOverride').val())
+                 let hosts = $('#allowedUrlHosts').val()
+                 hosts = hosts.replace(/\s/g, '');
+                 hosts = hosts.replace(/\r\n[\r]\n/g, '')
+                 config.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
                  break
                  case 'visual':
                  store.set('oldTheme', config.get('currentTheme'))
@@ -294,13 +304,6 @@
                  break
                  case 'server':
                  config.set('tickRate', $('#tickRate').val())
-             
-                config.set('usernameOverride', $('#usernameOverride').val())
-             
-                let hosts = $('#allowedUrlHosts').val()
-                 hosts = hosts.replace(/\s/g, '');
-                 hosts = hosts.replace(/\r\n[\r]\n/g, '')
-                 config.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
                  break
              }
              store.set('configSet', true)

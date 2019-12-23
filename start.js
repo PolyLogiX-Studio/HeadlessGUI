@@ -29,7 +29,9 @@ ipcMain.on('fetchDocs', function(e){
     window.sendData('EditorWindow','Documentation:Update',Docs)
 })
 
+const unhandled = require('electron-unhandled');
 
+unhandled();
 /**
  * System Window Manager
  */
@@ -55,6 +57,9 @@ const themes = new Store({
 });
 //Predefine Windows in Global Space
 const fs = require('fs-extra'); //Recursive Folder Delete
+
+store.set("pseudo",false)
+
 
 /**
  * Neos API Endpoints
@@ -126,19 +131,13 @@ var lang = {}
       })
 console.log(lang)
 
+
+
+
+
 const LocalizedStrings = require('localized-strings').default
-var strings = new LocalizedStrings(lang, {pseudo: true})
+var strings = new LocalizedStrings(lang, {pseudo: store.get("pseudo")})
     strings.setLanguage(config.get('lang'))
-
-
-
-
-
-
-
-
-
-
 
 const {Instances} = require("./Server.js")(bus)
 const instances = new Instances()
@@ -176,8 +175,26 @@ checkInternet(function(isConnected) {
         store.set('isConnected', false)
     }
 })
-
-
+const contextMenu = require('electron-context-menu');
+if (process.env.NODE_ENV != 'production'){
+contextMenu({
+	prepend: (defaultActions, params, browserWindow) => [
+		{
+			label: 'Rainbow',
+			// Only show it when right-clicking images
+			visible: params.mediaType === 'image'
+		},
+		{
+			label: 'Search Google for “{selection}”',
+			// Only show it when right-clicking text
+			visible: params.selectionText.trim().length > 0,
+			click: () => {
+				shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`);
+			}
+		}
+	]
+});
+}
 
 //Disable SubMenu & Dev tools
 //process.env.NODE_ENV = 'production';
@@ -565,23 +582,23 @@ ipcMain.on('Console:Command', function(e, item) {
 })
 
 const mainMenuTemplate = [{
-        label: strings.getString('Main'),
+        label: strings.getString('Menu.Main'),
         submenu: [{
-                label: strings.getString('New_Server'),
+                label: strings.getString('Menu.New_Server'),
                 accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
                 click() {
                     createAddWindow()
                 }
             },
             {
-                label: strings.getString('Config'),
+                label: strings.getString('Menu.Config'),
                 accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
                 click() {
                     createConfigWindow()
                 }
             },
             {
-                label: strings.getString('Refresh'),
+                label: strings.getString('Menu.Refresh'),
                 accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
                 click() {
                     RefreshAll()
@@ -591,7 +608,7 @@ const mainMenuTemplate = [{
                 type: 'separator'
             },
             {
-                label: strings.getString('Quit'),
+                label: strings.getString('Menu.Quit'),
                 accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
                 click() {
                     safeQuit()
@@ -600,23 +617,23 @@ const mainMenuTemplate = [{
         ]
     },
     {
-        label: strings.getString('Help'),
+        label: strings.getString('Menu.Help'),
         submenu: [{
-                label: strings.getString('Online_Help'),
+                label: strings.getString('Menu.Online_Help'),
                 accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
                 click() {
                     createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
                 }
             },
             {
-                label: strings.getString('MyPXAccount'),
+                label: strings.getString('Menu.MyPXAccount'),
                 accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
                 click() {
                     createURLWindow('www.polylogix.studio/PolyLogiX-Account')
                 }
             },
             {
-                label: strings.getString('ReportBug'),
+                label: strings.getString('Menu.ReportBug'),
                 accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
                 click() {
                     createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
@@ -626,7 +643,7 @@ const mainMenuTemplate = [{
 
     },
     {
-        label: strings.getString('SupportUs'),
+        label: strings.getString('Menu.SupportUs'),
         click() {
             createURLWindow('www.patreon.com/PolyLogiX_VR')
         }
@@ -680,6 +697,13 @@ function checkInternet(cb) {
 
 
 //Server Pipe
+ipcMain.on('synchronous-message', (event, arg) => {
+    console.log(arg)  // prints "ping"
+    event.returnValue = 'pong'
+  })
+
+
+
 bus.on('Server:Update',function(serverObject) {
     console.log('Server:Update')
     window.sendData(`ServerManager-${serverObject.ID}`,'Update:Raw',serverObject)
@@ -692,7 +716,7 @@ bus.on('Server:Log',function(id,message){
     console.log(`${id}:${message}`)
     window.sendData(`ServerManager-${id}`,'Server:Log',message)
 })
-ipcMain.on('fetchLang', (event)=>{
+ipcMain.on('fetchLanguage', (event, arg)=>{
     event.returnValue = strings.getContent()
 })
 ipcMain.on('openManager', function(e, id) {

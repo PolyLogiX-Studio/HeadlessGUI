@@ -68,8 +68,8 @@
         const themes = new Store({name: 'themes'});
         const fetch = require('node-fetch')
         const LocalizedStrings = require('localized-strings').default
-        var lang = ipcRenderer.sendSync('fetchLang')
-        var strings = new LocalizedStrings(lang, {pseudo: true})
+        var lang = ipcRenderer.sendSync('fetchLanguage')
+        var strings = new LocalizedStrings(lang, {pseudo: store.get("pseudo")})
         strings.setLanguage(config.get('lang'))
 
 
@@ -87,7 +87,7 @@
             updateSession(session)
         })
         ipcRenderer.on('ConfigError', function(e, items) {
-            removeAlert(addAlert(strings.formatString(strings.getString("ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig'), 5000)
+            removeAlert(addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig'), 5000)
         });
         ipcRenderer.on('removeStart', function(e, items) {
             removeAlert('StartupAlert')
@@ -178,10 +178,10 @@
         }
 
 
-        addAlert(strings.getString('NewServerNotif'), 'info', 'StartupAlert')
+        addAlert(strings.formatString(strings.getString('Notifications.NewServerNotif'),strings.getString("Menu.Main"),strings.getString("Menu.New_Server")), 'info', 'StartupAlert')
 
         if (!store.has('configSet')||!config.get('loginPassword')) {
-            addAlert(strings.formatString(strings.getString("ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig')
+            addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig')
         }
 
 
@@ -194,10 +194,10 @@
         let releaseTag = compareVersions(json.tag_name,VERSION)
         switch (releaseTag){
             case -1:
-            addAlert(strings.getString('PreReleaseNotif'),'warning')
-            break
-            case 1:
-            addAlert(`<h4 class="alert-heading">A new version <strong>${json.tag_name}</strong> is available <a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">Here</a></h4><p class="mb-0">${json.body}</p>`,'warning')
+            addAlert(strings.getString('Notifications.PreReleaseNotif'),'warning')
+            //break
+            //case 1:
+            addAlert(`<h4 class="alert-heading">${strings.formatString(strings.getString("Notifications.NewVersionNotif"),json.tag_name,`<a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">`,"</a></h4>")}<p class="mb-0">${json.body}</p>`,'warning')
             break
         }
         })
