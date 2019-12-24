@@ -52,7 +52,7 @@
 <body class="card">
     <div id="alerts" class="AlertWindow" width="100%">
     </div>
-    <div id="ServerList" class="" style="flex-direction: row; flex-wrap:wrap; height: 100%;">
+    <div id="ServerList" class="" style="flex-direction:column; flex-wrap:wrap; height: 100%;">
     </div>
     <img class="LogoImage" src="../images/Thig_Transparent.png" width="200px" height="150px">
     <script>
@@ -84,6 +84,7 @@
             removeAlert(addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`,'danger'),5000)
         })
         ipcRenderer.on('Server:Update', (e, session) => {
+            console.log("SERVER UPDATE REQUEST ON MAIN WINDOW")
             updateSession(session)
         })
         ipcRenderer.on('ConfigError', function(e, items) {
@@ -116,17 +117,18 @@
         }
 
         function updateSession(session) {
-            console.log('Update: ' + session.ID)
-            if (session.Vars.Status === 'Running') {
+            
+            console.log('Update: ' + session.ID,session.Vars)
+            if (session.Vars._Status === 'Running') {
                 removeAlert('startAlert-' + session.ID)
             }
-            updateElementSrc('previewImage-' + session.ID, session.Vars.SessionPreview)
-            updateElementHTML('usercount-' + session.ID, 'Players: ' + (session.vars.UserCount - 1) + '/' + (session.Config.startWorlds[0].maxUsers - 1))
-            updateElementHTML("status-" + session.ID, 'Status: ' + session.Vars.Status)
-            console.log(session.Vars.displayStatusMessage)
-            if (session.Vars.displayStatusMessage) {
+            updateElementSrc('previewImage-' + session.ID, session.Vars._SessionPreview)
+            updateElementHTML('usercount-' + session.ID, 'Players: ' + (session.Vars._UserCount - 1) + '/' + (session.Config.startWorlds[0].maxUsers - 1))
+            updateElementHTML("status-" + session.ID, 'Status: ' + session.Vars._Status)
+            console.log(session.Vars._displayStatusMessage)
+            if (session.Vars._displayStatusMessage) {
                 console.log('alert')
-                switch (session.event) {
+                switch (session.Vars._event) {
                     case 'Saving':
                         removeAlert(addAlert(`Session ${session.ID} Saving...`, 'info'), 5000)
                         break
@@ -150,10 +152,10 @@
                         removeElement('SERVER-' + session.ID)
                         break
                     case 'UserJoinContext':
-                        removeAlert(addAlert(`User <strong>${session.Vars.eventContext[1]}</strong> connected to ${session.ID}!`, 'primary'), 5000)
+                        removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> connected to ${session.ID}!`, 'primary'), 5000)
                         break
                     case 'UserLeft':
-                        removeAlert(addAlert(`User <strong>${session.Vars.eventContext[1]}</strong> disconnected from ${session.ID}!`, 'warning'), 5000)
+                        removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> disconnected from ${session.ID}!`, 'warning'), 5000)
                         break
                     default:
                 }

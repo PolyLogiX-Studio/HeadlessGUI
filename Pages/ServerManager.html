@@ -162,10 +162,12 @@
          
          function updateSession(session) {
              console.log('Update: ' + session.ID)
-             if (session.Status === 'Running') {
+             console.log(session.Vars)
+
+             if (session.Vars._Status === 'Running') {
                  removeAlert('startAlert-' + session.ID)
              }
-             updateElementHTML('userListHeader',`Connected Users (${session.UserCount-1}/${session.Config.startWorlds[0].maxUsers-1})`)
+             updateElementHTML('userListHeader',`Connected Users (${session.Vars._UserCount-1}/${session.Config.startWorlds[0].maxUsers-1})`)
          
          
              /*
@@ -176,7 +178,7 @@
              */
              if (session.displayStatusMessage) {
                  console.log('alert')
-                 switch (session.event) {
+                 switch (session.Vars._event) {
                      case 'Saving':
                          removeAlert(addAlert(`Saving...`, 'info'), 5000)
                          break
@@ -199,10 +201,10 @@
                          removeAlert(addAlert(`Session Ended.`, 'danger'), 2000)
                          break
                      case 'UserJoinContext':
-                         removeAlert(addAlert(`User <strong>${session.eventContext[1]}</strong> connected!`, 'primary'), 5000)
+                         removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> connected!`, 'primary'), 5000)
                          break
                      case 'UserLeft':
-                         removeAlert(addAlert(`User <strong>${session.eventContext[1]}</strong> disconnected!`, 'warning'), 5000)
+                         removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> disconnected!`, 'warning'), 5000)
                          break
                      default:
                  }

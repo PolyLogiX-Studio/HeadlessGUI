@@ -14,12 +14,22 @@ const jsdoc2md = require('jsdoc-to-markdown')
 var bus = require('./eventBus')
 var md = require('markdown-it')();
 const {
+    crashReporter,
     dialog,
     app,
     BrowserWindow,
     Menu,
-    ipcMain
+    ipcMain,
+    Tray
 } = electron;
+
+crashReporter.start({
+    productName: 'Headless Core',
+    companyName: 'PolyLogiX Studio',
+    submitURL:"",
+    uploadToServer: false
+  })
+  
 const Store = require('electron-store');
 const Window = require('./WindowManager')(bus).WindowManager;
 ipcMain.on('fetchDocs', function(e){
@@ -72,7 +82,6 @@ const LOCAL_NEOS_API = "http://localhost:60612";
 const LOCAL_NEOS_BLOB = "http://127.0.0.1:10000/devstoreaccount1/";
 const ICON_GLOBAL_PNG = path.join(__dirname, '/images/icon.png')
 const ICON_GLOBAL_ICO = path.join(__dirname, '/images/icon.ico')
-
 /**
  * Close all Windows
  * (Excluding Console Windows, Handling Later)
@@ -175,6 +184,9 @@ checkInternet(function(isConnected) {
         store.set('isConnected', false)
     }
 })
+
+//Disable SubMenu & Dev tools
+//process.env.NODE_ENV = 'production';
 const contextMenu = require('electron-context-menu');
 if (process.env.NODE_ENV != 'production'){
 contextMenu({
@@ -196,8 +208,7 @@ contextMenu({
 });
 }
 
-//Disable SubMenu & Dev tools
-//process.env.NODE_ENV = 'production';
+
 
 if (!themes.has('Themes')) {
     config.set('currentTheme', 'Darkly')
@@ -242,8 +253,16 @@ if (!themes.has('Themes')) {
 
 
 // Listen for App to be ready
-
+let tray = null
 app.on('ready', function() {
+    tray = new Tray(ICON_GLOBAL_PNG)
+    const contextMenu = Menu.buildFromTemplate(mainMenuTemplate)
+    tray.setToolTip('Headless Core')
+    tray.setContextMenu(contextMenu)
+
+
+
+
     Menu.setApplicationMenu(Menu.buildFromTemplate(mainMenuTemplate))
     // Create new Window
     window.createWindow('MainWindow', {
@@ -572,13 +591,6 @@ ipcMain.on('Console:Command', function(e, item) {
         return
     }
     instances.runCommand(item.id,item.command)
-    if (item.command === 'shutdown') {
-        instances[item.id].Vars._Status = 'Shutting Down'
-        instances[item.id].Vars._event = 'ShuttingDown'
-        instances[item.id].Vars._displayStatusMessage = true
-        instances[item.id].update()
-        instances[item.id].Session.stdin.write(`\n${item.command}\nlog\n`)
-    }
 })
 
 const mainMenuTemplate = [{
@@ -702,10 +714,19 @@ ipcMain.on('synchronous-message', (event, arg) => {
     event.returnValue = 'pong'
   })
 
-
-
+bus.on('SessionForceUpdate',function(ID){
+    instances.update(ID)
+})
+bus.on('clearCache', function(THIS){
+    fs.removeSync(Instances[THIS.id].sessionDir)
+    instances.clear(THIS.id)
+    if (shuttingDown && JSON.stringify(instances.all()) === '{}') {
+        ClearQuit()
+    }
+})
 bus.on('Server:Update',function(serverObject) {
-    console.log('Server:Update')
+    //console.log('Server:Update')
+    window.sendData('MainWindow',"Server:Update",serverObject)
     window.sendData(`ServerManager-${serverObject.ID}`,'Update:Raw',serverObject)
 })
 bus.on("Console:Close", function(id){

@@ -118,6 +118,7 @@ class WindowManager {
      */
     sendData(ID,tag,data){
         if (!this.Windows[ID]){return false}
+        //console.log(`sendData(${ID},${tag},${data})`)
         this.Windows[ID].webContents.send(tag,data)
     }
     /**

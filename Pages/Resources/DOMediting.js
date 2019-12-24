@@ -1,8 +1,25 @@
+/**
+ * File Path to a File 
+ * @typedef {string} FilePath
+ */
+
+
+/** Remove a page element
+ * @param {string} elementId
+ * @deprecated
+ */
 function removeElement(elementId) {
     // Removes an element from the document
-    var element = document.getElementById(elementId);
-    element.parentNode.removeChild(element);
+    document.getElementById(elementId).remove()
 }
+/** Create a Page Element
+ * @param {string} parentId
+ * @param {string} elementTag
+ * @param {string} elementId
+ * @param {string} elementClass
+ * @param {string} html
+ * @deprecated
+ */
 function addElement(parentId, elementTag, elementId, elementClass, html) {
     // Adds an element to the document
     var p = document.getElementById(parentId);
@@ -12,6 +29,10 @@ function addElement(parentId, elementTag, elementId, elementClass, html) {
     newElement.innerHTML = html;
     p.appendChild(newElement);
 }
+/**Load a Js or CSS File
+ * @param {FilePath} filename
+ * @param {string} filetype
+ */
 function loadjscssfile(filename, filetype){
     if (filetype=="js"){ //if filename is a external JavaScript file
         var fileref=document.createElement('script')
@@ -27,6 +48,10 @@ function loadjscssfile(filename, filetype){
     if (typeof fileref!="undefined")
         document.getElementsByTagName("head")[0].appendChild(fileref)
 }
+/**Load a Js or CSS File
+ * @param {FilePath} filename
+ * @param {string} filetype
+ */
 function createjscssfile(filename, filetype){
     if (filetype=="js"){ //if filename is a external JavaScript file
         var fileref=document.createElement('script')
@@ -41,7 +66,13 @@ function createjscssfile(filename, filetype){
     }
     return fileref
 }
- 
+/**
+ *Load a Js or CSS File, Replacing oldname
+ *
+ * @param {string} oldfilename
+ * @param {string} newfilename
+ * @param {string} filetype
+ */
 function replacejscssfile(oldfilename, newfilename, filetype){
     var targetelement=(filetype=="js")? "script" : (filetype=="css")? "link" : "none" //determine element type to create nodelist using
     var targetattr=(filetype=="js")? "src" : (filetype=="css")? "href" : "none" //determine corresponding attribute to test for
@@ -53,6 +84,10 @@ function replacejscssfile(oldfilename, newfilename, filetype){
         }
     }
 }
+/**
+ *Setup the page Theme
+ *
+ */
 function setupThemes(){
     let Store = require('electron-store');
     const themes = new Store({name: 'themes'});
@@ -60,7 +95,10 @@ function setupThemes(){
     loadjscssfile(themes.get(`Themes.${config.get('currentTheme')}.url`),'css')
 }
 
-
+/**
+ * Update to a new theme(If changed)
+ *
+ */
 function updateTheme(){
     console.log("updateTheme")
     const reload = require('electron-css-reload');

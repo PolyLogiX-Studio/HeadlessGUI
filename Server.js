@@ -1,5 +1,8 @@
 var bus
 const fetch = require('node-fetch');
+function updateSession(ID){
+    bus.emit('SessionForceUpdate',ID)
+}
 /**
  * Neos Config
  * @param {Object} DefaultConfig
@@ -125,7 +128,7 @@ class Server {
                     func: () => {
                         this.log('updateCloudXID')
                         this.updateCloudXID()
-                        this.update()
+                        updateSession(this.ID)
                     },
                     freq: 60
                 }
@@ -134,6 +137,7 @@ class Server {
             set event(v){this.Vars._event = v},
             set displayStatusMessage(v){this.Vars._displayStatusMessage = v}
         }
+        
         this.log = (message) => {
             console.log(`${this.ID}:${message}`)
         }
@@ -171,7 +175,7 @@ class Server {
             this.Session.stdin.pause();
             this.Vars._event = 'ShutDown';
             this.Vars._displayStatusMessage = true;
-            this.update();
+            updateSession(this.ID);
             if (this.Console !== null) {
                 bus.emit("Console:Close",this.ID)
                 this.Console = null
@@ -179,7 +183,7 @@ class Server {
 
             this.Session.kill();
             this.Session = null
-            clearCache(this.ID);
+            bus.emit('clearCache',this);
             //NEED TO MANAGE WITH MANAGER TO CALL ENDING
         })
         
@@ -192,7 +196,7 @@ class Server {
                 this.Vars._Status = 'Running';
                 this.Vars._event = 'Started'
                 this.Vars._displayStatusMessage = true;
-                this.update()
+                updateSession(this.ID)
                 setTimeout(() => {
                     this.TimerProc()
                 }, 10000) // Start Internal Timers
@@ -201,31 +205,31 @@ class Server {
                 this.Vars._event = 'Saving';
                 this.Vars._Status = 'Saving';
                 this.Vars._displayStatusMessage = true;
-                this.update()
+                updateSession(this.ID)
             }
             if (data.toString().startsWith('World Saved')) {
                 this.Vars._event = 'Saved';
                 this.Vars._Status = 'Saved';
                 this.Vars._displayStatusMessage = true;
-                this.update()
+                updateSession(this.ID)
             }
             if (data.toString().startsWith('Starting sync')) {
                 this.Vars._event = 'Syncing';
                 this.Vars._Status = 'Syncing';
                 this.Vars._displayStatusMessage = true;
-                this.update()
+                updateSession(this.ID)
             }
             if (data.toString().startsWith('Finished sync')) {
                 this.Vars._event = 'Synced';
                 this.Vars._Status = 'Running';
                 this.displayStatusMessage = true;
-                this.update()
+                updateSession(this.ID)
             }
             if (data.toString().startsWith('Shutting Down')) {
                 this.Vars._event = 'ShuttingDown';
                 this.Vars._Status = 'Shutting Down';
                 this.Vars._displayStatusMessage = true;
-                this.update()
+                updateSession(this.ID)
             }
             if (data.toString().startsWith('Peer Connected')) {
                 this.Vars._event = 'UserJoin';
@@ -236,7 +240,7 @@ class Server {
                     'username': undefined,
                     'userID': undefined
                 })
-                this.update()
+                updateSession(this.ID)
             }
             if (data.toString().startsWith('http://cloudx.azurewebsites.net/open/session/')) {
                 let id = data.toString().substring(45)
@@ -253,7 +257,7 @@ class Server {
 
                 this.Vars._Users[foundIndex].username = this.Vars._eventContext[1]
                 this.Vars._Users[foundIndex].userID = this.Vars._eventContext[0]
-                this.update()
+                updateSession(this.ID)
             }
             if (data.toString().startsWith('Peer Disconnected')) {
                 this.Vars._event = 'UserLeft';
@@ -268,7 +272,7 @@ class Server {
                     return returnableObjects.ip !== ip;
                 });
 
-                this.update()
+                updateSession(this.ID)
 
             }
             if (data.toString().startsWith(this.Config.startWorlds[0].sessionName + ">")) {
@@ -333,12 +337,15 @@ class Server {
         this.Vars._Status = 'Shutting Down'
         this.Vars._event = 'ShuttingDown'
         this.Vars._displayStatusMessage = true
-        this.update()
+        updateSession(this.ID)
         setTimeout(() => {
             this.Session.stdin.write('\nshutdown\n');
         }, 1000)
     }
     /* Getters */
+    var(varname){
+        return this.Vars[`_${varname}`]
+    }
     /**
      * @return server object
      */
@@ -353,11 +360,12 @@ class Server {
      * @memberof Server
      */
     update() {
-        this.log('Updating Server Info')
+        
         bus.emit('Server:Update', this)
         if (this.Vars._displayStatusMessage) {
             this.Vars._displayStatusMessage = false
         }
+        this.log('Updating Server Info')
     }
     consoleClosed(){
         this.Console = null
@@ -412,7 +420,13 @@ class Instances {
      * Close all servers
      */
     endAll(){
-
+        for (var property in this.Instances){
+            this.Instances[property].end()
+        }
+    }
+    clear(id){
+        this.Instances[id] = null
+        delete this.Instances[id]
     }
     /**
      * Return all Servers
