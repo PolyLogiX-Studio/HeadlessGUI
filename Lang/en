@@ -13,7 +13,9 @@
        "General":"General",
        "Advanced":"Advanced",
        "Addons":"Addons",
-       "Misc":"Misc"
+       "Misc":"Misc",
+       "Kick":"Kick",
+       "Roles":"Roles"
 
     },
     "Notifications": {

@@ -238,7 +238,8 @@ class Server {
                 this.Vars._Users.push({
                     'ip': data.toString().substring(15).trim(),
                     'username': undefined,
-                    'userID': undefined
+                    'userID': undefined,
+                    'role':undefined
                 })
                 updateSession(this.ID)
             }
@@ -274,6 +275,21 @@ class Server {
 
                 updateSession(this.ID)
 
+            }
+            if (data.toString().startsWith('User ')) {
+                let message = data.toString().substring(5).replace('\r\n', '')
+                let point1 = message.indexOf(' Role:')
+                let user = message.substring(0,point1).trim()
+                let role = message.substring(point1+7,message.indexOf(",")).trim()
+                console.log(this.Vars._Users)
+                console.log(user,role)
+                var foundIndex = this.Vars._Users.findIndex(x => x.username === user);
+                console.log(foundIndex)
+                if (foundIndex!==undefined){
+                this.Vars._Users[foundIndex].role = role
+                console.log(this.Vars._Users)
+                updateSession(this.ID)
+                }
             }
             if (data.toString().startsWith(this.Config.startWorlds[0].sessionName + ">")) {
                 return
@@ -439,6 +455,7 @@ class Instances {
      */
     newSession(session){
         if (!session.UUID){session.UUID = uuidv4()}
+        //console.log(session)
        this.Instances[session.UUID] = new Server(session.sessionsDir,session.UUID, session.usernameOverride, session.sessionName, session.loadWorldURL, session.maxUsers, session.description, session.saveOnExit, session.autosaveInterval, session.accessLevel, session.loadWorldPresetName, session.autoRecover, session.mobileFriendly, session.tickRate, session.keepOriginalRoles, session.defaultUserRoles, session.idleRestartInterval, session.forcedRestartInterval, session.forcePort, session.autoInviteUsernames, session.autoInviteMessage)
     
     }
