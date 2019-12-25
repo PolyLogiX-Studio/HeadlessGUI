@@ -61,7 +61,7 @@ class WindowManager {
             if (this.Windows[prop.parent]){
                 //Exclude Top Level
                 if (ID!=='MainWindow'){
-                    if (this.Windows[prop.parent].Children.includes(ID)){
+                    if (!this.Windows[prop.parent].Children.includes(ID)){
                         this.Windows[prop.parent].Children.push(ID)
                     }
                 }
@@ -96,14 +96,23 @@ class WindowManager {
         // GC Handle
         this.Windows[ID].onClose = (this.Windows[ID].on('close', ()=> {
             console.log(`Manual Close on ${ID}`)
+            if (ID!='MainWindow'){
             for (let i=0;i<this.Windows[ID].Children.length; i++){
                 this.closeWindow(this.Windows[ID].Children[i])
             }
             delete this.Windows[ID]
+        }
         }))
         this.Windows[ID].onClosed = (this.Windows[ID].on('closed', ()=>{
             console.log(`Window ${ID}: Closed.`)
+            if (ID=='MainWindow'){
+                for (let i=0;i<this.Windows[ID].Children.length; i++){
+                    this.closeWindow(this.Windows[ID].Children[i])
+                }
+                delete this.Windows[ID]
+            }
         }))
+        console.log(this.Windows)
         return ID
     }
     /**

@@ -323,8 +323,8 @@ function safeQuit() {
 function ClearQuit() {
    
     fs.removeSync(sessionsDir)
+    window.closeWindow('MainWindow')
     setTimeout(() => {
-        window.closeWindow('MainWindow')
         app.quit()
     }, 5000) // Need a better way to do this
 }
