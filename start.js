@@ -22,21 +22,16 @@ const {
     ipcMain,
     Tray
 } = electron;
+/*
 
-crashReporter.start({
-    productName: 'Headless Core',
-    companyName: 'PolyLogiX Studio',
-    submitURL:"",
-    uploadToServer: false
-  })
-  
+  */
 const Store = require('electron-store');
 const Window = require('./WindowManager')(bus).WindowManager;
-ipcMain.on('fetchDocs', function(e){
+ipcMain.on('fetchDocs', function (e) {
     console.log('Generating Documentation')
     var Docs = jsdoc2md.renderSync({ files: './*.js' })
     console.log('Converting to HTML')
-    window.sendData('EditorWindow','Documentation:Update',Docs)
+    window.sendData('EditorWindow', 'Documentation:Update', Docs)
 })
 
 const unhandled = require('electron-unhandled');
@@ -57,7 +52,7 @@ const store = new Store({
  */
 const config = new Store({
     name: 'config',
-    defaults:{lang:'en'}
+    defaults: { lang: 'en' }
 });
 /**
  * Themes Store
@@ -68,7 +63,7 @@ const themes = new Store({
 //Predefine Windows in Global Space
 const fs = require('fs-extra'); //Recursive Folder Delete
 
-store.set("pseudo",false)
+store.set("pseudo", false)
 
 
 /**
@@ -97,7 +92,7 @@ function closeAllWindows() {
 /** Path to %AppData%/Headless Core/
  * @const {path} dataDir
  */
-var dataDir = app.getPath('userData') 
+var dataDir = app.getPath('userData')
 /** Path to %AppData%/Headless Core/Scripts/
  * @const {path} scriptsDir
  */
@@ -113,7 +108,7 @@ var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
 /** Path to %AppData%/Headless Core/Active Sessions/
  * @const {path} sessionsDir
  */
-var sessionsDir = path.join(dataDir, "Active Sessions") 
+var sessionsDir = path.join(dataDir, "Active Sessions")
 fs.removeSync(sessionsDir)
 // Setup Scripts folder
 if (!fs.pathExistsSync(scriptsDir)) {
@@ -130,14 +125,14 @@ if (!fs.pathExistsSync(enabledScriptsDir)) {
  */
 var langDir = path.join(dataDir, 'Lang')
 if (!fs.pathExistsSync(langDir)) {
-    fs.copySync("./Lang",langDir)
+    fs.copySync("./Lang", langDir)
 }
 var lang = {}
-        let filenames = fs.readdirSync(langDir)
-      filenames.forEach(function(filename) {
-        let content = fs.readFileSync(path.join(langDir,filename))
-          lang[filename] = JSON.parse(content);
-      })
+let filenames = fs.readdirSync(langDir)
+filenames.forEach(function (filename) {
+    let content = fs.readFileSync(path.join(langDir, filename))
+    lang[filename] = JSON.parse(content);
+})
 console.log(lang)
 
 
@@ -145,10 +140,10 @@ console.log(lang)
 
 
 const LocalizedStrings = require('localized-strings').default
-var strings = new LocalizedStrings(lang, {pseudo: store.get("pseudo")})
-    strings.setLanguage(config.get('lang'))
+var strings = new LocalizedStrings(lang, { pseudo: store.get("pseudo") })
+strings.setLanguage(config.get('lang'))
 
-const {Instances} = require("./Server.js")(bus)
+const { Instances } = require("./Server.js")(bus)
 const instances = new Instances()
 const scriptsConfig = new Store({
     name: 'scripts',
@@ -171,7 +166,7 @@ if (!store.has('MachineId')) { //For API Calls
 }
 //Check if there is an internet connection, and set values accordingly
 
-checkInternet(function(isConnected) {
+checkInternet(function (isConnected) {
     if (isConnected) {
         store.set('isConnected', true)
         console.log('connected')
@@ -188,24 +183,24 @@ checkInternet(function(isConnected) {
 //Disable SubMenu & Dev tools
 //process.env.NODE_ENV = 'production';
 const contextMenu = require('electron-context-menu');
-if (process.env.NODE_ENV != 'production'){
-contextMenu({
-	prepend: (defaultActions, params, browserWindow) => [
-		{
-			label: 'Rainbow',
-			// Only show it when right-clicking images
-			visible: params.mediaType === 'image'
-		},
-		{
-			label: 'Search Google for “{selection}”',
-			// Only show it when right-clicking text
-			visible: params.selectionText.trim().length > 0,
-			click: () => {
-				shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`);
-			}
-		}
-	]
-});
+if (process.env.NODE_ENV != 'production') {
+    contextMenu({
+        prepend: (defaultActions, params, browserWindow) => [
+            {
+                label: 'Rainbow',
+                // Only show it when right-clicking images
+                visible: params.mediaType === 'image'
+            },
+            {
+                label: 'Search Google for “{selection}”',
+                // Only show it when right-clicking text
+                visible: params.selectionText.trim().length > 0,
+                click: () => {
+                    shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`);
+                }
+            }
+        ]
+    });
 }
 
 
@@ -254,7 +249,9 @@ if (!themes.has('Themes')) {
 
 // Listen for App to be ready
 let tray = null
-app.on('ready', function() {
+app.on('ready', function () {
+
+
     tray = new Tray(ICON_GLOBAL_PNG)
     const contextMenu = Menu.buildFromTemplate(mainMenuTemplate)
     tray.setToolTip('Headless Core')
@@ -274,14 +271,16 @@ app.on('ready', function() {
         webPreferences: {
             nodeIntegration: true
         }
-    }, {page:{
-        pathname: path.join(__dirname, '/Pages/mainWindow.html'),
-        protocol: 'file:',
-        slashes: true,
-    }})
+    }, {
+        page: {
+            pathname: path.join(__dirname, '/Pages/mainWindow.html'),
+            protocol: 'file:',
+            slashes: true,
+        }
+    })
     // Quit app when main closed
     window.Windows['MainWindow'].setMenu(Menu.buildFromTemplate(mainMenuTemplate))
-    window.Windows['MainWindow'].on('closed', function() {
+    window.Windows['MainWindow'].on('closed', function () {
         safeQuit()
     })
     window.Windows['MainWindow'].on('close', (e) => {
@@ -312,7 +311,6 @@ shuttingDown = false
  */
 function safeQuit() {
     shuttingDown = true
-    window.closeWindow('MainWindow')
     instances.endAll()
 }
 
@@ -323,8 +321,10 @@ function safeQuit() {
  *
  */
 function ClearQuit() {
+   
     fs.removeSync(sessionsDir)
     setTimeout(() => {
+        window.closeWindow('MainWindow')
         app.quit()
     }, 5000) // Need a better way to do this
 }
@@ -334,15 +334,15 @@ function ClearQuit() {
  */
 function createAddWindow() {
     if (!store.get('isConnected')) {
-        window.sendData('MainWindow','NOCONNECTION')
+        window.sendData('MainWindow', 'NOCONNECTION')
         return
     }
     if (!store.get('configSet') || !config.get('loginPassword')) {
-        window.sendData('MainWindow','ConfigError')
+        window.sendData('MainWindow', 'ConfigError')
         return
     }
-    window.sendData('MainWindow','removeStart')
-    
+    window.sendData('MainWindow', 'removeStart')
+
     window.createWindow('AddWindow', {
         parent: 'MainWindow',
         show: false,
@@ -354,11 +354,13 @@ function createAddWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    }, {page:{
-        pathname: path.join(__dirname, '/Pages/addWindow.html'),
-        protocol: 'file:',
-        slashes: true,
-    }})
+    }, {
+        page: {
+            pathname: path.join(__dirname, '/Pages/addWindow.html'),
+            protocol: 'file:',
+            slashes: true,
+        }
+    })
 }
 
 /**
@@ -377,11 +379,13 @@ function createLoginWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    }, {page:{
-        pathname: path.join(__dirname, 'Pages/NeosLogin.html'),
-        protocol: 'file:',
-        slashes: true,
-    }})
+    }, {
+        page: {
+            pathname: path.join(__dirname, 'Pages/NeosLogin.html'),
+            protocol: 'file:',
+            slashes: true,
+        }
+    })
 }
 
 /**
@@ -398,11 +402,13 @@ function createConfigWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    }, {page:{
-        pathname: path.join(__dirname, '/Pages/ConfigWindow.html'),
-        protocol: 'file:',
-        slashes: true,
-    },children:['LoginWindow']})
+    }, {
+        page: {
+            pathname: path.join(__dirname, '/Pages/ConfigWindow.html'),
+            protocol: 'file:',
+            slashes: true,
+        }, children: ['LoginWindow']
+    })
 }
 
 
@@ -424,11 +430,13 @@ function createURLWindow(URL) {
         webPreferences: {
             nodeIntegration: false
         }
-    },{page: {
-        pathname: URL,
-        protocol: 'https:',
-        slashes: true,
-    }})
+    }, {
+        page: {
+            pathname: URL,
+            protocol: 'https:',
+            slashes: true,
+        }
+    })
 }
 /**
  * Open the Script Editor Window
@@ -445,11 +453,13 @@ function createEditorWindow() {
         webPreferences: {
             nodeIntegration: true
         }
-    }, {page:{
-        pathname: path.join(__dirname, 'Pages/ScriptEditor.html'),
-        protocol: 'file:',
-        slashes: true,
-    }}, null)
+    }, {
+        page: {
+            pathname: path.join(__dirname, 'Pages/ScriptEditor.html'),
+            protocol: 'file:',
+            slashes: true,
+        }
+    }, null)
 }
 /**
  * Login to Neos
@@ -484,12 +494,12 @@ function login(credential, password) {
  */
 function sendLoginPost(loginPayload) {
     return fetch(CLOUDX_PRODUCTION_NEOS_API + 'api/userSessions', {
-            method: "POST",
-            body: JSON.stringify(loginPayload),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        method: "POST",
+        body: JSON.stringify(loginPayload),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
         .then(res => res.json())
         .then(json => {
             config.set('loginCredentials', (loginPayload.email ? loginPayload.email : loginPayload.username))
@@ -512,39 +522,39 @@ function sendLoginPost(loginPayload) {
         })
 }
 /* Data Calls from Windows */
-ipcMain.on('NEOS:Login', function(e, info) {
+ipcMain.on('NEOS:Login', function (e, info) {
     login(info.neosCredential, info.neosPassword).then((test) => {
         if (!test.err) {
-            window.sendData('ConfigWindow','NEOS:Login')
+            window.sendData('ConfigWindow', 'NEOS:Login')
             if (window.isOpen('LoginWindow')) {
                 window.closeWindow('LoginWindow')
             }
 
         } else {
-            window.sendData('LoginWindow','NEOS:Failed', test)
+            window.sendData('LoginWindow', 'NEOS:Failed', test)
         }
     })
 
 })
-ipcMain.on('callWindow:Login', function(e) {
+ipcMain.on('callWindow:Login', function (e) {
     createLoginWindow()
 })
 // User has changed the Config
-ipcMain.on('Config:Update', function(e, item) {
+ipcMain.on('Config:Update', function (e, item) {
     //configWindow.close()
-    window.sendData('MainWindow','removeConfig')
+    window.sendData('MainWindow', 'removeConfig')
 })
 // Open Advanced Settings for New Server window
 
 /* Create New Session */
-ipcMain.on('server:new', function(e, item) {
+ipcMain.on('server:new', function (e, item) {
     //console.log(item)
     //Create server
     item.id = uuidv4()
-    window.sendData('MainWindow','Main:updateList', item);
+    window.sendData('MainWindow', 'Main:updateList', item);
     window.closeWindow('AddWindow')
     instances.newSession({
-        sessionsDir:sessionsDir,
+        sessionsDir: sessionsDir,
         UUID: item.id,
         usernameOverride: item.usernameOverride,
         sessionName: item.sessionName,
@@ -567,18 +577,18 @@ ipcMain.on('server:new', function(e, item) {
         autoInviteMessage: item.autoInviteMessage
     })
 })
-ipcMain.on('new:editor', function(e, item) {
+ipcMain.on('new:editor', function (e, item) {
     createEditorWindow()
 })
 //Open a Browser
-ipcMain.on('openURL', function(e, item) {
+ipcMain.on('openURL', function (e, item) {
     createURLWindow(item)
 })
-ipcMain.on('getUpdateRaw', function(e, session) {
+ipcMain.on('getUpdateRaw', function (e, session) {
     console.log(session)
     instances.update(session)
 })
-ipcMain.on('Console:Command', function(e, item) {
+ipcMain.on('Console:Command', function (e, item) {
     if (!instances.get(item.id).val()) {
         dialog.showMessageBox(null, {
             type: 'error',
@@ -590,76 +600,76 @@ ipcMain.on('Console:Command', function(e, item) {
         })
         return
     }
-    instances.runCommand(item.id,item.command)
+    instances.runCommand(item.id, item.command)
 })
 
 const mainMenuTemplate = [{
-        label: strings.getString('Menu.Main'),
-        submenu: [{
-                label: strings.getString('Menu.New_Server'),
-                accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
-                click() {
-                    createAddWindow()
-                }
-            },
-            {
-                label: strings.getString('Menu.Config'),
-                accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
-                click() {
-                    createConfigWindow()
-                }
-            },
-            {
-                label: strings.getString('Menu.Refresh'),
-                accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
-                click() {
-                    RefreshAll()
-                }
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: strings.getString('Menu.Quit'),
-                accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-                click() {
-                    safeQuit()
-                }
-            }
-        ]
-    },
-    {
-        label: strings.getString('Menu.Help'),
-        submenu: [{
-                label: strings.getString('Menu.Online_Help'),
-                accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
-                click() {
-                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
-                }
-            },
-            {
-                label: strings.getString('Menu.MyPXAccount'),
-                accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
-                click() {
-                    createURLWindow('www.polylogix.studio/PolyLogiX-Account')
-                }
-            },
-            {
-                label: strings.getString('Menu.ReportBug'),
-                accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
-                click() {
-                    createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
-                }
-            },
-        ]
-
-    },
-    {
-        label: strings.getString('Menu.SupportUs'),
+    label: strings.getString('Menu.Main'),
+    submenu: [{
+        label: strings.getString('Menu.New_Server'),
+        accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
         click() {
-            createURLWindow('www.patreon.com/PolyLogiX_VR')
+            createAddWindow()
+        }
+    },
+    {
+        label: strings.getString('Menu.Config'),
+        accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
+        click() {
+            createConfigWindow()
+        }
+    },
+    {
+        label: strings.getString('Menu.Refresh'),
+        accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
+        click() {
+            RefreshAll()
+        }
+    },
+    {
+        type: 'separator'
+    },
+    {
+        label: strings.getString('Menu.Quit'),
+        accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+        click() {
+            safeQuit()
         }
     }
+    ]
+},
+{
+    label: strings.getString('Menu.Help'),
+    submenu: [{
+        label: strings.getString('Menu.Online_Help'),
+        accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
+        click() {
+            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
+        }
+    },
+    {
+        label: strings.getString('Menu.MyPXAccount'),
+        accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
+        click() {
+            createURLWindow('www.polylogix.studio/PolyLogiX-Account')
+        }
+    },
+    {
+        label: strings.getString('Menu.ReportBug'),
+        accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
+        click() {
+            createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
+        }
+    },
+    ]
+
+},
+{
+    label: strings.getString('Menu.SupportUs'),
+    click() {
+        createURLWindow('www.patreon.com/PolyLogiX_VR')
+    }
+}
 ]
 
 // Dev tools so i know when i fuck up
@@ -667,15 +677,15 @@ if (process.env.NODE_ENV !== 'production') {
     mainMenuTemplate.push({
         label: 'Developer Tools',
         submenu: [{
-                label: 'Toggle DevTools',
-                accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
-                click(item, focusedWindow) {
-                    focusedWindow.toggleDevTools();
-                }
-            },
-            {
-                role: 'reload'
+            label: 'Toggle DevTools',
+            accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
+            click(item, focusedWindow) {
+                focusedWindow.toggleDevTools();
             }
+        },
+        {
+            role: 'reload'
+        }
         ]
     })
 }
@@ -693,7 +703,7 @@ if (process.env.NODE_ENV !== 'production') {
  */
 
 function checkInternet(cb) {
-    require('url-exists')(`https://neosvr.com/`, function(err, exists) {
+    require('url-exists')(`https://neosvr.com/`, function (err, exists) {
         console.log(err, exists)
         if (!exists) {
             cb(false);
@@ -712,35 +722,35 @@ function checkInternet(cb) {
 ipcMain.on('synchronous-message', (event, arg) => {
     console.log(arg)  // prints "ping"
     event.returnValue = 'pong'
-  })
+})
 
-bus.on('SessionForceUpdate',function(ID){
+bus.on('SessionForceUpdate', function (ID) {
     instances.update(ID)
 })
-bus.on('clearCache', function(THIS){
-    fs.removeSync(Instances[THIS.id].sessionDir)
-    instances.clear(THIS.id)
+bus.on('clearCache', function (THIS) {
+    fs.removeSync(instances.get(THIS.ID).sessionDir)
+    instances.clear(THIS.ID)
     if (shuttingDown && JSON.stringify(instances.all()) === '{}') {
         ClearQuit()
     }
 })
-bus.on('Server:Update',function(serverObject) {
+bus.on('Server:Update', function (serverObject) {
     //console.log('Server:Update')
-    window.sendData('MainWindow',"Server:Update",serverObject)
-    window.sendData(`ServerManager-${serverObject.ID}`,'Update:Raw',serverObject)
+    window.sendData('MainWindow', "Server:Update", serverObject)
+    window.sendData(`ServerManager-${serverObject.ID}`, 'Update:Raw', serverObject)
 })
-bus.on("Console:Close", function(id){
-    console.log('console:close:',id)
+bus.on("Console:Close", function (id) {
+    console.log('console:close:', id)
     window.closeWindow(`ServerManager-${id}`)
 })
-bus.on('Server:Log',function(id,message){
+bus.on('Server:Log', function (id, message) {
     console.log(`${id}:${message}`)
-    window.sendData(`ServerManager-${id}`,'Server:Log',message)
+    window.sendData(`ServerManager-${id}`, 'Server:Log', message)
 })
-ipcMain.on('fetchLanguage', (event, arg)=>{
+ipcMain.on('fetchLanguage', (event, arg) => {
     event.returnValue = strings.getContent()
 })
-ipcMain.on('openManager', function(e, id) {
+ipcMain.on('openManager', function (e, id) {
     instances.openWindow(id)
     window.createWindow(`ServerManager-${id}`, {
         parent: 'MainWindow',
@@ -753,11 +763,13 @@ ipcMain.on('openManager', function(e, id) {
         webPreferences: {
             nodeIntegration: true
         }
-    }, {page:{
-        pathname: path.join(__dirname, `/Pages/ServerManager.html`),
-        protocol: 'file:',
-        slashes: true,
-    },query:{"id":id}})
+    }, {
+        page: {
+            pathname: path.join(__dirname, `/Pages/ServerManager.html`),
+            protocol: 'file:',
+            slashes: true,
+        }, query: { "id": id }
+    })
 
-    
+
 })

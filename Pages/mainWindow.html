@@ -52,7 +52,7 @@
 <body class="card">
     <div id="alerts" class="AlertWindow" width="100%">
     </div>
-    <div id="ServerList" class="" style="flex-direction:column; flex-wrap:wrap; height: 100%;">
+    <div id="ServerList" class="" style="display:flex;flex-direction:row; flex-wrap:wrap;">
     </div>
     <img class="LogoImage" src="../images/Thig_Transparent.png" width="200px" height="150px">
     <script>
@@ -197,8 +197,8 @@
         switch (releaseTag){
             case -1:
             addAlert(strings.getString('Notifications.PreReleaseNotif'),'warning')
-            //break
-            //case 1:
+            break
+            case 1:
             addAlert(`<h4 class="alert-heading">${strings.formatString(strings.getString("Notifications.NewVersionNotif"),json.tag_name,`<a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">`,"</a></h4>")}<p class="mb-0">${json.body}</p>`,'warning')
             break
         }

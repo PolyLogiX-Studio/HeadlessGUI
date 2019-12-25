@@ -176,7 +176,7 @@
              updateElementHTML("status-"+session.ID,'Status: '+session.Status)
              console.log(session.displayStatusMessage)
              */
-             if (session.displayStatusMessage) {
+             if (session.Vars._displayStatusMessage) {
                  console.log('alert')
                  switch (session.Vars._event) {
                      case 'Saving':

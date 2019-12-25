@@ -253,7 +253,7 @@ class Server {
                 this.Vars._displayStatusMessage = true;
                 let message = data.toString().substring(25).replace('\r\n', '')
                 this.Vars._eventContext = [message.substring(0, message.indexOf(',')), message.substring(message.indexOf(',') + 12)]
-                var foundIndex = this.Users.findIndex(x => x.username == undefined);
+                var foundIndex = this.Vars._Users.findIndex(x => x.username == undefined);
 
                 this.Vars._Users[foundIndex].username = this.Vars._eventContext[1]
                 this.Vars._Users[foundIndex].userID = this.Vars._eventContext[0]
@@ -265,10 +265,10 @@ class Server {
                 this.Vars._displayStatusMessage = true;
                 let message = data.toString().substring(19).replace('\r\n', '')
                 let ip = message.substring(0, message.indexOf(','))
-                var foundIndex = this.Users.findIndex(x => x.ip == ip);
-                let user = this.Users[foundIndex]
+                var foundIndex = this.Vars._Users.findIndex(x => x.ip == ip);
+                let user = this.Vars._Users[foundIndex]
                 this.Vars._eventContext = [user.userID, user.username]
-                this.Vars._Users = this.Users.filter(function(returnableObjects) {
+                this.Vars._Users = this.Vars._Users.filter(function(returnableObjects) {
                     return returnableObjects.ip !== ip;
                 });
 
@@ -338,9 +338,7 @@ class Server {
         this.Vars._event = 'ShuttingDown'
         this.Vars._displayStatusMessage = true
         updateSession(this.ID)
-        setTimeout(() => {
-            this.Session.stdin.write('\nshutdown\n');
-        }, 1000)
+        this.Session.stdin.write('\nshutdown\n');
     }
     /* Getters */
     var(varname){
@@ -360,7 +358,6 @@ class Server {
      * @memberof Server
      */
     update() {
-        
         bus.emit('Server:Update', this)
         if (this.Vars._displayStatusMessage) {
             this.Vars._displayStatusMessage = false
@@ -375,6 +372,7 @@ class Server {
      * @param {String} command Command to run on server
      */
     runCommand(command){
+        if (command==='shutdown'){this.end();return}
         this.Session.stdin.write(`\n${command}\nlog\n`)
     }
 }
@@ -393,11 +391,11 @@ class Instances {
      * @param {*} id 
      */
     get(id){
-        if (!this.Instances[id]) {return undefined}
+        if (!this.Instances[id]) {return null}
         return this.Instances[id]
     }
     runCommand(id,command){
-        this.Instances[id].Session.stdin.write(`\n${command}\nlog\n`)
+        this.Instances[id].runCommand(command)
     }
     /**
      * 
@@ -413,7 +411,7 @@ class Instances {
      * @param {String} id Server ID
      */
     update(id){
-        if (!this.Instances[id]) {return}
+        if (!this.Instances[id]) {return null}
         this.Instances[id].update()
     }
     /**
@@ -425,7 +423,7 @@ class Instances {
         }
     }
     clear(id){
-        this.Instances[id] = null
+        this.Instances[id] = undefined
         delete this.Instances[id]
     }
     /**

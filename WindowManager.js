@@ -52,9 +52,6 @@ class WindowManager {
      * @returns {String} Unique Window ID
      */
     createWindow(ID = uuidv4(),prop,data,menu=null){
-
-
-        this.ID = ID
         console.log('New Window Call,',ID)
         if (this.Windows[ID] != undefined) {
             return false
