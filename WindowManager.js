@@ -154,5 +154,7 @@ class WindowManager {
     }
 }
 
-
+/**
+ * @private
+ */
 module.exports = function(b){ bus = b; return {WindowManager}}

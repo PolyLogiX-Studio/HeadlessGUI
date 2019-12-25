@@ -185,6 +185,11 @@ checkInternet(function (isConnected) {
 const contextMenu = require('electron-context-menu');
 if (process.env.NODE_ENV != 'production') {
     contextMenu({
+        /**
+         * @private
+         * @function
+         */
+
         prepend: (defaultActions, params, browserWindow) => [
             {
                 label: 'Rainbow',
@@ -195,6 +200,11 @@ if (process.env.NODE_ENV != 'production') {
                 label: 'Search Google for “{selection}”',
                 // Only show it when right-clicking text
                 visible: params.selectionText.trim().length > 0,
+                /**
+         * @private
+         * @function
+         */
+
                 click: () => {
                     shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`);
                 }
@@ -321,7 +331,7 @@ function safeQuit() {
  *
  */
 function ClearQuit() {
-   
+
     fs.removeSync(sessionsDir)
     window.closeWindow('MainWindow')
     setTimeout(() => {
@@ -726,7 +736,7 @@ const mainMenuTemplate = [{
          * @private
          * @function
          */
-        click() {
+    click() {
         createURLWindow('www.patreon.com/PolyLogiX_VR')
     }
 }
@@ -739,6 +749,11 @@ if (process.env.NODE_ENV !== 'production') {
         submenu: [{
             label: 'Toggle DevTools',
             accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
+            /**
+         * @private
+         * @function
+         */
+
             click(item, focusedWindow) {
                 focusedWindow.toggleDevTools();
             }

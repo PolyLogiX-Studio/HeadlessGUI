@@ -1,5 +1,9 @@
 var bus
 const fetch = require('node-fetch');
+/**
+ * @private
+ * @param {String} ID
+ */
 function updateSession(ID) {
     bus.emit('SessionForceUpdate', ID)
 }
@@ -406,6 +410,11 @@ class Instances {
         if (!this.Instances[id]) { return null }
         return this.Instances[id]
     }
+    /**
+     * Run a console command on the instance
+     * @param {String} id 
+     * @param {String} command 
+     */
     runCommand(id, command) {
         this.Instances[id].runCommand(command)
     }
@@ -434,6 +443,10 @@ class Instances {
             this.Instances[property].end()
         }
     }
+    /**
+     * Wipe an instance from the internal cache, This will NOT kill the instance
+     * @param {String} id 
+     */
     clear(id) {
         this.Instances[id] = undefined
         delete this.Instances[id]
@@ -455,4 +468,7 @@ class Instances {
 
     }
 }
+/**
+ * @private
+ */
 module.exports = function (b) { bus = b; return { Instances, Server } }
