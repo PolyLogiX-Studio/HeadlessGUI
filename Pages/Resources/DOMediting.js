@@ -32,6 +32,7 @@ function addElement(parentId, elementTag, elementId, elementClass, html) {
 /**Load a Js or CSS File
  * @param {FilePath} filename
  * @param {string} filetype
+ * @private
  */
 function loadjscssfile(filename, filetype){
     if (filetype=="js"){ //if filename is a external JavaScript file

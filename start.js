@@ -487,10 +487,38 @@ function login(credential, password) {
     return sendLoginPost(loginPayload)
 }
 /**
+ * Login Payload for Neos
+ * @private
+ * @typedef {Object} LoginPayload
+ * @property {string} secretMachineId - Machine ID, Leaving blank will log out all instances
+ * @property {string} [email] - Neos Email
+ * @property {string} [username] - Neos Username, Do not use this if Email is supplied
+ * @property {string} password - Neos Password
+ * @property {boolean} rememberMe - Make token last 7 days
+ */
+/**
+ * Response from Neos Servers
+ * @private
+ * @typedef {Object} loginResponse
+ * @property {string} userId - User ID
+ * @property {string} token - Neos Email
+ * @property {string} created - When the token was created
+ * @property {string} expire - When the token expires
+ * @property {boolean} rememberMe - WIll the token work to log in
+ * @property {string} secretMachineId - Machine ID
+ * @property {string} sourceIP - IP
+ * @property {string} partitionKey - Unknown
+ * @property {string} rowKey - Unknown
+ * @property {string} timestamp - Current time
+ * @property {string} eTag - Unknown
+ */
+/**
  * Send a login request to the Neos Server
  * @ignore
- * @param {{secretMachineId:String,email:String,password:String,rememberMe:boolean}} loginPayload Login Info
- * @return {JSON} Session Object
+ * @param {LoginPayload} loginPayload Login Info
+ * @return {loginResponse} Response from Neos Servers
+ * @link https://cloudx.azurewebsites.net/
+ * @example sendLoginPost(username:"someUser",password:"password",rememberMe:true})
  */
 function sendLoginPost(loginPayload) {
     return fetch(CLOUDX_PRODUCTION_NEOS_API + 'api/userSessions', {
@@ -502,6 +530,7 @@ function sendLoginPost(loginPayload) {
     })
         .then(res => res.json())
         .then(json => {
+            //console.log(json)
             config.set('loginCredentials', (loginPayload.email ? loginPayload.email : loginPayload.username))
             config.set('loginPassword', (loginPayload.password ? loginPayload.password : config.get('loginPassword')))
             store.set('NEOS:token', json.token)
@@ -602,12 +631,15 @@ ipcMain.on('Console:Command', function (e, item) {
     }
     instances.runCommand(item.id, item.command)
 })
-
 const mainMenuTemplate = [{
     label: strings.getString('Menu.Main'),
     submenu: [{
         label: strings.getString('Menu.New_Server'),
         accelerator: process.platform == 'darwin' ? 'Command+N' : 'Ctrl+N',
+        /**
+         * @private
+         * @function
+         */
         click() {
             createAddWindow()
         }
@@ -615,6 +647,10 @@ const mainMenuTemplate = [{
     {
         label: strings.getString('Menu.Config'),
         accelerator: process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P',
+        /**
+         * @private
+         * @function
+         */
         click() {
             createConfigWindow()
         }
@@ -622,6 +658,10 @@ const mainMenuTemplate = [{
     {
         label: strings.getString('Menu.Refresh'),
         accelerator: process.platform == 'darwin' ? 'Command+R' : 'Ctrl+R',
+        /**
+         * @private
+         * @function
+         */
         click() {
             RefreshAll()
         }
@@ -632,6 +672,10 @@ const mainMenuTemplate = [{
     {
         label: strings.getString('Menu.Quit'),
         accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+        /**
+         * @private
+         * @function
+         */
         click() {
             safeQuit()
         }
@@ -643,6 +687,10 @@ const mainMenuTemplate = [{
     submenu: [{
         label: strings.getString('Menu.Online_Help'),
         accelerator: process.platform == 'darwin' ? 'F1' : 'F1',
+        /**
+         * @private
+         * @function
+         */
         click() {
             createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
         }
@@ -650,6 +698,10 @@ const mainMenuTemplate = [{
     {
         label: strings.getString('Menu.MyPXAccount'),
         accelerator: process.platform == 'darwin' ? 'F2' : 'F2',
+        /**
+         * @private
+         * @function
+         */
         click() {
             createURLWindow('www.polylogix.studio/PolyLogiX-Account')
         }
@@ -657,6 +709,10 @@ const mainMenuTemplate = [{
     {
         label: strings.getString('Menu.ReportBug'),
         accelerator: process.platform == 'darwin' ? 'F3' : 'F3',
+        /**
+         * @private
+         * @function
+         */
         click() {
             createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
         }
@@ -666,7 +722,11 @@ const mainMenuTemplate = [{
 },
 {
     label: strings.getString('Menu.SupportUs'),
-    click() {
+    /**
+         * @private
+         * @function
+         */
+        click() {
         createURLWindow('www.patreon.com/PolyLogiX_VR')
     }
 }

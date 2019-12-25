@@ -1,7 +1,7 @@
 var bus
 const fetch = require('node-fetch');
-function updateSession(ID){
-    bus.emit('SessionForceUpdate',ID)
+function updateSession(ID) {
+    bus.emit('SessionForceUpdate', ID)
 }
 /**
  * Neos Config
@@ -81,7 +81,7 @@ class Server {
      * @param {string} [autoInviteMessage=null] Message to send with Invite
      * @memberof Server
      */
-    constructor(sessionsDir,UUID = uuidv4(), usernameOverride = null, sessionName = "DefaultWorld", loadWorldURL = null, maxUsers = 32, description = null, saveOnExit = false, autosaveInterval = -1.0, accessLevel = "Anyone", loadWorldPresetName = "SpaceWorld", autoRecover = false, mobileFriendly = false, tickRate = 60, keepOriginalRoles = false, defaultUserRoles = null, idleRestartInterval = -1.0, forcedRestartInterval = -1.0, forcePort = null, autoInviteUsernames = null, autoInviteMessage = null) {
+    constructor(sessionsDir, UUID = uuidv4(), usernameOverride = null, sessionName = "DefaultWorld", loadWorldURL = null, maxUsers = 32, description = null, saveOnExit = false, autosaveInterval = -1.0, accessLevel = "Anyone", loadWorldPresetName = "SpaceWorld", autoRecover = false, mobileFriendly = false, tickRate = 60, keepOriginalRoles = false, defaultUserRoles = null, idleRestartInterval = -1.0, forcedRestartInterval = -1.0, forcePort = null, autoInviteUsernames = null, autoInviteMessage = null) {
         if (!fs.existsSync(sessionsDir)) {
             fs.mkdirSync(sessionsDir)
         }
@@ -114,16 +114,16 @@ class Server {
         this.Config.cacheFolder = path.join(this.sessionDir, 'Cache')
         this.Console = null;
         this.Vars = {
-            _Status:'Starting',
-            _event:null,
-            _CloudXID:null,
-            _SessionPreview:'https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607',
-            _eventContext:null,
-            _displayStatusMessage:false,
-            _UserCount:1,
-            _Users:[],
-            _timerMod:0,
-            _Timers:{
+            _Status: 'Starting',
+            _event: null,
+            _CloudXID: null,
+            _SessionPreview: 'https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607',
+            _eventContext: null,
+            _displayStatusMessage: false,
+            _UserCount: 1,
+            _Users: [],
+            _timerMod: 0,
+            _Timers: {
                 'UpdatePreview': {
                     func: () => {
                         this.log('updateCloudXID')
@@ -133,11 +133,14 @@ class Server {
                     freq: 60
                 }
             },
-            set Status(v){this.Vars._Status = v},
-            set event(v){this.Vars._event = v},
-            set displayStatusMessage(v){this.Vars._displayStatusMessage = v}
+            set Status(v) { this.Vars._Status = v },
+            set event(v) { this.Vars._event = v },
+            set displayStatusMessage(v) { this.Vars._displayStatusMessage = v }
         }
-        
+        /** 
+         * Log a message with the server id
+         * @param {string} message the message to send
+        */
         this.log = (message) => {
             console.log(`${this.ID}:${message}`)
         }
@@ -177,16 +180,16 @@ class Server {
             this.Vars._displayStatusMessage = true;
             updateSession(this.ID);
             if (this.Console !== null) {
-                bus.emit("Console:Close",this.ID)
+                bus.emit("Console:Close", this.ID)
                 this.Console = null
             }
 
             this.Session.kill();
             this.Session = null
-            bus.emit('clearCache',this);
+            bus.emit('clearCache', this);
             //NEED TO MANAGE WITH MANAGER TO CALL ENDING
         })
-        
+
         // Handle Events
         this.Session.stdout.on('data', (data) => {
             if (data.toString().startsWith('Enabling logging output.')) {
@@ -239,7 +242,7 @@ class Server {
                     'ip': data.toString().substring(15).trim(),
                     'username': undefined,
                     'userID': undefined,
-                    'role':undefined
+                    'role': undefined
                 })
                 updateSession(this.ID)
             }
@@ -269,7 +272,7 @@ class Server {
                 var foundIndex = this.Vars._Users.findIndex(x => x.ip == ip);
                 let user = this.Vars._Users[foundIndex]
                 this.Vars._eventContext = [user.userID, user.username]
-                this.Vars._Users = this.Vars._Users.filter(function(returnableObjects) {
+                this.Vars._Users = this.Vars._Users.filter(function (returnableObjects) {
                     return returnableObjects.ip !== ip;
                 });
 
@@ -279,23 +282,19 @@ class Server {
             if (data.toString().startsWith('User ')) {
                 let message = data.toString().substring(5).replace('\r\n', '')
                 let point1 = message.indexOf(' Role:')
-                let user = message.substring(0,point1).trim()
-                let role = message.substring(point1+7,message.indexOf(",")).trim()
-                console.log(this.Vars._Users)
-                console.log(user,role)
+                let user = message.substring(0, point1).trim()
+                let role = message.substring(point1 + 7, message.indexOf(",")).trim()
                 var foundIndex = this.Vars._Users.findIndex(x => x.username === user);
-                console.log(foundIndex)
-                if (foundIndex!==undefined){
-                this.Vars._Users[foundIndex].role = role
-                console.log(this.Vars._Users)
-                updateSession(this.ID)
+                if (foundIndex !== undefined) {
+                    this.Vars._Users[foundIndex].role = role
+                    updateSession(this.ID)
                 }
             }
             if (data.toString().startsWith(this.Config.startWorlds[0].sessionName + ">")) {
                 return
             }
             if (this.Console !== null) {
-                bus.emit('Server:Log',this.ID, data.toString())
+                bus.emit('Server:Log', this.ID, data.toString())
             }
         });
         return this
@@ -357,17 +356,17 @@ class Server {
         this.Session.stdin.write('\nshutdown\n');
     }
     /* Getters */
-    var(varname){
+    var(varname) {
         return this.Vars[`_${varname}`]
     }
     /**
      * @return server object
      */
-    val(){
+    val() {
         return this
     }
     /* Setters */
-    
+
     /**
      * Update data about the server Globally, Update server pannel in Main Window
      *
@@ -380,15 +379,12 @@ class Server {
         }
         this.log('Updating Server Info')
     }
-    consoleClosed(){
-        this.Console = null
-    }
     /**
      * Run a Neos Command
      * @param {String} command Command to run on server
      */
-    runCommand(command){
-        if (command==='shutdown'){this.end();return}
+    runCommand(command) {
+        if (command === 'shutdown') { this.end(); return }
         this.Session.stdin.write(`\n${command}\nlog\n`)
     }
 }
@@ -399,26 +395,26 @@ class Instances {
     /**
      * 
      */
-    constructor(){
+    constructor() {
         this.Instances = {}
     }
-    /**
+    /** Returns a Server Object with variables
      * @memberof Server
-     * @param {*} id 
+     * @param {string} id 
      */
-    get(id){
-        if (!this.Instances[id]) {return null}
+    get(id) {
+        if (!this.Instances[id]) { return null }
         return this.Instances[id]
     }
-    runCommand(id,command){
+    runCommand(id, command) {
         this.Instances[id].runCommand(command)
     }
     /**
      * 
      * @param {String} id Server ID
      */
-    openWindow(id){
-        if (!this.Instances[id]) {return undefined}
+    openWindow(id) {
+        if (!this.Instances[id]) { return undefined }
         this.Instances[id].Console = true
     }
     /**
@@ -426,19 +422,19 @@ class Instances {
      * @memberof Server
      * @param {String} id Server ID
      */
-    update(id){
-        if (!this.Instances[id]) {return null}
+    update(id) {
+        if (!this.Instances[id]) { return null }
         this.Instances[id].update()
     }
     /**
      * Close all servers
      */
-    endAll(){
-        for (var property in this.Instances){
+    endAll() {
+        for (var property in this.Instances) {
             this.Instances[property].end()
         }
     }
-    clear(id){
+    clear(id) {
         this.Instances[id] = undefined
         delete this.Instances[id]
     }
@@ -446,18 +442,17 @@ class Instances {
      * Return all Servers
      * @returns {Object} All instances
      */
-    all(){
+    all() {
         return this.Instances
     }
     /**
      * 
      * @param {Object} session Session Object
      */
-    newSession(session){
-        if (!session.UUID){session.UUID = uuidv4()}
-        //console.log(session)
-       this.Instances[session.UUID] = new Server(session.sessionsDir,session.UUID, session.usernameOverride, session.sessionName, session.loadWorldURL, session.maxUsers, session.description, session.saveOnExit, session.autosaveInterval, session.accessLevel, session.loadWorldPresetName, session.autoRecover, session.mobileFriendly, session.tickRate, session.keepOriginalRoles, session.defaultUserRoles, session.idleRestartInterval, session.forcedRestartInterval, session.forcePort, session.autoInviteUsernames, session.autoInviteMessage)
-    
+    newSession(session) {
+        if (!session.UUID) { session.UUID = uuidv4() }
+        this.Instances[session.UUID] = new Server(session.sessionsDir, session.UUID, session.usernameOverride, session.sessionName, session.loadWorldURL, session.maxUsers, session.description, session.saveOnExit, session.autosaveInterval, session.accessLevel, session.loadWorldPresetName, session.autoRecover, session.mobileFriendly, session.tickRate, session.keepOriginalRoles, session.defaultUserRoles, session.idleRestartInterval, session.forcedRestartInterval, session.forcePort, session.autoInviteUsernames, session.autoInviteMessage)
+
     }
 }
-module.exports = function(b){bus = b; return {Instances,Server}}
+module.exports = function (b) { bus = b; return { Instances, Server } }
