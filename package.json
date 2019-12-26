@@ -1,7 +1,7 @@
 {
   "name": "headlesscore",
   "productName": "Headless Core",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Headless Server for Neos",
   "main": "start.js",
   "scripts": {

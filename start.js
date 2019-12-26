@@ -20,8 +20,10 @@ const {
     BrowserWindow,
     Menu,
     ipcMain,
-    Tray
+    Tray,
+    remote
 } = electron;
+
 /*
 
   */
@@ -129,11 +131,12 @@ if (!fs.pathExistsSync(langDir)) {
 }
 var lang = {}
 let filenames = fs.readdirSync(langDir)
+store.set('langDir',langDir)
 filenames.forEach(function (filename) {
     let content = fs.readFileSync(path.join(langDir, filename))
     lang[filename] = JSON.parse(content);
 })
-console.log(lang)
+//console.log(lang)
 
 
 
@@ -143,7 +146,7 @@ const LocalizedStrings = require('localized-strings').default
 var strings = new LocalizedStrings(lang, { pseudo: store.get("pseudo") })
 strings.setLanguage(config.get('lang'))
 
-const { Instances } = require("./Server.js")(bus)
+const { Instances } = require("./Server.js")(bus,strings)
 const instances = new Instances()
 const scriptsConfig = new Store({
     name: 'scripts',
@@ -169,13 +172,13 @@ if (!store.has('MachineId')) { //For API Calls
 checkInternet(function (isConnected) {
     if (isConnected) {
         store.set('isConnected', true)
-        console.log('connected')
+        //console.log('connected')
         if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
 
             login(config.get('loginCredentials'), config.get('loginPassword')) // Login to Neos (If Able)
         }
     } else {
-        console.log('no connection')
+        //console.log('no connection')
         store.set('isConnected', false)
     }
 })
@@ -261,7 +264,6 @@ if (!themes.has('Themes')) {
 let tray = null
 app.on('ready', function () {
 
-
     tray = new Tray(ICON_GLOBAL_PNG)
     const contextMenu = Menu.buildFromTemplate(mainMenuTemplate)
     tray.setToolTip('Headless Core')
@@ -300,11 +302,11 @@ app.on('ready', function () {
             e.preventDefault()
             dialog.showMessageBox(null, {
                 type: 'question',
-                buttons: ['Cancel', `Yes, Kill them All :)`, `No, I clicked this by mistake`],
+                buttons: [strings.getString("Terms.Cancel"), strings.getString("Terms.Yes"), strings.getString("Terms.No")],
                 defaultId: 2,
-                title: "Close Program?",
-                message: "Are you sure you want to quit?",
-                detail: "This will Kick all players and close all sessions."
+                title: strings.getString("Notifications.closeTitle"),
+                message: strings.getString("Notifications.closeMessage"),
+                detail: strings.getString("Notifications.closeDetail")
             }).then((e) => {
                 if (e.response === 1) {
                     safeQuit()
@@ -624,7 +626,7 @@ ipcMain.on('openURL', function (e, item) {
     createURLWindow(item)
 })
 ipcMain.on('getUpdateRaw', function (e, session) {
-    console.log(session)
+    //console.log(session)
     instances.update(session)
 })
 ipcMain.on('Console:Command', function (e, item) {
@@ -779,7 +781,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 function checkInternet(cb) {
     require('url-exists')(`https://neosvr.com/`, function (err, exists) {
-        console.log(err, exists)
+       // console.log(err, exists)
         if (!exists) {
             cb(false);
         } else {
@@ -794,10 +796,6 @@ function checkInternet(cb) {
 
 
 //Server Pipe
-ipcMain.on('synchronous-message', (event, arg) => {
-    console.log(arg)  // prints "ping"
-    event.returnValue = 'pong'
-})
 
 bus.on('SessionForceUpdate', function (ID) {
     instances.update(ID)
@@ -824,6 +822,12 @@ bus.on('Server:Log', function (id, message) {
 })
 ipcMain.on('fetchLanguage', (event, arg) => {
     event.returnValue = strings.getContent()
+})
+bus.on('getLang', (event, arg) => {
+    bus.emit('sendLang',strings.getContent())
+})
+ipcMain.on('restartRequired', function (e,id){
+    window.sendData('MainWindow','restartRequired')
 })
 ipcMain.on('openManager', function (e, id) {
     instances.openWindow(id)

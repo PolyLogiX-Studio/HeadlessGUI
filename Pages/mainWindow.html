@@ -87,6 +87,11 @@
             console.log("SERVER UPDATE REQUEST ON MAIN WINDOW")
             updateSession(session)
         })
+        ipcRenderer.on('restartRequired', function(e){
+            if (!$('#alert-restartRequired').length){
+                addAlert(`<h4>${strings.getString("Notifications.restartRequired")}</h4>`, 'danger', 'restartRequired',true)
+            }
+        })
         ipcRenderer.on('ConfigError', function(e, items) {
             removeAlert(addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig'), 5000)
         });
@@ -100,8 +105,8 @@
             }
         });
         ipcRenderer.on('Main:updateList', function(e, items) {
-            addAlert('Session <strong>' + items.id + '</strong> Starting..', 'info', 'startAlert-' + items.id)
-            addElement('ServerList', "div", 'SERVER-' + items.id, "form-group", '<div class="card" id=""  style="width: 300px;"><h3 id="SessionName-'+items.id+'" class="card-header">' + items.sessionName + '</h3><div class="card-body"><h5 id="WorldName-' + items.id + '" class="card-title">' + (!items.loadWorldURL ? items.loadWorldPresetName : 'Custom') + '</h5><h6 class="card-subtitle text-muted">' + items.id + '</h6></div><img id="previewImage-' + items.id + '" style="height: 200px; width: 100%; display: block;" src="https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607" alt="Card image"><div class="card-body"><p id="description-' + items.id + '" class="card-text">' + items.description + '</p></div><ul class="list-group list-group-flush"><li id="usercount-' + items.id + '" class="list-group-item">Players: undefined/' + items.maxUsers-- + '</li>  <li id="status-' + items.id + '" class="list-group-item">Status: Starting</li></ul><div class="card-body"><a href="javascript:openManager(\'' + items.id + '\')" class="card-link">Manage Server</a></div><div id="uptime" class="card-footer text-muted">' + new Date() + '</div></div>')
+            addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),items.id,strings.getString("Terms.Starting")), 'info', 'startAlert-' + items.id)
+            addElement('ServerList', "div", 'SERVER-' + items.id, "form-group", '<div class="card" id=""  style="width: 300px;"><h3 id="SessionName-'+items.id+'" class="card-header">' + items.sessionName + '</h3><div class="card-body"><h5 id="WorldName-' + items.id + '" class="card-title">' + (!items.loadWorldURL ? items.loadWorldPresetName : 'Custom') + '</h5><h6 class="card-subtitle text-muted">' + items.id + '</h6></div><img id="previewImage-' + items.id + '" style="height: 200px; width: 100%; display: block;" src="https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607" alt="Card image"><div class="card-body"><p id="description-' + items.id + '" class="card-text">' + items.description + '</p></div><ul class="list-group list-group-flush"><li id="usercount-' + items.id + '" class="list-group-item">'+strings.getString("Terms.Players")+': 0/' + items.maxUsers-- + '</li>  <li id="status-' + items.id + '" class="list-group-item">'+strings.getString("Terms.Status")+': '+strings.getString("Terms.Starting")+'</li></ul><div class="card-body"><a href="javascript:openManager(\'' + items.id + '\')" class="card-link">'+strings.getString("Menu.ManageServer")+'</a></div><div id="uptime" class="card-footer text-muted">' + new Date() + '</div></div>')
         });
 
         function openManager(id) {
@@ -119,37 +124,37 @@
         function updateSession(session) {
             
             console.log('Update: ' + session.ID,session.Vars)
-            if (session.Vars._Status === 'Running') {
+            if (session.Vars._event === 'Started') {
                 removeAlert('startAlert-' + session.ID)
             }
             updateElementSrc('previewImage-' + session.ID, session.Vars._SessionPreview)
-            updateElementHTML('usercount-' + session.ID, 'Players: ' + (session.Vars._UserCount - 1) + '/' + (session.Config.startWorlds[0].maxUsers - 1))
-            updateElementHTML("status-" + session.ID, 'Status: ' + session.Vars._Status)
+            updateElementHTML('usercount-' + session.ID, `${strings.getString("Terms.Players")}: ` + (session.Vars._UserCount - 1) + '/' + (session.Config.startWorlds[0].maxUsers - 1))
+            updateElementHTML("status-" + session.ID, `${strings.getString("Terms.Status")}: ` + session.Vars._Status)
             updateElementHTML("SessionName-" + session.ID, session.sessionName)
             console.log(session.Vars._displayStatusMessage)
             if (session.Vars._displayStatusMessage) {
                 console.log('alert')
                 switch (session.Vars._event) {
                     case 'Saving':
-                        removeAlert(addAlert(`Session ${session.ID} Saving...`, 'info'), 5000)
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Saving")), 'info'), 5000)
                         break
                     case 'Started':
-                        removeAlert(addAlert(`Session ${session.ID} Running!`, 'success'), 2000)
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Running")), 'success'), 2000)
                         break
                     case 'Saved':
-                        removeAlert(addAlert(`Session ${session.ID} Saved!`, 'success'), 5000)
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Saved")), 'success'), 5000)
                         break
                     case 'Syncing':
-                        removeAlert(addAlert(`Session ${session.ID} Syncing...`, 'info'), 5000)
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Syncing")), 'info'), 5000)
                         break
                     case 'Synced':
-                        removeAlert(addAlert(`Session ${session.ID} Synced!`, 'success'), 5000)
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Synced")), 'success'), 5000)
                         break
                     case 'ShuttingDown':
-                        removeAlert(addAlert(`Session ${session.ID} Shutting Down...`, 'warning'), 5000)
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.ShuttingDown")), 'warning'), 5000)
                         break
                     case 'ShutDown':
-                        removeAlert(addAlert(`Session ${session.ID} has Ended.`, 'danger'), 2000)
+                        removeAlert(addAlert(`Session ${session.ID} Ended.`, 'danger'), 2000)
                         removeElement('SERVER-' + session.ID)
                         break
                     case 'UserJoinContext':
@@ -171,9 +176,9 @@
             }, timeout)
         }
 
-        function addAlert(message, alertType = "", CustomAlertID) {
+        function addAlert(message, alertType = "", CustomAlertID, hideClear) {
             let myAlert = (!CustomAlertID ? alertID : CustomAlertID)
-            addElement('alerts', 'div', 'alert-' + myAlert, 'alert alert-dismissible alert-' + alertType, '<button type="button" class="close" data-dismiss="alert" onclick="removeElement(\'alert-' + myAlert + '\')">&times;</button>' + message)
+            addElement('alerts', 'div', 'alert-' + myAlert, 'alert alert-dismissible alert-' + alertType, `${(hideClear?'':'<button type="button" class="close" data-dismiss="alert" onclick="removeElement(\'alert-'+myAlert+'\')">&times;</button>')}` + message)
             if (!CustomAlertID) {
                 alertID++
             }

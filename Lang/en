@@ -15,14 +15,29 @@
        "Addons":"Addons",
        "Misc":"Misc",
        "Kick":"Kick",
-       "Roles":"Roles"
-
+       "Roles":"Roles",
+       "System":"System",
+       "Visual":"Visual",
+       "Account":"Account",
+       "Servers":"Servers",
+       "Scripts":"Scripts",
+       "SaveX":"Save {0}",
+       "LangLabel":"Language ({0})",
+       "ManageServer":"Manage Server",
+       "SelectTheme":"Theme"
     },
     "Notifications": {
-       "ConfigError": "<b>Oh Snap!</b> Make sure to set your config before starting a server! Do this in <b>Main -> Config</b> or with <b>{0}</b>",
-       "PreReleaseNotif": "You are running a Pre-Release Build, If you encounter Issues, Please report them with <b>F3</b>",
+       "ConfigError": "<b>Oh Snap!</b> Make sure to set your config before starting a server! Do this in <b>Main -> Config</b> or with <b>{0}</b>.",
+       "PreReleaseNotif": "You are running a Pre-Release Build, If you encounter Issues, Please report them with <b>F3</b>.",
        "NewServerNotif": "Start a New Server through <b>{0} -> {1}</b> Or by pressing <b>Ctrl+N</b>.",
-       "NewVersionNotif":"A new version <b>{0}</b> is available {1}Here{2}"
+       "NewVersionNotif":"A new version <b>{0}</b> is available {1}Here{2}.",
+       "restartRequired":"You must restart this program for it to function correctly!",
+       "closeTitle":"Close Program?",
+       "closeMessage":"Are you sure you want to quit?",
+       "closeDetail":"This will Kick all players and close all sessions.",
+       "sessionNotif":"Session <b>{0}</b> {1}!",
+       "userJoin":"User <b>{0}</b> Connected to {1}.",
+       "userLeave":"User <b>{0}</b> disconnected from {1}."
     },
     "Roles":{
        "Spectator":"Spectator",
@@ -68,9 +83,43 @@
         "NewRoleButton":"New Role",
         "togleInvites":"Invite Users",
         "INVITES":"Invites",
-        "NewInviteButton":"New Invite"
+        "NewInviteButton":"New Invite",
+        "usernameOverrideLabel":"Server Display Name",
+        "usernameOverride":"Display Username",
+        "allowedUrlHostsLabel":"Networking Hosts Allowed",
+        "allowedUrlHosts":"URI Hosts; Comma Delimited",
+        "custom-file-label":"Headless Client",
+        "clientText":"Browse for Folder",
+        "ProfileDisplay":"Neos Account",
+        "NeosLogin":"Login to Neos",
+        "tickRate":"Server Tick Rate",
+        "frameRate":"Frame Rate",
+        "apikeyhelp":"API Key for communicating with your PolyLogiX Account",
+        "headlessFound":"Headless Client Found!",
+        "headlessNotFound":"Headless Client not found!",
+        "apikey":"PolyLogiX Api Key",
+        "newScript":"New Script",
+        "EnabledScripts":"Enabled Scripts",
+        "DisabledScripts":"Disabled Scripts"
     },
     "Terms":{
-       "Seconds":"Seconds"
+       "Seconds":"Seconds",
+       "RestartRequired":"Requires Restart",
+       "Yes":"Yes",
+       "No":"No",
+       "Cancel":"Cancel",
+       "Saving":"Saving",
+       "Running":"Running",
+       "Saved":"Saved",
+       "Syncing":"Syncing",
+       "Synced":"Synced",
+       "ShuttingDown":"Shutting Down",
+       "Ended":"Ended",
+       "Starting":"Starting",
+       "Status":"Status",
+       "Players":"Players",
+       "Path":"Path",
+       "Logout":"Logout",
+       "Optional":"Optional"
     }
  }

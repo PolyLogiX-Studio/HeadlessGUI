@@ -13,22 +13,22 @@
       </div>
       <ul class="nav nav-tabs">
          <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#system">System</a>
+            <a id="SYSTEML" class="nav-link active" data-toggle="tab" href="#system">System</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#visual">Visual</a>
+            <a id="VISUALL" class="nav-link" data-toggle="tab" href="#visual">Visual</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#account">Account</a>
+            <a id="ACCOUNTL" class="nav-link" data-toggle="tab" href="#account">Account</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#server">Servers</a>
+            <a id="SERVERSL" class="nav-link" data-toggle="tab" href="#server">Servers</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#scripts">Scripts</a>
+            <a id="SCRIPTSL" class="nav-link" data-toggle="tab" href="#scripts">Scripts</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link btn-outline-danger" data-toggle="tab" href="#danger">Danger Zone</a>
+            <a id="DANGERL" class="nav-link btn-outline-danger" data-toggle="tab" href="#danger">Danger Zone</a>
          </li>
 
       </ul>
@@ -36,11 +36,11 @@
          <!--SYSTEM-->
          <div class="tab-pane fade active show" id="system">
             <div class="form-group">
-               <label for="usernameOverride">Server Display Name</label>
+               <label id="usernameOverrideL" for="usernameOverride">Server Display Name</label>
                <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp" placeholder="Display Username">
-               <label for="allowedUrlHosts">Networking Hosts Allowed</label>
+               <label id="allowedUrlHostsL" for="allowedUrlHosts">Networking Hosts Allowed</label>
                <textarea rows=3 type="text" id="allowedUrlHosts" class="form-control" placeholder="URI Hosts; Comma Delimited"></textarea>
-               <label for="custom-file">Headless Client</label>
+               <label id="custom-fileL" for="custom-file">Headless Client</label>
                <div class="custom-file">
                   <input type="file" accept=".exe" class="custom-file-input" id="NeosClient" onchange="setFileDisplay(this.files[0].path)" webkitdirectory />
                   <label class="custom-file-label" id="clientText" for="NeosClient">Browse for Folder</label>
@@ -49,12 +49,12 @@
                   <input type="text" class="form-control" id="NeosClientPath" aria-describedby="emailHelp" placeholder="Path" onchange="validatePath()">
                   <div id="PathFeedback" class="invalid-feedback"></div>
                </div>
-               <label for="Languages">Language (Requires Restart)</label>
+               <label id="LanguagesL" for="Languages">Language (Requires Restart)</label>
                <select class="custom-select" id="Languages">
                   <option value="en" selected>en</option>
                </select>
             </div>
-            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save System</button></div>
+            <div class="modal-footer"><button type="button" id="SaveSystem" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save System</button></div>
          </div>
          <!--VISUAL-->
          <div class="tab-pane fade" id="visual">
@@ -108,34 +108,33 @@
             </div>
             <br>
             <div>
-               <label for="SelectTheme">Theme</label>
+               <label id="SelectThemeL" for="SelectTheme">Theme</label>
                <select id="SelectTheme" class="custom-select" onchange="newThemeFunc()">
                </select>
             </div>
-            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Visual</button></div>
+            <div class="modal-footer"><button type="button" id="SaveVisual" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Visual</button></div>
          </div>
          <!--ACCOUNT-->
          <div class="tab-pane fade" id="account">
-            <label for="ProfileDisplay">Neos Account</label>
+            <label id="ProfileDisplayL" for="ProfileDisplay">Neos Account</label>
             <div id='ProfileDisplay' style="display: none;">
                <img id="ProfilePicture" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" style="float:left; width:75px; height: 75px; padding-right: 5px; border-radius: 50%;">
                <h3 id="userNameProfile">[Loading...]</h3>
-               <button type="button" class="btn btn-outline-danger btn-sm" onclick="callLogout()">Logout</button>
+               <button id="LogoutL"type="button" class="btn btn-outline-danger btn-sm" onclick="callLogout()">Logout</button>
             </div>
             <div id="Login" style="display: none;">
-               <button type="button" class="btn btn-info" onclick="callLogin()">Login to Neos</button>
+               <button id="LoginL" type="button" class="btn btn-info" onclick="callLogin()">Login to Neos</button>
             </div>
-            <label for="apikey">PolyLogiX Api Key</label>
+            <label id="apikeyL" for="apikey">PolyLogiX Api Key</label>
             <input type="password" class="form-control" id="apikey" placeholder="Optional">
             <small id="apikeyhelp" class="form-text text-muted">API Key for communicating with your PolyLogiX Account</small>
-            <small id="apikeyhelp" class="form-text text-muted">NOT YET IMPLIMENTED</small>
-            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Account</button></div>
+            <div class="modal-footer"><button type="button" id="SaveAccount" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Account</button></div>
          </div>
          <!--SERVER-->
          <div class="tab-pane fade" id="server">
-            <label for="tickRate">Server Tick Rate</label>
+            <label id="tickRateL" for="tickRate">Server Tick Rate</label>
             <input type="number" id="tickRate" class="form-control" placeholder="Frame Rate" min="24" max="1024" value="60">
-            <div class="modal-footer"><button type="button" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Server</button></div>
+            <div class="modal-footer"><button type="button" id="SaveServer" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Server</button></div>
          </div>
          <!--DANGER ZONE-->
          <div class="tab-pane fade" id="danger">
@@ -143,17 +142,17 @@
          </div>
          <!--Scripts-->
          <div class="tab-pane fade" id="scripts">
-            <label for="enabledScripts">Enabled Scripts</label>
+            <label id="enabledScriptsL" for="enabledScripts">Enabled Scripts</label>
             <div id="enabledScripts" class="card border-success mb-3">
-
+               <div class="list-group-item"><span id="coretext">Core 1.0.0</span><button disabled style="width: 20px;" type="button" class="close" data-dismiss="alert">&times;</button><button disabled style="width: 20px;" type="button" class="close" data-dismiss="alert">&darr;</button><button disabled style="width: 20px;" type="button" class="close" data-dismiss="alert">&uarr;</button></div>
             </div>
             <hr class="my-4">
-            <label for="disabledScripts">Disabled Scripts</label>
+            <label id="disabledScriptsL"for="disabledScripts">Disabled Scripts</label>
             <div id="disabledScripts" class="card border-light mb-3">
 
             </div>
             <hr class="my-4">
-            <button type="button" class="btn btn-outline-success btn-sm" onclick="newScript()">+ New Script</button>
+            <button id="newScriptButton" type="button" class="btn btn-outline-success btn-sm disabled" disabled onclick="newScript()">+ New Script</button>
          </div>
       </div>
       <script>
@@ -162,15 +161,20 @@
              ipcRenderer,
              app
          } = electron;
+         const VERSION = require('root-require')('package.json').version
          const Store = require('electron-store');
          const store = new Store({name: 'dat'});
          const config = new Store({name: 'config'});
          const themes = new Store({name: 'themes'});
-         const fs = require('fs')
+         const fs = require('fs-extra')
          const path = require('path');
          const fetch = require('node-fetch')
          var pathValid = false
          var neosToken = store.get('NEOS:token')
+         console.log("Loading Localized Strings")
+         const LocalizedStrings = require('localized-strings').default;
+         strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), {pseudo:store.get("pseudo")})
+         strings.setLanguage(config.get('lang'))
          /*
          var dataDir = app.getPath('userData') //AppData/Roaming
          var scriptsDir = path.join(dataDir, 'Scripts')
@@ -179,8 +183,9 @@
          */
          $(document).ready(function () {
              generateThemeTable()
-             getConfig();
              generateScriptsTable()
+             setLocalization()
+             getConfig();
          
          /* if no Token stored, display Login Button, Else get user info*/
          if (!neosToken) {
@@ -189,8 +194,44 @@
              login()
              $('#ProfileDisplay').css("display",'block')
          }
-         
          });
+
+         function setLocalization(){
+             $('Title').text(strings.getString('Menu.Config'))
+             $('#SYSTEML').text(strings.getString('Menu.System'))
+             $('#VISUALL').text(strings.getString('Menu.Visual'))
+             $('#ACCOUNTL').text(strings.getString('Menu.Account'))
+             $('#SERVERSL').text(strings.getString('Menu.Servers'))
+             $('#SCRIPTSL').text(strings.getString('Menu.Scripts'))
+             $('#SaveSystem').text(strings.formatString(strings.getString('Menu.SaveX'),strings.getString('Menu.System')))
+             $('#SaveVisual').text(strings.formatString(strings.getString('Menu.SaveX'),strings.getString('Menu.Visual')))
+             $('#SaveServer').text(strings.formatString(strings.getString('Menu.SaveX'),strings.getString('Menu.Servers')))
+             $('#SaveAccount').text(strings.formatString(strings.getString('Menu.SaveX'),strings.getString('Menu.Account')))
+             $('#usernameOverrideL').text(strings.getString('Config.usernameOverrideLabel'))
+             $('#usernameOverride').attr("placeholder",strings.getString('Config.usernameOverride'))
+             $('#allowedUrlHostsL').text(strings.getString('Config.allowedUrlHostsLabel'))
+             $('#allowedUrlHosts').attr("placeholder",strings.getString('Config.allowedUrlHosts'))
+             $('#custom-fileL').text(strings.getString('Config.custom-file-label'))
+             $('#clientText').text(strings.getString('Config.clientText'))
+             $('#NeosClientPath').attr("placeholder",strings.getString('Terms.Path'))
+             $('#LanguagesL').text(strings.formatString(strings.getString("Menu.LangLabel"),strings.getString("Terms.RestartRequired")))
+             $('#SelectThemeL').text(strings.getString('Menu.SelectTheme'))
+             $('#ProfileDisplayL').text(strings.getString('Config.ProfileDisplay'))
+             $('#LoginL').text(strings.getString('Config.NeosLogin'))
+             $('#LogoutL').text(strings.getString('Terms.Logout'))
+             $('#tickRateL').text(strings.getString('Config.tickRate'))
+             $('#tickRate').attr("placeholder",strings.getString("Config.frameRate"))
+             $('#apikeyhelp').text(strings.getString('Config.apikeyhelp'))
+             $('#apikeyL').text(strings.getString('Config.apikey'))
+             $('#apikey').attr("placeholder",strings.getString("Terms.Optional"))
+             $('#enabledScriptsL').text(strings.getString('Config.EnabledScripts'))
+             $('#disabledScriptsL').text(strings.getString('Config.DisabledScripts'))
+             $('#newScriptButton').text("+ "+strings.getString('Config.newScript'))
+             $('#coretext').text(`Core ${VERSION}`)
+            }
+
+
+
          function newScript(){
             ipcRenderer.send('new:editor')
          }
@@ -244,23 +285,31 @@
              if (fs.existsSync(path.join($('#NeosClientPath').val(), 'Neos.exe'))) {
                  $('#NeosClientPath').attr('class', 'form-control is-valid')
                  $('#PathFeedback').attr('class', 'valid-feedback')
-                 $('#PathFeedback').html('Headless Client Found!')
+                 $('#PathFeedback').html(strings.getString("Config.headlessFound"))
                  pathValid = true
              } else {
                  $('#NeosClientPath').attr('class', 'form-control is-invalid')
                  $('#PathFeedback').attr('class', 'invalid-feedback')
-                 $('#PathFeedback').html('Headless Client not found!')
+                 $('#PathFeedback').html(strings.getString("Config.headlessNotFound"))
                  pathValid = false
              }
          
          }
          function generateScriptsTable() {
-
-
+           
+         }
+         function generateLanguages(){
+            let options = fs.readdirSync(store.get('langDir'))
+            console.log(options)
+            let innerText = ''
+            for (let i = 0; i < options.length; i++) {
+               innerText+=("<option " + (options[i] == config.get('lang') ? 'selected ' : '') + "value=\"" + options[i] + "\">" + options[i] + "</option>")
+            }
+            $('#Languages').html(innerText)
          }
          function getConfig() {
              let hosts = config.get('allowedUrlHosts')
-         
+             generateLanguages()
              if (!store.has('configSet')) {
                  return
              }
@@ -287,6 +336,9 @@
          function saveConfig(element) {
              switch(element){
                  case 'system':
+                    if ($('#Languages').val()!==config.get('lang')){
+                       ipcRenderer.send('restartRequired')
+                    }
                  config.set('lang', $('#Languages').val())
                  config.set('neosClientPath', $('#NeosClientPath').val())
                  config.set('usernameOverride', $('#usernameOverride').val())

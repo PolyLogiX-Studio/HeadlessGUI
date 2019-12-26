@@ -105,14 +105,8 @@ class WindowManager {
         }))
         this.Windows[ID].onClosed = (this.Windows[ID].on('closed', ()=>{
             console.log(`Window ${ID}: Closed.`)
-            if (ID=='MainWindow'){
-                for (let i=0;i<this.Windows[ID].Children.length; i++){
-                    this.closeWindow(this.Windows[ID].Children[i])
-                }
-                delete this.Windows[ID]
-            }
         }))
-        console.log(this.Windows)
+        //console.log(this.Windows)
         return ID
     }
     /**

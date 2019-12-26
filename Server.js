@@ -7,6 +7,7 @@ const fetch = require('node-fetch');
 function updateSession(ID) {
     bus.emit('SessionForceUpdate', ID)
 }
+var strings
 /**
  * Neos Config
  * @param {Object} DefaultConfig
@@ -91,6 +92,7 @@ class Server {
         }
         this.Config = DefaultConfig
         this.ID = UUID
+        this.sessionName = sessionName
         this.sessionDir = path.join(sessionsDir, UUID)
         this.Config.startWorlds[0].sessionName = sessionName
         this.Config.startWorlds[0].description = description
@@ -118,7 +120,7 @@ class Server {
         this.Config.cacheFolder = path.join(this.sessionDir, 'Cache')
         this.Console = null;
         this.Vars = {
-            _Status: 'Starting',
+            _Status: strings.getString("Terms.Starting"),
             _event: null,
             _CloudXID: null,
             _SessionPreview: 'https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607',
@@ -200,7 +202,7 @@ class Server {
                 return
             }
             if (data.toString().startsWith('World running')) {
-                this.Vars._Status = 'Running';
+                this.Vars._Status = strings.getString("Terms.Running")
                 this.Vars._event = 'Started'
                 this.Vars._displayStatusMessage = true;
                 updateSession(this.ID)
@@ -210,31 +212,31 @@ class Server {
             }
             if (data.toString().startsWith('World Saving') || data.toString().startsWith('Autosaving')) {
                 this.Vars._event = 'Saving';
-                this.Vars._Status = 'Saving';
+                this.Vars._Status = strings.getString("Terms.Saving")
                 this.Vars._displayStatusMessage = true;
                 updateSession(this.ID)
             }
             if (data.toString().startsWith('World Saved')) {
                 this.Vars._event = 'Saved';
-                this.Vars._Status = 'Saved';
+                this.Vars._Status = strings.getString("Terms.Saved")
                 this.Vars._displayStatusMessage = true;
                 updateSession(this.ID)
             }
             if (data.toString().startsWith('Starting sync')) {
                 this.Vars._event = 'Syncing';
-                this.Vars._Status = 'Syncing';
+                this.Vars._Status = strings.getString("Terms.Syncing")
                 this.Vars._displayStatusMessage = true;
                 updateSession(this.ID)
             }
             if (data.toString().startsWith('Finished sync')) {
                 this.Vars._event = 'Synced';
-                this.Vars._Status = 'Running';
+                this.Vars._Status = strings.getString("Terms.Running")
                 this.displayStatusMessage = true;
                 updateSession(this.ID)
             }
             if (data.toString().startsWith('Shutting Down')) {
                 this.Vars._event = 'ShuttingDown';
-                this.Vars._Status = 'Shutting Down';
+                this.Vars._Status = strings.getString("Terms.ShuttingDown")
                 this.Vars._displayStatusMessage = true;
                 updateSession(this.ID)
             }
@@ -289,7 +291,7 @@ class Server {
                 let user = message.substring(0, point1).trim()
                 let role = message.substring(point1 + 7, message.indexOf(",")).trim()
                 var foundIndex = this.Vars._Users.findIndex(x => x.username === user);
-                if (foundIndex !== undefined) {
+                if (this.Vars._Users[foundIndex] !== undefined) {
                     this.Vars._Users[foundIndex].role = role
                     updateSession(this.ID)
                 }
@@ -353,7 +355,7 @@ class Server {
      * @memberof Server
      */
     end() {
-        this.Vars._Status = 'Shutting Down'
+        this.Vars._Status = strings.getString("Terms.ShuttingDown")
         this.Vars._event = 'ShuttingDown'
         this.Vars._displayStatusMessage = true
         updateSession(this.ID)
@@ -471,4 +473,4 @@ class Instances {
 /**
  * @private
  */
-module.exports = function (b) { bus = b; return { Instances, Server } }
+module.exports = function (b,s) { bus = b;strings = s; return { Instances, Server } }
