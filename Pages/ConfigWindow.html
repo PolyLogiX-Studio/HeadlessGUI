@@ -30,23 +30,26 @@
          <li class="nav-item">
             <a id="DANGERL" class="nav-link btn-outline-danger" data-toggle="tab" href="#danger">Danger Zone</a>
          </li>
-
       </ul>
       <div id="myTabContent" class="tab-content">
          <!--SYSTEM-->
          <div class="tab-pane fade active show" id="system">
             <div class="form-group">
                <label id="usernameOverrideL" for="usernameOverride">Server Display Name</label>
-               <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp" placeholder="Display Username">
+               <input type="text" class="form-control" id="usernameOverride" aria-describedby="emailHelp"
+                  placeholder="Display Username">
                <label id="allowedUrlHostsL" for="allowedUrlHosts">Networking Hosts Allowed</label>
-               <textarea rows=3 type="text" id="allowedUrlHosts" class="form-control" placeholder="URI Hosts; Comma Delimited"></textarea>
+               <textarea rows=3 type="text" id="allowedUrlHosts" class="form-control"
+                  placeholder="URI Hosts; Comma Delimited"></textarea>
                <label id="custom-fileL" for="custom-file">Headless Client</label>
                <div class="custom-file">
-                  <input type="file" accept=".exe" class="custom-file-input" id="NeosClient" onchange="setFileDisplay(this.files[0].path)" webkitdirectory />
+                  <input type="file" accept=".exe" class="custom-file-input" id="NeosClient"
+                     onchange="setFileDisplay(this.files[0].path)" webkitdirectory />
                   <label class="custom-file-label" id="clientText" for="NeosClient">Browse for Folder</label>
                </div>
                <div class='form-group' id="PathFormGroup">
-                  <input type="text" class="form-control" id="NeosClientPath" aria-describedby="emailHelp" placeholder="Path" onchange="validatePath()">
+                  <input type="text" class="form-control" id="NeosClientPath" aria-describedby="emailHelp"
+                     placeholder="Path" onchange="validatePath()">
                   <div id="PathFeedback" class="invalid-feedback"></div>
                </div>
                <label id="LanguagesL" for="Languages">Language (Requires Restart)</label>
@@ -54,7 +57,8 @@
                   <option value="en" selected>en</option>
                </select>
             </div>
-            <div class="modal-footer"><button type="button" id="SaveSystem" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save System</button></div>
+            <div class="modal-footer"><button type="button" id="SaveSystem" class="btn btn-primary" type="submit"
+               onclick="saveConfig(this.parentElement.parentElement.id)">Save System</button></div>
          </div>
          <!--VISUAL-->
          <div class="tab-pane fade" id="visual">
@@ -69,19 +73,25 @@
                <div class="alert alert-dismissible alert-warning">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
                   <h4 class="alert-heading">Warning!</h4>
-                  <p class="mb-0">Best check yo self, you're not looking too good. Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, <a href="#" class="alert-link">vel scelerisque nisl consectetur et</a>.</p>
+                  <p class="mb-0">Best check yo self, you're not looking too good. Nulla vitae elit libero, a pharetra
+                     augue. Praesent commodo cursus magna, <a href="#" class="alert-link">vel scelerisque nisl consectetur
+                     et</a>.
+                  </p>
                </div>
                <div class="alert alert-dismissible alert-danger">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
-                  <strong>Oh snap!</strong> <a href="#" class="alert-link">Change a few things up</a> and try submitting again.
+                  <strong>Oh snap!</strong> <a href="#" class="alert-link">Change a few things up</a> and try submitting
+                  again.
                </div>
                <div class="alert alert-dismissible alert-success">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
-                  <strong>Well done!</strong> You successfully read <a href="#" class="alert-link">this important alert message</a>.
+                  <strong>Well done!</strong> You successfully read <a href="#" class="alert-link">this important alert
+                  message</a>.
                </div>
                <div class="alert alert-dismissible alert-info">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
-                  <strong>Heads up!</strong> This <a href="#" class="alert-link">alert needs your attention</a>, but it's not super important.
+                  <strong>Heads up!</strong> This <a href="#" class="alert-link">alert needs your attention</a>, but it's
+                  not super important.
                </div>
                <span class="badge badge-primary">Primary</span>
                <span class="badge badge-secondary">Secondary</span>
@@ -112,60 +122,71 @@
                <select id="SelectTheme" class="custom-select" onchange="newThemeFunc()">
                </select>
             </div>
-            <div class="modal-footer"><button type="button" id="SaveVisual" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Visual</button></div>
+            <div class="modal-footer"><button type="button" id="SaveVisual" class="btn btn-primary" type="submit"
+               onclick="saveConfig(this.parentElement.parentElement.id)">Save Visual</button></div>
          </div>
          <!--ACCOUNT-->
          <div class="tab-pane fade" id="account">
             <label id="ProfileDisplayL" for="ProfileDisplay">Neos Account</label>
             <div id='ProfileDisplay' style="display: none;">
-               <img id="ProfilePicture" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" style="float:left; width:75px; height: 75px; padding-right: 5px; border-radius: 50%;">
+               <img id="ProfilePicture" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
+                  style="float:left; width:75px; height: 75px; padding-right: 5px; border-radius: 50%;">
                <h3 id="userNameProfile">[Loading...]</h3>
-               <button id="LogoutL"type="button" class="btn btn-outline-danger btn-sm" onclick="callLogout()">Logout</button>
+               <button id="LogoutL" type="button" class="btn btn-outline-danger btn-sm"
+                  onclick="callLogout()">Logout</button>
             </div>
             <div id="Login" style="display: none;">
                <button id="LoginL" type="button" class="btn btn-info" onclick="callLogin()">Login to Neos</button>
             </div>
             <label id="apikeyL" for="apikey">PolyLogiX Api Key</label>
             <input type="password" class="form-control" id="apikey" placeholder="Optional">
-            <small id="apikeyhelp" class="form-text text-muted">API Key for communicating with your PolyLogiX Account</small>
-            <div class="modal-footer"><button type="button" id="SaveAccount" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Account</button></div>
+            <small id="apikeyhelp" class="form-text text-muted">API Key for communicating with your PolyLogiX
+            Account</small>
+            <div class="modal-footer"><button type="button" id="SaveAccount" class="btn btn-primary" type="submit"
+               onclick="saveConfig(this.parentElement.parentElement.id)">Save Account</button></div>
          </div>
          <!--SERVER-->
          <div class="tab-pane fade" id="server">
             <label id="tickRateL" for="tickRate">Server Tick Rate</label>
-            <input type="number" id="tickRate" class="form-control" placeholder="Frame Rate" min="24" max="1024" value="60">
-            <div class="modal-footer"><button type="button" id="SaveServer" class="btn btn-primary" type="submit" onclick="saveConfig(this.parentElement.parentElement.id)">Save Server</button></div>
+            <input type="number" id="tickRate" class="form-control" placeholder="Frame Rate" min="24" max="1024"
+               value="60">
+            <div class="modal-footer"><button type="button" id="SaveServer" class="btn btn-primary" type="submit"
+               onclick="saveConfig(this.parentElement.parentElement.id)">Save Server</button></div>
          </div>
          <!--DANGER ZONE-->
          <div class="tab-pane fade" id="danger">
-            <button type="button" class="btn btn-outline-danger disabled" type="submit" onclick="">Wipe HeadlessCore Data (Disabled)</button>
+            <button type="button" class="btn btn-outline-danger disabled" type="submit" onclick="">Wipe HeadlessCore Data
+            (Disabled)</button>
          </div>
          <!--Scripts-->
          <div class="tab-pane fade" id="scripts">
             <label id="enabledScriptsL" for="enabledScripts">Enabled Scripts</label>
             <div id="enabledScripts" class="card border-success mb-3">
-               <div class="list-group-item"><span id="coretext">Core 1.0.0</span><button disabled style="width: 20px;" type="button" class="close" data-dismiss="alert">&times;</button><button disabled style="width: 20px;" type="button" class="close" data-dismiss="alert">&darr;</button><button disabled style="width: 20px;" type="button" class="close" data-dismiss="alert">&uarr;</button></div>
+               <div class="list-group-item"><span id="coretext">Core 1.0.0</span><button disabled style="width: 20px;"
+                  type="button" class="close" data-dismiss="alert">&times;</button><button disabled style="width: 20px;"
+                  type="button" class="close" data-dismiss="alert">&darr;</button><button disabled style="width: 20px;"
+                  type="button" class="close" data-dismiss="alert">&uarr;</button></div>
             </div>
             <hr class="my-4">
-            <label id="disabledScriptsL"for="disabledScripts">Disabled Scripts</label>
+            <label id="disabledScriptsL" for="disabledScripts">Disabled Scripts</label>
             <div id="disabledScripts" class="card border-light mb-3">
-
             </div>
             <hr class="my-4">
-            <button id="newScriptButton" type="button" class="btn btn-outline-success btn-sm disabled" disabled onclick="newScript()">+ New Script</button>
+            <button id="newScriptButton" type="button" class="btn btn-outline-success btn-sm disabled" disabled
+               onclick="newScript()">+ New Script</button>
          </div>
       </div>
       <script>
          const electron = require('electron')
          const {
-             ipcRenderer,
-             app
+            ipcRenderer,
+            app
          } = electron;
          const VERSION = require('root-require')('package.json').version
          const Store = require('electron-store');
-         const store = new Store({name: 'dat'});
-         const config = new Store({name: 'config'});
-         const themes = new Store({name: 'themes'});
+         const store = new Store({ name: 'dat' });
+         const config = new Store({ name: 'config' });
+         const themes = new Store({ name: 'themes' });
          const fs = require('fs-extra')
          const path = require('path');
          const fetch = require('node-fetch')
@@ -173,7 +194,7 @@
          var neosToken = store.get('NEOS:token')
          console.log("Loading Localized Strings")
          const LocalizedStrings = require('localized-strings').default;
-         strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), {pseudo:store.get("pseudo")})
+         strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), { pseudo: store.get("pseudo") })
          strings.setLanguage(config.get('lang'))
          /*
          var dataDir = app.getPath('userData') //AppData/Roaming
@@ -182,145 +203,145 @@
          var disabledScriptsDir = path.join(scriptsDir, 'Disabled')
          */
          $(document).ready(function () {
-             generateThemeTable()
-             generateScriptsTable()
-             setLocalization()
-             getConfig();
+            generateThemeTable()
+            generateScriptsTable()
+            setLocalization()
+            getConfig();
          
-         /* if no Token stored, display Login Button, Else get user info*/
-         if (!neosToken) {
-             $('#Login').css("display",'block')
-         } else {
-             login()
-             $('#ProfileDisplay').css("display",'block')
-         }
-         });
-
-         function setLocalization(){
-             $('Title').text(strings.getString('Menu.Config'))
-             $('#SYSTEML').text(strings.getString('Menu.System'))
-             $('#VISUALL').text(strings.getString('Menu.Visual'))
-             $('#ACCOUNTL').text(strings.getString('Menu.Account'))
-             $('#SERVERSL').text(strings.getString('Menu.Servers'))
-             $('#SCRIPTSL').text(strings.getString('Menu.Scripts'))
-             $('#SaveSystem').text(strings.formatString(strings.getString('Menu.SaveX'),strings.getString('Menu.System')))
-             $('#SaveVisual').text(strings.formatString(strings.getString('Menu.SaveX'),strings.getString('Menu.Visual')))
-             $('#SaveServer').text(strings.formatString(strings.getString('Menu.SaveX'),strings.getString('Menu.Servers')))
-             $('#SaveAccount').text(strings.formatString(strings.getString('Menu.SaveX'),strings.getString('Menu.Account')))
-             $('#usernameOverrideL').text(strings.getString('Config.usernameOverrideLabel'))
-             $('#usernameOverride').attr("placeholder",strings.getString('Config.usernameOverride'))
-             $('#allowedUrlHostsL').text(strings.getString('Config.allowedUrlHostsLabel'))
-             $('#allowedUrlHosts').attr("placeholder",strings.getString('Config.allowedUrlHosts'))
-             $('#custom-fileL').text(strings.getString('Config.custom-file-label'))
-             $('#clientText').text(strings.getString('Config.clientText'))
-             $('#NeosClientPath').attr("placeholder",strings.getString('Terms.Path'))
-             $('#LanguagesL').text(strings.formatString(strings.getString("Menu.LangLabel"),strings.getString("Terms.RestartRequired")))
-             $('#SelectThemeL').text(strings.getString('Menu.SelectTheme'))
-             $('#ProfileDisplayL').text(strings.getString('Config.ProfileDisplay'))
-             $('#LoginL').text(strings.getString('Config.NeosLogin'))
-             $('#LogoutL').text(strings.getString('Terms.Logout'))
-             $('#tickRateL').text(strings.getString('Config.tickRate'))
-             $('#tickRate').attr("placeholder",strings.getString("Config.frameRate"))
-             $('#apikeyhelp').text(strings.getString('Config.apikeyhelp'))
-             $('#apikeyL').text(strings.getString('Config.apikey'))
-             $('#apikey').attr("placeholder",strings.getString("Terms.Optional"))
-             $('#enabledScriptsL').text(strings.getString('Config.EnabledScripts'))
-             $('#disabledScriptsL').text(strings.getString('Config.DisabledScripts'))
-             $('#newScriptButton').text("+ "+strings.getString('Config.newScript'))
-             $('#coretext').text(`Core ${VERSION}`)
+            /* if no Token stored, display Login Button, Else get user info*/
+            if (!neosToken) {
+               $('#Login').css("display", 'block')
+            } else {
+               login()
+               $('#ProfileDisplay').css("display", 'block')
             }
-
-
-
-         function newScript(){
+         });
+         
+         function setLocalization() {
+            $('Title').text(strings.getString('Menu.Config'))
+            $('#SYSTEML').text(strings.getString('Menu.System'))
+            $('#VISUALL').text(strings.getString('Menu.Visual'))
+            $('#ACCOUNTL').text(strings.getString('Menu.Account'))
+            $('#SERVERSL').text(strings.getString('Menu.Servers'))
+            $('#SCRIPTSL').text(strings.getString('Menu.Scripts'))
+            $('#SaveSystem').text(strings.formatString(strings.getString('Menu.SaveX'), strings.getString('Menu.System')))
+            $('#SaveVisual').text(strings.formatString(strings.getString('Menu.SaveX'), strings.getString('Menu.Visual')))
+            $('#SaveServer').text(strings.formatString(strings.getString('Menu.SaveX'), strings.getString('Menu.Servers')))
+            $('#SaveAccount').text(strings.formatString(strings.getString('Menu.SaveX'), strings.getString('Menu.Account')))
+            $('#usernameOverrideL').text(strings.getString('Config.usernameOverrideLabel'))
+            $('#usernameOverride').attr("placeholder", strings.getString('Config.usernameOverride'))
+            $('#allowedUrlHostsL').text(strings.getString('Config.allowedUrlHostsLabel'))
+            $('#allowedUrlHosts').attr("placeholder", strings.getString('Config.allowedUrlHosts'))
+            $('#custom-fileL').text(strings.getString('Config.custom-file-label'))
+            $('#clientText').text(strings.getString('Config.clientText'))
+            $('#NeosClientPath').attr("placeholder", strings.getString('Terms.Path'))
+            $('#LanguagesL').text(strings.formatString(strings.getString("Menu.LangLabel"), strings.getString("Terms.RestartRequired")))
+            $('#SelectThemeL').text(strings.getString('Menu.SelectTheme'))
+            $('#ProfileDisplayL').text(strings.getString('Config.ProfileDisplay'))
+            $('#LoginL').text(strings.getString('Config.NeosLogin'))
+            $('#LogoutL').text(strings.getString('Terms.Logout'))
+            $('#tickRateL').text(strings.getString('Config.tickRate'))
+            $('#tickRate').attr("placeholder", strings.getString("Config.frameRate"))
+            $('#apikeyhelp').text(strings.getString('Config.apikeyhelp'))
+            $('#apikeyL').text(strings.getString('Config.apikey'))
+            $('#apikey').attr("placeholder", strings.getString("Terms.Optional"))
+            $('#enabledScriptsL').text(strings.getString('Config.EnabledScripts'))
+            $('#disabledScriptsL').text(strings.getString('Config.DisabledScripts'))
+            $('#newScriptButton').text("+ " + strings.getString('Config.newScript'))
+            $('#coretext').text(`Core ${VERSION}`)
+         }
+         
+         
+         
+         function newScript() {
             ipcRenderer.send('new:editor')
          }
          function callLogin() {
-             ipcRenderer.send('callWindow:Login')
+            ipcRenderer.send('callWindow:Login')
          }
-
          
-
+         
+         
          ipcRenderer.on("NEOS:Login", (e) => {
-             login()
-             $('#ProfileDisplay').css("display",'block')
-             $('#Login').css("display",'none')
+            login()
+            $('#ProfileDisplay').css("display", 'block')
+            $('#Login').css("display", 'none')
          })
          
          function callLogout() {
-             fetch(`api/userSessions/${store.get('NEOS:userId')}/${store.get('NEOS:token')}`,{method:"DELETE",headers:{'neos':`${store.get('NEOS:userId')}:${store.get('NEOS:token')}`}}) // Invalidate Token
-             store.delete('NEOS:token')
-             store.delete('NEOS:userId')
-             store.delete('NEOS:token:expire')
-             config.delete('loginCredentials')
-             config.delete('loginPassword')
-             $('#ProfileDisplay').css("display",'none')
-             $('#Login').css("display",'block')
-             ipcRenderer.send('NEOS:Logout')
+            fetch(`api/userSessions/${store.get('NEOS:userId')}/${store.get('NEOS:token')}`, { method: "DELETE", headers: { 'neos': `${store.get('NEOS:userId')}:${store.get('NEOS:token')}` } }) // Invalidate Token
+            store.delete('NEOS:token')
+            store.delete('NEOS:userId')
+            store.delete('NEOS:token:expire')
+            config.delete('loginCredentials')
+            config.delete('loginPassword')
+            $('#ProfileDisplay').css("display", 'none')
+            $('#Login').css("display", 'block')
+            ipcRenderer.send('NEOS:Logout')
          }
          /* Fetch Neos Account Profile Info */
          function login() {
-             fetch(`https://cloudx.azurewebsites.net/api/users/${store.get('NEOS:userId')}`)
-                 .then(res => res.json())
-                 .then(json => {
-                     $('#userNameProfile').html(json.username)
-                     let str = json.profile.iconUrl
-                     var hash = str.substring(
-                         str.lastIndexOf("/") + 1,
-                         str.lastIndexOf("."))
-                     $('#ProfilePicture').attr('src',`https://cloudxstorage.blob.core.windows.net/assets/${hash}`)
+            fetch(`https://cloudx.azurewebsites.net/api/users/${store.get('NEOS:userId')}`)
+               .then(res => res.json())
+               .then(json => {
+                  $('#userNameProfile').html(json.username)
+                  let str = json.profile.iconUrl
+                  var hash = str.substring(
+                     str.lastIndexOf("/") + 1,
+                     str.lastIndexOf("."))
+                  $('#ProfilePicture').attr('src', `https://cloudxstorage.blob.core.windows.net/assets/${hash}`)
          
-                 })
+               })
          
          }
          /* Cut File path and Validate */
          function setFileDisplay(FilePath) {
-             let folder = FilePath.split('\\')
-             $('#NeosClientPath').val(FilePath.substring(0, FilePath.lastIndexOf('\\') + 1))
-             $('#clientText').innerHTML = folder[folder.length - 2]
-             validatePath()
+            let folder = FilePath.split('\\')
+            $('#NeosClientPath').val(FilePath.substring(0, FilePath.lastIndexOf('\\') + 1))
+            $('#clientText').innerHTML = folder[folder.length - 2]
+            validatePath()
          }
          //Make sure Valid directory to Neos.EXE
          function validatePath() {
-             if (fs.existsSync(path.join($('#NeosClientPath').val(), 'Neos.exe'))) {
-                 $('#NeosClientPath').attr('class', 'form-control is-valid')
-                 $('#PathFeedback').attr('class', 'valid-feedback')
-                 $('#PathFeedback').html(strings.getString("Config.headlessFound"))
-                 pathValid = true
-             } else {
-                 $('#NeosClientPath').attr('class', 'form-control is-invalid')
-                 $('#PathFeedback').attr('class', 'invalid-feedback')
-                 $('#PathFeedback').html(strings.getString("Config.headlessNotFound"))
-                 pathValid = false
-             }
+            if (fs.existsSync(path.join($('#NeosClientPath').val(), 'Neos.exe'))) {
+               $('#NeosClientPath').attr('class', 'form-control is-valid')
+               $('#PathFeedback').attr('class', 'valid-feedback')
+               $('#PathFeedback').html(strings.getString("Config.headlessFound"))
+               pathValid = true
+            } else {
+               $('#NeosClientPath').attr('class', 'form-control is-invalid')
+               $('#PathFeedback').attr('class', 'invalid-feedback')
+               $('#PathFeedback').html(strings.getString("Config.headlessNotFound"))
+               pathValid = false
+            }
          
          }
          function generateScriptsTable() {
-           
+         
          }
-         function generateLanguages(){
+         function generateLanguages() {
             let options = fs.readdirSync(store.get('langDir'))
             console.log(options)
             let innerText = ''
             for (let i = 0; i < options.length; i++) {
-               innerText+=("<option " + (options[i] == config.get('lang') ? 'selected ' : '') + "value=\"" + options[i] + "\">" + options[i] + "</option>")
+               innerText += ("<option " + (options[i] == config.get('lang') ? 'selected ' : '') + "value=\"" + options[i] + "\">" + options[i] + "</option>")
             }
             $('#Languages').html(innerText)
          }
          function getConfig() {
-             let hosts = config.get('allowedUrlHosts')
-             generateLanguages()
-             if (!store.has('configSet')) {
-                 return
-             }
-             $('#tickRate').val(config.get('tickRate'))
-             $('#NeosClientPath').val(config.get('neosClientPath'))
-             $('#usernameOverride').val(config.get('usernameOverride'))
-             $('#apikey').val(config.get('PolyLogiXAPI'))
-             if (hosts) {
-                 $('#allowedUrlHosts').val(hosts.join(',\r\n'))
-             }
-             validatePath()
+            let hosts = config.get('allowedUrlHosts')
+            generateLanguages()
+            if (!store.has('configSet')) {
+               return
+            }
+            $('#tickRate').val(config.get('tickRate'))
+            $('#NeosClientPath').val(config.get('neosClientPath'))
+            $('#usernameOverride').val(config.get('usernameOverride'))
+            $('#apikey').val(config.get('PolyLogiXAPI'))
+            if (hosts) {
+               $('#allowedUrlHosts').val(hosts.join(',\r\n'))
+            }
+            validatePath()
          }
          
          /* Theme Swapping */
@@ -328,54 +349,53 @@
          var newTheme = undefined
          
          function newThemeFunc() {
-             oldTheme = (newTheme ? newTheme : config.get('currentTheme'))
-             newTheme = $("#SelectTheme").val()
-             replacejscssfile(themes.get(`Themes.${oldTheme}.url`), themes.get(`Themes.${newTheme}.url`), 'css')
+            oldTheme = (newTheme ? newTheme : config.get('currentTheme'))
+            newTheme = $("#SelectTheme").val()
+            replacejscssfile(themes.get(`Themes.${oldTheme}.url`), themes.get(`Themes.${newTheme}.url`), 'css')
          }
          /* Update Store with Info */
          function saveConfig(element) {
-             switch(element){
-                 case 'system':
-                    if ($('#Languages').val()!==config.get('lang')){
-                       ipcRenderer.send('restartRequired')
-                    }
-                 config.set('lang', $('#Languages').val())
-                 config.set('neosClientPath', $('#NeosClientPath').val())
-                 config.set('usernameOverride', $('#usernameOverride').val())
-                 let hosts = $('#allowedUrlHosts').val()
-                 hosts = hosts.replace(/\s/g, '');
-                 hosts = hosts.replace(/\r\n[\r]\n/g, '')
-                 config.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
-                 break
-                 case 'visual':
-                 store.set('oldTheme', config.get('currentTheme'))
-                 config.set('currentTheme', $("#SelectTheme").val())
-                 break
-                 case 'account':
-                 config.set('PolyLogiXAPI', $('#apikey').val())
-                 break
-                 case 'server':
-                 config.set('tickRate', $('#tickRate').val())
-                 break
-             }
-             store.set('configSet', true)
-             
-         
-             
-             ipcRenderer.send('Config:Update');
+            switch (element) {
+               case 'system':
+                  if ($('#Languages').val() !== config.get('lang')) {
+                     ipcRenderer.send('restartRequired')
+                  }
+                  config.set('lang', $('#Languages').val())
+                  config.set('neosClientPath', $('#NeosClientPath').val())
+                  config.set('usernameOverride', $('#usernameOverride').val())
+                  let hosts = $('#allowedUrlHosts').val()
+                  hosts = hosts.replace(/\s/g, '');
+                  hosts = hosts.replace(/\r\n[\r]\n/g, '')
+                  config.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
+                  break
+               case 'visual':
+                  store.set('oldTheme', config.get('currentTheme'))
+                  config.set('currentTheme', $("#SelectTheme").val())
+                  break
+               case 'account':
+                  config.set('PolyLogiXAPI', $('#apikey').val())
+                  break
+               case 'server':
+                  config.set('tickRate', $('#tickRate').val())
+                  break
+            }
+            if (config.has('neosClientPath') && config.has('loginCredentials') && config.has('loginPassword')) {
+               store.set('configSet', true)
+            }
+            ipcRenderer.send('Config:Update');
          }
-         function generateThemeTable(){
-             console.log('Generating Theme Table')
-             let table = themes.get('Themes');
-             console.log(table)
-             let options = Object.keys(table);
-         /* Genetate Theme Options from Store */
+         function generateThemeTable() {
+            console.log('Generating Theme Table')
+            let table = themes.get('Themes');
+            console.log(table)
+            let options = Object.keys(table);
+            /* Genetate Theme Options from Store */
          
-             let innerText = ``
-         for (let i = 0; i < options.length; i++) {
-             innerText+=("<option " + (options[i] == config.get('currentTheme') ? 'selected ' : '') + "value=\"" + options[i] + "\">" + options[i] + "</option>")
-         }
-         $("#SelectTheme").html(innerText)
+            let innerText = ``
+            for (let i = 0; i < options.length; i++) {
+               innerText += ("<option " + (options[i] == config.get('currentTheme') ? 'selected ' : '') + "value=\"" + options[i] + "\">" + options[i] + "</option>")
+            }
+            $("#SelectTheme").html(innerText)
          }
       </script>
    </body>

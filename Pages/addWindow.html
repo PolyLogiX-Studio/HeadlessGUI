@@ -7,28 +7,25 @@
       </script>
       <title>New Server</title>
       <style>
-        /* width */
-        ::-webkit-scrollbar {
-            width: 20px;
-        }
-
-        /* Track */
-        ::-webkit-scrollbar-track {
-            box-shadow: inset 0 0 5px grey;
-            border-radius: 10px;
-        }
-
-        /* Handle */
-        ::-webkit-scrollbar-thumb {
-            background: #00afed;
-            border-radius: 10px;
-        }
-
-        /* Handle on hover */
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00afed;
-        }
-    </style>
+         /* width */
+         ::-webkit-scrollbar {
+         width: 20px;
+         }
+         /* Track */
+         ::-webkit-scrollbar-track {
+         box-shadow: inset 0 0 5px grey;
+         border-radius: 10px;
+         }
+         /* Handle */
+         ::-webkit-scrollbar-thumb {
+         background: #00afed;
+         border-radius: 10px;
+         }
+         /* Handle on hover */
+         ::-webkit-scrollbar-thumb:hover {
+         background: #00afed;
+         }
+      </style>
    </head>
    <body>
       <ul class="nav nav-tabs">
@@ -52,7 +49,8 @@
             <label id="descriptionL" for="description">Description</label>
             <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
             <label id="maxUsersL" for="maxUsers">User Limit</label>
-            <input type="number" id="maxUsers" class="form-control" placeholder="User Limit" min="1" max="32" value="32">
+            <input type="number" id="maxUsers" class="form-control" placeholder="User Limit" min="1" max="32"
+               value="32">
             <label id="accessLevelL" for="accessLevel">Visibility</label>
             <select class="custom-select" id="accessLevel">
                <option id="AnyoneL" value="Anyone" selected>Anyone</option>
@@ -61,7 +59,8 @@
                <option id="LANL" value="LAN">LAN</option>
                <option id="PrivateL" value="Private">Private</option>
             </select>
-            <label id="loadWorldURLL" for="loadWorldURL">World Record URL <small class="text-info"><a id="helpContextL" href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is
+            <label id="loadWorldURLL" for="loadWorldURL">World Record URL <small class="text-info"><a id="helpContextL"
+               href="javascript:openURL('www.polylogix.studio/headless-manager-help')">What is
             This?</a></small></label>
             <input type="text" id="loadWorldURL" class="form-control" placeholder="neosrec:///">
             <label id="loadWorldPresetNameL" for="loadWorldPresetName">Load World Preset Name</label>
@@ -91,54 +90,60 @@
             <input type="number" id="forcePort" class="form-control" placeholder="Port">
             <label id="idleRestartIntervalL" for="idleRestartInterval">Restart on Idle</label>
             <input type="number" id="idleRestartInterval" class="form-control" placeholder="Time (Minutes)">
-            <label id="forcedRestartIntervalL"for="forcedRestartInterval">Force Restart</label>
+            <label id="forcedRestartIntervalL" for="forcedRestartInterval">Force Restart</label>
             <input type="number" id="forcedRestartInterval" class="form-control" placeholder="Time (Minutes)">
             <div class="custom-control custom-switch">
-               <input type="checkbox" class="custom-control-input" id="keepOriginalRolesNOT" onchange="togglePermissions(this.checked)">
-               <label id="keepOriginalRolesNOTL" class="custom-control-label" for="keepOriginalRolesNOT">Custom Permissions</label>
+               <input type="checkbox" class="custom-control-input" id="keepOriginalRolesNOT"
+                  onchange="togglePermissions(this.checked)">
+               <label id="keepOriginalRolesNOTL" class="custom-control-label" for="keepOriginalRolesNOT">Custom
+               Permissions</label>
             </div>
             <div id="permissionContainer" style="display:none">
                <label id="PERMISSIONSL" for="PERMISSIONS">Permissions</label>
                <div id="PERMISSIONS" class="list-group" style="overflow: scroll; height: 200px; overflow-x: hidden;">
                </div>
-               <button id="NewRoleButton" type="button" class="btn btn-outline-success btn-sm" onclick="newRole()">+ New Role</button>
+               <button id="NewRoleButton" type="button" class="btn btn-outline-success btn-sm" onclick="newRole()">+
+               New Role</button>
             </div>
             <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="togleInvites" onchange="toggleInvites(this.checked)">
-                <label id="togleInvitesL" class="custom-control-label" for="togleInvites">Invite Users</label>
-             </div>
-             <div id="inviteContainer" style="display:none">
-                <label id="INVITESL" for="INVITES">Invites</label>
-                <div id="INVITES" class="list-group" style="overflow: scroll; height: 200px; overflow-x: hidden;">
-                </div>
-                <button id="NewInviteButton" type="button" class="btn btn-outline-success btn-sm" onclick="newInvite()">+ New Invite</button>
-             </div>
+               <input type="checkbox" class="custom-control-input" id="togleInvites"
+                  onchange="toggleInvites(this.checked)">
+               <label id="togleInvitesL" class="custom-control-label" for="togleInvites">Invite Users</label>
+            </div>
+            <div id="inviteContainer" style="display:none">
+               <label id="INVITESL" for="INVITES">Invites</label>
+               <div id="INVITES" class="list-group" style="overflow: scroll; height: 200px; overflow-x: hidden;">
+               </div>
+               <button id="NewInviteButton" type="button" class="btn btn-outline-success btn-sm"
+                  onclick="newInvite()">+ New Invite</button>
+            </div>
          </div>
          <div class="tab-pane fade" id="addons">
          </div>
       </div>
-      <div class="modal-footer"><button id="newServerButton" class="btn btn-success" type="submit">New Server</button></div>
+      <div class="modal-footer"><button id="newServerButton" class="btn btn-success" type="submit">New Server</button>
+      </div>
       <script>
          function openURL(url) {
              ipcRenderer.send('openURL', url)
          }
          const electron = require('electron');
          const Store = require('electron-store');
-         const store = new Store({name: 'dat'});
-         const config = new Store({name: 'config'});
-         const themes = new Store({name: 'themes'});
+         const store = new Store({ name: 'dat' });
+         const config = new Store({ name: 'config' });
+         const themes = new Store({ name: 'themes' });
          var strings = {}
          const {
              ipcRenderer
          } = electron
-
+         
          console.log("Loading Localized Strings")
          const LocalizedStrings = require('localized-strings').default;
-         strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), {pseudo:store.get("pseudo")})
+         strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), { pseudo: store.get("pseudo") })
          strings.setLanguage(config.get('lang'))
-
-
-         $(document).ready(function(){
+         
+         
+         $(document).ready(function () {
              $('Title').text(strings.getString('Menu.New_Server'))
              $('#newServerButton').text(strings.getString('Menu.New_Server'))
              $('#GeneralL').text(strings.getString('Menu.General'))
@@ -147,26 +152,26 @@
              $('#MiscL').text(strings.getString('Menu.Misc'))
              $('#sessionNameL').text(strings.getString('Config.sessionName'))
              $('#descriptionL').text(strings.getString('Config.description'))
-             $('#description').attr("placeholder",strings.getString('Config.description'))
+             $('#description').attr("placeholder", strings.getString('Config.description'))
              $('#maxUsersL').text(strings.getString('Config.maxUsers'))
-             $('#maxUsers').attr("placeholder",strings.getString('Config.maxUsers'))
+             $('#maxUsers').attr("placeholder", strings.getString('Config.maxUsers'))
              $('#accessLevelL').text(strings.getString('Config.accessLevel'))
              $('#loadWorldURLL').text(strings.getString('Config.loadWorldURL'))
              $('#helpContextL').text(strings.getString('Config.helpContext'))
              $('#loadWorldPresetNameL').text(strings.getString('Config.loadWorldPresetName'))
-             $('#autosaveIntervalL').text(strings.formatString(strings.getString('Config.autosaveInterval'),strings.getString('Terms.Seconds')))
+             $('#autosaveIntervalL').text(strings.formatString(strings.getString('Config.autosaveInterval'), strings.getString('Terms.Seconds')))
              $('#saveOnExitL').text(strings.getString('Config.saveOnExit'))
              $('#forcePortL').text(strings.getString('Config.forcePort'))
-             $('#forcePort').attr("placeholder",strings.getString('Config.Port'))
+             $('#forcePort').attr("placeholder", strings.getString('Config.Port'))
              $('#idleRestartIntervalL').text(strings.getString('Config.idleRestartInterval'))
-             $('#idleRestartInterval').attr("placeholder",strings.formatString(strings.getString('Config.Time'),strings.getString('Terms.Seconds')))
+             $('#idleRestartInterval').attr("placeholder", strings.formatString(strings.getString('Config.Time'), strings.getString('Terms.Seconds')))
              $('#forcedRestartIntervalL').text(strings.getString('Config.forcedRestartInterval'))
-             $('#forcedRestartInterval').attr("placeholder",strings.formatString(strings.getString('Config.Time'),strings.getString('Terms.Seconds')))
+             $('#forcedRestartInterval').attr("placeholder", strings.formatString(strings.getString('Config.Time'), strings.getString('Terms.Seconds')))
              $('#PERMISSIONSL').text(strings.getString('Config.PERMISSIONS'))
-             $('#NewRoleButtonL').text("+ "+strings.getString('Config.NewRoleButton'))
+             $('#NewRoleButtonL').text("+ " + strings.getString('Config.NewRoleButton'))
              $('#togleInvitesL').text(strings.getString('Config.togleInvites'))
              $('#INVITESL').text(strings.getString('Config.INVITES'))
-             $('#NewInviteButton').text("+ "+strings.getString('Config.NewInviteButton'))
+             $('#NewInviteButton').text("+ " + strings.getString('Config.NewInviteButton'))
              $('#keepOriginalRolesNOTL').text(strings.getString('Config.keepOriginalRolesNOT'))
              $('#mobileFriendlyL').text(strings.getString('Config.mobileFriendly'))
              $('#autoRecoverL').text(strings.getString('Config.autoRecover'))
@@ -180,11 +185,11 @@
              $('#LANL').text(strings.getString('AccessLevel.LAN'))
              $('#PrivateL').text(strings.getString('AccessLevel.Private'))
          })
-
-
-
-
-         const form = $('#newServerButton').click(function(event){submitForm(event)});
+         
+         
+         
+         
+         const form = $('#newServerButton').click(function (event) { submitForm(event) });
          var advanced = {
              "forcePort": null,
              "idleRestartInterval": -1.0,
@@ -235,7 +240,7 @@
              addElement('INVITES', 'div', `inviterole-${inviteID}`, 'list-group-item list-group-item-action', `<button type="button" style="width:10%;" onclick="removeElement(this.parentElement.id)" class="close"><span aria-hidden="true">&times;</span></button><span id="idDisp" class="badge badge-dark" style="float:left; width:10%">${inviteID}</span><input class="form-control" style="float:left; width:80%" id="invite-${inviteID}" type="text" placeholder="${strings.getString('Config.Username')}">`)
              inviteID++
          }
-         function buildPermissions(perms) {}
+         function buildPermissions(perms) { }
          /* Parse Permision window and generate JSON object */
          function parsePermissions() {
              if (!document.getElementById('keepOriginalRolesNOT').checked) {
@@ -259,7 +264,7 @@
                      Invites.push(document.getElementById(`invite-${i}`).value)
                  }
              }
-             if (Invites==[]){Invites = null}
+             if (Invites == []) { Invites = null }
              return Invites
          }
          function openURL(url) {
@@ -268,7 +273,7 @@
          function togglePermissions(val) {
              if (val) {
                  document.getElementById('permissionContainer').style.display = 'block'
-                 
+         
              } else {
                  document.getElementById('permissionContainer').style.display = 'none'
              }
@@ -276,7 +281,7 @@
          function toggleInvites(val) {
              if (val) {
                  document.getElementById('inviteContainer').style.display = 'block'
-                 
+         
              } else {
                  document.getElementById('inviteContainer').style.display = 'none'
              }

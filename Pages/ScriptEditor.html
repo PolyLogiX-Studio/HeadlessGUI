@@ -8,17 +8,17 @@
       </script>
       <title>Editor</title>
       <style type="text/css" media="screen">
-        #editor { 
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-        body{min-height: 100%; overflow-y: hidden;}
-        html{height:100%}
-        /* width */
-        ::-webkit-scrollbar {
+         #editor { 
+         position: absolute;
+         top: 0;
+         right: 0;
+         bottom: 0;
+         left: 0;
+         }
+         body{min-height: 100%; overflow-y: hidden;}
+         html{height:100%}
+         /* width */
+         ::-webkit-scrollbar {
          width: 20px;
          }
          /* Track */
@@ -35,12 +35,11 @@
          ::-webkit-scrollbar-thumb:hover {
          background: #00afed;
          }
-    </style>
+      </style>
    </head>
    <body>
-       
-        <script src="./ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-        <script>
+      <script src="./ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+      <script>
          const electron = require('electron')
          var {
              ipcRenderer
@@ -63,23 +62,21 @@
             window.scrollTo(0,0)
          })
       </script>
-
-<div style="width:65%; float: left;">
-   <div id="editor" style="height: 90vh" >function run(command){
-      //Code Here
-      }</div>
-      <div style="width: 100%; height: 10vh;top: 90vh; left: 0;position: absolute; border-bottom: hidden; border-radius: 0%;" class="card border-primary mb-3">
-         THIS FEATURE IS NOT YET IMPLIMENTED
-      </div>   
-</div>
-
-<div class="card border-primary mb-3" style="width:35%; float: right; height: 100vh; overflow-y: hidden">
-      <div class="card-header">API Refrence</div>
-      <div class="card-body" style="overflow-y: scroll;">
-        <div id="functions">
-        </div>
+      <div style="width:65%; float: left;">
+         <div id="editor" style="height: 90vh" >function run(command){
+            //Code Here
+            }
+         </div>
+         <div style="width: 100%; height: 10vh;top: 90vh; left: 0;position: absolute; border-bottom: hidden; border-radius: 0%;" class="card border-primary mb-3">
+            THIS FEATURE IS NOT YET IMPLIMENTED
+         </div>
       </div>
-    </div>
-    
+      <div class="card border-primary mb-3" style="width:35%; float: right; height: 100vh; overflow-y: hidden">
+         <div class="card-header">API Refrence</div>
+         <div class="card-body" style="overflow-y: scroll;">
+            <div id="functions">
+            </div>
+         </div>
+      </div>
    </body>
 </html>

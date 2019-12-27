@@ -1,43 +1,39 @@
 <!DOCTYPE html>
 <html>
-
-<head id="head">
-        <script type="text/javascript" src="./Resources/DOMediting.js"></script>
-        <script>require('bootstrap')</script>
-    <title>Neos Login</title>
-</head>
-
-<body>
-    <div id="alerts">
-    </div>
-    <form>
-        <div class="form-group">
-            <label for="neosCredential">Neos Account Credential</label>
-            <input type="text" class="form-control" id="neosCredential" aria-describedby="emailHelp" placeholder="Neos Login">
-            <label for="NeosPassword">Neos Account Password</label>
-            <input type="password" class="form-control" id="NeosPassword" placeholder="Neos Password">
-            <small id="Error" class="form-text text-danger" style="display: none;">Invalid Login</small> <!--Hidden until Failed login-->
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" type="submit" onclick="attemptLogin()">Login</button>
-            </div>
-    </form>
-    <script>
-        const electron = require('electron')
-        const {
-            ipcRenderer
-        } = electron;
-        ipcRenderer.on('NEOS:Failed',()=>{
-            document.getElementById('Error').style.display = 'block'
-        })
-        /**
-         * Login to Neos, Handling is in start.js : NEOS:Login
-         */ 
-        function attemptLogin(){
-            if (document.getElementById('neosCredential').value&&document.getElementById('NeosPassword').value)
-            ipcRenderer.send('NEOS:Login', {'neosCredential':document.getElementById('neosCredential').value,'neosPassword':document.getElementById('NeosPassword').value})
-        }
-    </script>
-</body>
-
+   <head id="head">
+      <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+      <script>require('bootstrap')</script>
+      <title>Neos Login</title>
+   </head>
+   <body>
+      <div id="alerts">
+      </div>
+      <form>
+         <div class="form-group">
+         <label for="neosCredential">Neos Account Credential</label>
+         <input type="text" class="form-control" id="neosCredential" aria-describedby="emailHelp" placeholder="Neos Login">
+         <label for="NeosPassword">Neos Account Password</label>
+         <input type="password" class="form-control" id="NeosPassword" placeholder="Neos Password">
+         <small id="Error" class="form-text text-danger" style="display: none;">Invalid Login</small> <!--Hidden until Failed login-->
+         <div class="modal-footer">
+            <button type="button" class="btn btn-success" type="submit" onclick="attemptLogin()">Login</button>
+         </div>
+      </form>
+      <script>
+         const electron = require('electron')
+         const {
+             ipcRenderer
+         } = electron;
+         ipcRenderer.on('NEOS:Failed',()=>{
+             document.getElementById('Error').style.display = 'block'
+         })
+         /**
+          * Login to Neos, Handling is in start.js : NEOS:Login
+          */ 
+         function attemptLogin(){
+             if (document.getElementById('neosCredential').value&&document.getElementById('NeosPassword').value)
+             ipcRenderer.send('NEOS:Login', {'neosCredential':document.getElementById('neosCredential').value,'neosPassword':document.getElementById('NeosPassword').value})
+         }
+      </script>
+   </body>
 </html>
