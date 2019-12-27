@@ -24,7 +24,8 @@
        "SaveX":"Save {0}",
        "LangLabel":"Language ({0})",
        "ManageServer":"Manage Server",
-       "SelectTheme":"Theme"
+       "SelectTheme":"Theme",
+       "ConnectedUsers":"Connected Users"
     },
     "Notifications": {
        "ConfigError": "<b>Oh Snap!</b> Make sure to set your config before starting a server! Do this in <b>{1} -> {2}</b> or with <b>{0}</b>.",
@@ -90,6 +91,7 @@
         "allowedUrlHosts":"URI Hosts; Comma Delimited",
         "custom-file-label":"Headless Client",
         "clientText":"Browse for Folder",
+        "browse":"Browse",
         "ProfileDisplay":"Neos Account",
         "NeosLogin":"Login to Neos",
         "tickRate":"Server Tick Rate",

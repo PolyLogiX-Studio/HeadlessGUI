@@ -195,27 +195,34 @@
             }
             for (let i = 0; session.Vars._Users.length > i; i++) {
                 var badge = 'badge-'
+                let translatedRole = "undefined"
                 switch(session.Vars._Users[i].role){
                     case "Admin":
                     badge += 'danger'
+                    translatedRole = strings.getString("Roles.Admin")
                     break
                     case "Builder":
                     badge += 'info'
+                    translatedRole = strings.getString("Roles.Builder")
                     break
                     case "Moderator":
                     badge += 'warning'
+                    translatedRole = strings.getString("Roles.Moderator")
                     break
                     case "Guest":
                     badge += 'light'
+                    translatedRole = strings.getString("Roles.Guest")
                     break
                     case "Spectator":
                     badge += 'secondary'
+                    translatedRole = strings.getString("Roles.Spectator")
                     break
                     default:
-                    badge += 'light'
+                    badge += 'success'
+                    translatedRole = 'Connecting...'
                     break
                 }
-                addElement('UserListInner', 'div', '0', '', `<div class="list-group-item"><p style="">${session.Vars._Users[i].username} <span id="ROLE-${session.Vars._Users[i].username}" class="badge ${badge}">${session.Vars._Users[i].role}</span></p>
+                addElement('UserListInner', 'div', '0', '', `<div class="list-group-item"><p style="">${session.Vars._Users[i].username} <span id="ROLE-${session.Vars._Users[i].username}" class="badge ${badge}">${translatedRole}</span></p>
                         <button type="button" class="btn btn-sm btn-danger" style="" onclick="sendCommand('kick ${session.Vars._Users[i].username}',false)">${strings.getString("Menu.Kick")}</button>
                         <div class="btn-group btn-sm" role="group">
                         <button id="btnGroupDrop3" type="button" style="" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${strings.getString('Menu.Roles')} </button>
