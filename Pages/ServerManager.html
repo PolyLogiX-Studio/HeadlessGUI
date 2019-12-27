@@ -188,7 +188,7 @@
             if (session.Vars._Status === 'Running') {
                 removeAlert('startAlert-' + session.ID)
             }
-            updateElementHTML('userListHeader', `Connected Users (${session.Vars._UserCount - 1}/${session.Config.startWorlds[0].maxUsers - 1})`)
+            updateElementHTML('userListHeader', `${strings.getString('Menu.ConnectedUsers')} (${session.Vars._UserCount - 1}/${session.Config.startWorlds[0].maxUsers - 1})`)
             const myNode = document.getElementById("UserListInner");
             while (myNode.firstChild) {
                 myNode.removeChild(myNode.firstChild);

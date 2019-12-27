@@ -812,8 +812,6 @@ ipcMain.on('Server:UpdateRole', function(event,args){
     console.log(args)
     instances.setRole(args.session,args.user,args.role)
 })
-
-
 bus.on('Server:Update', function (serverObject) {
     //console.log('Server:Update')
     window.sendData('MainWindow', "Server:Update", serverObject)
