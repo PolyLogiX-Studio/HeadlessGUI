@@ -30,9 +30,7 @@ const {
 const Store = require('electron-store');
 const Window = require('./WindowManager')(bus).WindowManager;
 ipcMain.on('fetchDocs', function (e) {
-    console.log('Generating Documentation')
     var Docs = jsdoc2md.renderSync({ files: './*.js' })
-    console.log('Converting to HTML')
     window.sendData('EditorWindow', 'Documentation:Update', Docs)
 })
 
@@ -136,7 +134,6 @@ filenames.forEach(function (filename) {
     let content = fs.readFileSync(path.join(langDir, filename))
     lang[filename] = JSON.parse(content);
 })
-//console.log(lang)
 
 
 
@@ -172,13 +169,11 @@ if (!store.has('MachineId')) { //For API Calls
 checkInternet(function (isConnected) {
     if (isConnected) {
         store.set('isConnected', true)
-        //console.log('connected')
         if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
 
             login(config.get('loginCredentials'), config.get('loginPassword')) // Login to Neos (If Able)
         }
     } else {
-        //console.log('no connection')
         store.set('isConnected', false)
     }
 })
@@ -542,7 +537,6 @@ function sendLoginPost(loginPayload) {
     })
         .then(res => res.json())
         .then(json => {
-            //console.log(json)
             config.set('loginCredentials', (loginPayload.email ? loginPayload.email : loginPayload.username))
             config.set('loginPassword', (loginPayload.password ? loginPayload.password : config.get('loginPassword')))
             store.set('NEOS:token', json.token)
@@ -589,7 +583,6 @@ ipcMain.on('Config:Update', function (e, item) {
 
 /* Create New Session */
 ipcMain.on('server:new', function (e, item) {
-    //console.log(item)
     //Create server
     item.id = uuidv4()
     window.sendData('MainWindow', 'Main:updateList', item);
@@ -626,7 +619,6 @@ ipcMain.on('openURL', function (e, item) {
     createURLWindow(item)
 })
 ipcMain.on('getUpdateRaw', function (e, session) {
-    //console.log(session)
     instances.update(session)
 })
 ipcMain.on('Console:Command', function (e, item) {
@@ -781,7 +773,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 function checkInternet(cb) {
     require('url-exists')(`https://neosvr.com/`, function (err, exists) {
-       // console.log(err, exists)
         if (!exists) {
             cb(false);
         } else {
@@ -808,17 +799,13 @@ bus.on('clearCache', function (THIS) {
     }
 })
 ipcMain.on('Server:UpdateRole', function(event,args){
-    console.log("CallRoleUpdate")
-    console.log(args)
     instances.setRole(args.session,args.user,args.role)
 })
 bus.on('Server:Update', function (serverObject) {
-    //console.log('Server:Update')
     window.sendData('MainWindow', "Server:Update", serverObject)
     window.sendData(`ServerManager-${serverObject.ID}`, 'Update:Raw', serverObject)
 })
 bus.on("Console:Close", function (id) {
-    console.log('console:close:', id)
     window.closeWindow(`ServerManager-${id}`)
 })
 bus.on('Server:Log', function (id, message) {
