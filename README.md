@@ -8,6 +8,6 @@ Headless Manager for Neos Headless Client
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/bombitmanbomb/HeadlessCore?include_prereleases)
 ![GitHub commits since latest release](https://img.shields.io/github/commits-since/bombitmanbomb/HeadlessCore/latest)
 
-[English](/blob/master/Docs/README_EN.md)
+[English](/Docs/README_EN.md)
 
-[日本語](/blob/master/Docs/README_JP.md)
+[日本語](/Docs/README_JP.md)
