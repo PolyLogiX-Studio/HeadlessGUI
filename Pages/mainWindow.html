@@ -93,7 +93,7 @@
             }
         })
         ipcRenderer.on('ConfigError', function(e, items) {
-            removeAlert(addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig'), 5000)
+            removeAlert(addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P'),strings.getString("Menu.Main"),strings.getString("Menu.Config")), 'danger', 'noConfig'), 5000)
         });
         ipcRenderer.on('removeStart', function(e, items) {
             removeAlert('StartupAlert')
@@ -189,7 +189,7 @@
         addAlert(strings.formatString(strings.getString('Notifications.NewServerNotif'),strings.getString("Menu.Main"),strings.getString("Menu.New_Server")), 'info', 'StartupAlert')
 
         if (!store.has('configSet')||!config.get('loginPassword')) {
-            addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P')), 'danger', 'noConfig')
+            addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P'),strings.getString("Menu.Main"),strings.getString("Menu.Config")), 'danger', 'noConfig')
         }
 
 

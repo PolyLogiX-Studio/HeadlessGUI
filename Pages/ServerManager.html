@@ -178,8 +178,8 @@
             document.getElementById(ID).src = value
         }
         function setrole(user,role){
-            sendCommand(`role ${user} ${role}`,false)
             ipcRenderer.send('Server:UpdateRole',{session:SESSION_ID,user:user,role:role})
+            sendCommand(`role ${user} ${role}`,false)
         }
         function updateSession(session) {
             console.log('Update: ' + session.ID)
@@ -194,12 +194,32 @@
                 myNode.removeChild(myNode.firstChild);
             }
             for (let i = 0; session.Vars._Users.length > i; i++) {
-                addElement('UserListInner', 'div', '0', '', `<div class="list-group-item"><p style="">${session.Vars._Users[i].username}</p>
+                var badge = 'badge-'
+                switch(session.Vars._Users[i].role){
+                    case "Admin":
+                    badge += 'danger'
+                    break
+                    case "Builder":
+                    badge += 'info'
+                    break
+                    case "Moderator":
+                    badge += 'warning'
+                    break
+                    case "Guest":
+                    badge += 'light'
+                    break
+                    case "Spectator":
+                    badge += 'secondary'
+                    break
+                    default:
+                    badge += 'light'
+                    break
+                }
+                addElement('UserListInner', 'div', '0', '', `<div class="list-group-item"><p style="">${session.Vars._Users[i].username} <span id="ROLE-${session.Vars._Users[i].username}" class="badge ${badge}">${session.Vars._Users[i].role}</span></p>
                         <button type="button" class="btn btn-sm btn-danger" style="" onclick="sendCommand('kick ${session.Vars._Users[i].username}',false)">${strings.getString("Menu.Kick")}</button>
-                        <button type="button" id="ROLE-${session.Vars._Users[i].username}" class="btn btn-sm btn-info">${session.Vars._Users[i].role}</button>
                         <div class="btn-group btn-sm" role="group">
-                        <button id="btnGroupDrop3" type="button" style="" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop3" style="">
+                        <button id="btnGroupDrop3" type="button" style="" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${strings.getString('Menu.Roles')} </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop3" style=""> 
                         <a class="dropdown-item" href="javascript:setrole('${session.Vars._Users[i].username}','Admin')">${strings.getString("Roles.Admin")}</a>
                         <a class="dropdown-item" href="javascript:setrole('${session.Vars._Users[i].username}','Builder')">${strings.getString("Roles.Builder")}</a>
                         <a class="dropdown-item" href="javascript:setrole('${session.Vars._Users[i].username}','Moderator')">${strings.getString("Roles.Moderator")}</a>

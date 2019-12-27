@@ -321,6 +321,19 @@ class Server {
         }
     }
     /**
+     * set the role of a connected user (Internally)
+     * @param {string} user 
+     * @param {string} role 
+     */
+    setRole(user,role){
+        var foundIndex = this.Vars._Users.findIndex(x => x.username === user.trim());
+                if (this.Vars._Users[foundIndex] !== undefined) {
+                    this.Vars._Users[foundIndex].role = role.trim()
+                    console.log("Role Set",user,role)
+                }
+                updateSession(this.ID)
+            }
+    /**
      * Update the preview image on Main Window
      *
      * @memberof Server
@@ -404,6 +417,16 @@ class Instances {
     constructor() {
         this.Instances = {}
     }
+    /**
+     * 
+     * @param {string} session 
+     * @param {string} user 
+     * @param {string} role 
+     */
+    setRole(session, user, role) {
+        if (!this.Instances[session]) { return null }
+        this.Instances[session].setRole(user,role)
+    }
     /** Returns a Server Object with variables
      * @memberof Server
      * @param {string} id 
@@ -473,4 +496,4 @@ class Instances {
 /**
  * @private
  */
-module.exports = function (b,s) { bus = b;strings = s; return { Instances, Server } }
+module.exports = function (b, s) { bus = b; strings = s; return { Instances, Server } }

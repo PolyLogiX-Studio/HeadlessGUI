@@ -27,7 +27,7 @@
        "SelectTheme":"Theme"
     },
     "Notifications": {
-       "ConfigError": "<b>Oh Snap!</b> Make sure to set your config before starting a server! Do this in <b>Main -> Config</b> or with <b>{0}</b>.",
+       "ConfigError": "<b>Oh Snap!</b> Make sure to set your config before starting a server! Do this in <b>{1} -> {2}</b> or with <b>{0}</b>.",
        "PreReleaseNotif": "You are running a Pre-Release Build, If you encounter Issues, Please report them with <b>F3</b>.",
        "NewServerNotif": "Start a New Server through <b>{0} -> {1}</b> Or by pressing <b>Ctrl+N</b>.",
        "NewVersionNotif":"A new version <b>{0}</b> is available {1}Here{2}.",
