@@ -125,7 +125,7 @@ if (!fs.pathExistsSync(enabledScriptsDir)) {
  */
 var langDir = path.join(dataDir, 'Lang')
 if (!fs.pathExistsSync(langDir)) {
-    fs.copySync("./Lang", langDir)
+    fs.copySync(path.join(__dirname,"Lang"), langDir)
 }
 var lang = {}
 let filenames = fs.readdirSync(langDir)
@@ -159,7 +159,7 @@ const scriptsConfig = new Store({
 const API = new Store({
     name: 'api',
     cwd: dataDir,
-    defaults: JSON.parse(fs.readFileSync("./Pages/Resources/API_Default.json"))
+    defaults: JSON.parse(fs.readFileSync(path.join(__dirname,"Pages/Resources/API_Default.json")))
 });
 if (!store.has('MachineId')) { //For API Calls
     store.set('MachineId', uuidv4())
