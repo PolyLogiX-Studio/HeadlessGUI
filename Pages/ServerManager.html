@@ -68,8 +68,21 @@
             <button class="btn btn-secondary my-2 my-sm-0" type="button" onclick="invite()">Invite</button>
          </form>
       </div>
-      <div class="modal-footer"><button type="button" class="btn btn-outline-danger" onclick="shutdown()">End
-         Server</button>
+      <div class="modal-footer">
+        <button id="VisibilityDrop" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Visibility</button>
+        <div class="dropdown-menu" aria-labelledby="VisibilityDrop"> 
+        <a id="visany" class="dropdown-item" href="javascript:setVisibility('Public')">Anyone</a>
+        <a id="visreg" class="dropdown-item" href="javascript:setVisibility('RegisteredUsers')">Registered Users</a>
+        <a id="visfri" class="dropdown-item" href="javascript:setVisibility('Friends')">Friends</a>
+        <a id="vislan" class="dropdown-item" href="javascript:setVisibility('LAN')">LAN</a>
+        <a id="vispri" class="dropdown-item" href="javascript:setVisibility('Private')">Private</a>
+        </div>
+
+          <button type="button" style="float: right;" class="btn btn-outline-success" onclick="sendCommand('save',false)">Save</button>
+          <button id="shutdownButton" style="float: right;" type="button" class="btn btn-outline-danger" onclick="shutdown()">End Server</button>
+
+          
+
       </div>
       <script>
          const urlParams = new URLSearchParams(window.location.search);
@@ -88,16 +101,33 @@
          strings.setLanguage(config.get('lang'))
          //UpdateItems
          $(document).ready(function () {
+             setupLocale()
              updateElementHTML('title', `Console: ${SESSION_ID}`)
              ipcRenderer.send('getUpdateRaw', SESSION_ID)
          })
          
-         
+         var shutdownConfirm = 0
          //ipcRenderer.send('getUpdateRaw',SESSION_ID)
          function shutdown() {
-             sendCommand('shutdown', false)
-             updateScroll()
-         }
+             if (shutdownConfirm<1){
+                $('#shutdownButton').text("  Confirm?  ")
+                $('#shutdownButton').attr("class",'btn btn-danger')
+                shutdownConfirm++
+                setTimeout(() => {
+                    shutdownConfirm = 0
+                    $('#shutdownButton').text("End Server?")
+                    $('#shutdownButton').attr("class","btn btn-outline-danger")
+	            }, 5000)
+             } else {
+                 sendCommand('shutdown', false)
+             }
+
+            }
+            function setVisibility(vis){
+                ipcRenderer.send('Server:UpdateVisibility',{session:SESSION_ID,accessLevel:vis})
+                sendCommand(`accessLevel ${vis}`, false)
+                updateScroll()
+            }
          function inviteHandle(e) {
              e.preventDefault()
              invite()
@@ -112,6 +142,12 @@
              sendCommand(`invite "${$('#inviteUser').val()}"`, false)
              $('#inviteUser').val('')
          }
+         function runCommand(command){
+            ipcRenderer.send('Console:Command', {
+                     'id': SESSION_ID,
+                     'command': command
+                 })
+         }
          function sendCommand(command, display = true) {
              if (!command) {
                  return
@@ -120,16 +156,21 @@
                  addElement('Console', 'div', '0', 'list-group-item', `>${command}`)
              }
              if (!parseCommand(command)) {
-                 ipcRenderer.send('Console:Command', {
-                     'id': SESSION_ID,
-                     'command': command
-                 })
+                 runCommand(command)
              }
          
          }
          //Custom Commands
          function parseCommand(command) {
-         
+            return false //Implimented Later, Custom Command Handeling
+         }
+         function setupLocale(){
+             $('#VisibilityDrop').text(strings.getString("Config.accessLevel"))
+             $('#visany').text(strings.getString("AccessLevel.Anyone"))
+             $('#visreg').text(strings.getString("AccessLevel.RegisteredUsers"))
+             $('#visfri').text(strings.getString("AccessLevel.Friends"))
+             $('#vislan').text(strings.getString("AccessLevel.LAN"))
+             $('#vispri').text(strings.getString("AccessLevel.Private"))
          }
          
          
@@ -179,7 +220,7 @@
              if (session.Vars._Status === 'Running') {
                  removeAlert('startAlert-' + session.ID)
              }
-             updateElementHTML('userListHeader', `${strings.getString('Menu.ConnectedUsers')} (${session.Vars._UserCount - 1}/${session.Config.startWorlds[0].maxUsers - 1})`)
+             updateElementHTML('userListHeader', `${strings.getString('Menu.ConnectedUsers')} (${session.Vars._UserCount - 1}/${session.Config.startWorlds[0].maxUsers - 1})<br><small>${strings.getString("Config.accessLevel")}: ${strings.getString("AccessLevel."+session.accessLevel)}</small>`)
              const myNode = document.getElementById("UserListInner");
              while (myNode.firstChild) {
                  myNode.removeChild(myNode.firstChild);

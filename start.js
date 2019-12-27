@@ -597,7 +597,7 @@ ipcMain.on('server:new', function (e, item) {
 		description: item.description,
 		saveOnExit: item.saveOnExit,
 		autosaveInterval: item.autosaveInterval,
-		accesslevel: item.accessLevel,
+		accessLevel: item.accessLevel,
 		loadWorldPresetName: item.loadWorldPresetName,
 		autoRecover: item.autoRecover,
 		mobileFriendly: item.mobileFriendly,
@@ -797,6 +797,9 @@ bus.on('clearCache', function (THIS) {
 	if (shuttingDown && JSON.stringify(instances.all()) === '{}') {
 		ClearQuit()
 	}
+})
+ipcMain.on('Server:UpdateVisibility',function(event,args){
+    instances.setAccess(args.session, args.accessLevel)
 })
 ipcMain.on('Server:UpdateRole', function (event, args) {
 	instances.setRole(args.session, args.user, args.role)

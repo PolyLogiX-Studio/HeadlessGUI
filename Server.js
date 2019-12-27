@@ -92,7 +92,9 @@ class Server {
 		}
 		this.Config = DefaultConfig
 		this.ID = UUID
-		this.sessionName = sessionName
+        this.sessionName = sessionName
+        this.accessLevel = accessLevel.replace(' ','')
+        console.log(this.accessLevel)
 		this.sessionDir = path.join(sessionsDir, UUID)
 		this.Config.startWorlds[0].sessionName = sessionName
 		this.Config.startWorlds[0].description = description
@@ -216,7 +218,7 @@ class Server {
 					this.TimerProc()
 				}, 10000) // Start Internal Timers
 			}
-			if (data.toString().startsWith('World Saving') || data.toString().startsWith('Autosaving')) {
+			if (data.toString().startsWith('World Saving') || data.toString().startsWith('Autosaving')|| data.toString().startsWith('Saving...') ) {
 				this.Vars._event = 'Saving';
 				this.Vars._Status = strings.getString("Terms.Saving")
 				this.Vars._displayStatusMessage = true;
@@ -338,6 +340,11 @@ class Server {
 			console.log("Role Set", user, role)
 		}
 		updateSession(this.ID)
+    }
+    setAccess(accessLevel) {
+        this.accessLevel = accessLevel
+        console.log('UpdateAccess',accessLevel)
+		updateSession(this.ID)
 	}
 	/**
 	 * Update the preview image on Main Window
@@ -437,6 +444,17 @@ class Instances {
 			return null
 		}
 		this.Instances[session].setRole(user, role)
+    }
+    /**
+	 * 
+	 * @param {string} session 
+	 * @param {string} accessLevel
+	 */
+	setAccess(session, accessLevel) {
+		if (!this.Instances[session]) {
+			return null
+		}
+		this.Instances[session].setAccess(accessLevel)
 	}
 	/** Returns a Server Object with variables
 	 * @memberof Server
