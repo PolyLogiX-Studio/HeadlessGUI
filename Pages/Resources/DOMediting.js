@@ -1,8 +1,14 @@
+const path = require('path')
+const {store,config,themes} = require(path.join(__dirname,"store"))
+
+
 /**
  * File Path to a File 
  * @typedef {string} FilePath
  */
 
+
+        
 
 /** Remove a page element
  * @param {string} elementId
@@ -88,14 +94,9 @@ function replacejscssfile(oldfilename, newfilename, filetype) {
  *
  */
 function setupThemes() {
-	let Store = require('electron-store');
-	const themes = new Store({
-		name: 'themes'
-	});
-	const config = new Store({
-		name: 'config'
-	});
-	loadjscssfile(themes.get(`Themes.${config.get('currentTheme')}.url`), 'css')
+	console.log(config.get('currentTheme'))
+	console.log(themes.get(`Themes.${'Darkly'}.url`))
+	loadjscssfile(themes.get(`Themes.${'Darkly'}.url`), 'css')
 }
 
 /**
@@ -105,17 +106,7 @@ function setupThemes() {
 function updateTheme() {
 	console.log("updateTheme")
 	const reload = require('electron-css-reload');
-	const Store = require('electron-store');
-	const themes = new Store({
-		name: 'themes'
-	});
-	const config = new Store({
-		name: 'config'
-	});
-	const store = new Store({
-		name: 'dat'
-	});
 	document.getElementById('Theme').href = themes.get(`Themes.${config.get('currentTheme')}.url`)
 	reload()
 }
-setupThemes()
+module.exports = {setupThemes,removeElement,addElement,replacejscssfile,loadjscssfile,createjscssfile}

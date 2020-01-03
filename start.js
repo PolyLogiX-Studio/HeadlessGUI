@@ -27,7 +27,7 @@ const {
 /*
 
   */
-const Store = require('electron-store');
+
 const Window = require('./WindowManager')(bus).WindowManager;
 ipcMain.on('fetchDocs', function (e) {
 	var Docs = jsdoc2md.renderSync({
@@ -43,31 +43,14 @@ unhandled();
  * System Window Manager
  */
 const window = new Window(BrowserWindow);
-/**
- * General Data Store
- */
-const store = new Store({
-	name: 'dat'
-});
-/**
- * App Config Store
- */
-const config = new Store({
-	name: 'config',
-	defaults: {
-		lang: 'en'
-	}
-});
-/**
- * Themes Store
- */
-const themes = new Store({
-	name: 'themes'
-});
+const {store,config,themes} = require(path.join(__dirname,"Pages/Resources/store"))
 //Predefine Windows in Global Space
 const fs = require('fs-extra'); //Recursive Folder Delete
 
-store.set("pseudo", false)
+var arguments = [] 
+arguments = process.argv
+console.log("ARGUMENTS",arguments)
+store.set("pseudo", (arguments.indexOf("--TranslationDebug")>-1))
 
 
 /**
@@ -148,24 +131,8 @@ strings.setLanguage(config.get('lang'))
 
 const {
 	Instances
-} = require("./Server.js")(bus, strings)
+} = require("./Server.js")(bus, strings, config)
 const instances = new Instances()
-const scriptsConfig = new Store({
-	name: 'scripts',
-	cwd: dataDir,
-	defaults: {
-		scripts: {
-			global: {},
-			server: {},
-			commands: {}
-		}
-	}
-});
-const API = new Store({
-	name: 'api',
-	cwd: dataDir,
-	defaults: JSON.parse(fs.readFileSync(path.join(__dirname, "Pages/Resources/API_Default.json")))
-});
 if (!store.has('MachineId')) { //For API Calls
 	store.set('MachineId', uuidv4())
 }
@@ -261,7 +228,6 @@ if (!themes.has('Themes')) {
 // Listen for App to be ready
 let tray = null
 app.on('ready', function () {
-
 	tray = new Tray(ICON_GLOBAL_PNG)
 	const contextMenu = Menu.buildFromTemplate(mainMenuTemplate)
 	tray.setToolTip('Headless Core')
@@ -797,6 +763,9 @@ bus.on('clearCache', function (THIS) {
 	if (shuttingDown && JSON.stringify(instances.all()) === '{}') {
 		ClearQuit()
 	}
+})
+ipcMain.on('getStore', function(event,args){
+	event.returnValue = {'store':store,'config':config,'themes':themes}
 })
 ipcMain.on('Server:UpdateVisibility',function(event,args){
     instances.setAccess(args.session, args.accessLevel)

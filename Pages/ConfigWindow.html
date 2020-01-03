@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head id="head">
-      <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+      
       <script>
          const $ = require('jquery')
          require('bootstrap')
@@ -165,7 +165,8 @@
                <div class="list-group-item"><span id="coretext">Core 1.0.0</span><button disabled style="width: 20px;"
                   type="button" class="close" data-dismiss="alert">&times;</button><button disabled style="width: 20px;"
                   type="button" class="close" data-dismiss="alert">&darr;</button><button disabled style="width: 20px;"
-                  type="button" class="close" data-dismiss="alert">&uarr;</button></div>
+                  type="button" class="close" data-dismiss="alert">&uarr;</button><button disabled style="width: 30px;"
+                  type="button" class="close" data-dismiss="alert">&#128393;</button></div>
             </div>
             <hr class="my-4">
             <label id="disabledScriptsL" for="disabledScripts">Disabled Scripts</label>
@@ -183,13 +184,11 @@
             app
          } = electron;
          const VERSION = require('root-require')('package.json').version
-         const Store = require('electron-store');
-         const store = new Store({ name: 'dat' });
-         const config = new Store({ name: 'config' });
-         const themes = new Store({ name: 'themes' });
          const fs = require('fs-extra')
-         const path = require('path');
+         const path = require('path')
+         const {store,config,themes} = require(path.join(__dirname,"Resources/store"))
          const fetch = require('node-fetch')
+         require('./Resources/DOMEditing.js').setupThemes()
          var pathValid = false
          var neosToken = store.get('NEOS:token')
          console.log("Loading Localized Strings")
@@ -296,6 +295,7 @@
          }
          /* Cut File path and Validate */
          function setFileDisplay(FilePath) {
+            console.log("FIlePath",FilePath)
             let folder = FilePath.split('\\')
             $('#NeosClientPath').val(FilePath.substring(0, FilePath.lastIndexOf('\\') + 1))
             $('#clientText').innerHTML = folder[folder.length - 2]
@@ -303,6 +303,7 @@
          }
          //Make sure Valid directory to Neos.EXE
          function validatePath() {
+            console.log("path:",path.join($('#NeosClientPath').val(), 'Neos.exe'))
             if (fs.existsSync(path.join($('#NeosClientPath').val(), 'Neos.exe'))) {
                $('#NeosClientPath').attr('class', 'form-control is-valid')
                $('#PathFeedback').attr('class', 'valid-feedback')
@@ -386,6 +387,7 @@
          }
          function generateThemeTable() {
             console.log('Generating Theme Table')
+            console.log(themes)
             let table = themes.get('Themes');
             console.log(table)
             let options = Object.keys(table);

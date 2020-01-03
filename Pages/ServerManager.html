@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head id="head">
-      <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+      
       <script>
          const $ = require('jquery')
          require('bootstrap')
@@ -91,11 +91,10 @@
          const {
              ipcRenderer
          } = electron;
-          const Store = require('electron-store');
-          const store = new Store({name: 'dat'});
-          const config = new Store({name: 'config'});
-          const themes = new Store({name: 'themes'});
-         
+         const path = require('path')
+         const {store,config,themes} = require(path.join(__dirname,"Resources/store"))
+         require('./Resources/DOMEditing.js').setupThemes()
+         const {addElement,removeElement} = require('./Resources/DOMEditing.js')
          const LocalizedStrings = require('localized-strings').default
          var strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), { pseudo: store.get("pseudo") })
          strings.setLanguage(config.get('lang'))

@@ -46,13 +46,10 @@ const DefaultConfig = {
 const {
 	spawn
 } = require('child_process');
-const Store = require('electron-store');
+var config
 /**
  * App Config Store
  */
-const config = new Store({
-	name: 'config'
-});
 const path = require('path')
 const fs = require('fs-extra'); //Recursive Folder Delete
 const uuidv4 = require('uuid/v4');
@@ -533,9 +530,10 @@ class Instances {
 /**
  * @private
  */
-module.exports = function (b, s) {
+module.exports = function (b, s, c) {
 	bus = b;
 	strings = s;
+	config = c;
 	return {
 		Instances,
 		Server

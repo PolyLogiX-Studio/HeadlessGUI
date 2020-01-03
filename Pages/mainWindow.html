@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head id="head">
-      <script type="text/javascript" src="./Resources/DOMediting.js"></script>
+      
       <script>
          const $ = require('jquery')
               require('bootstrap')
@@ -53,15 +53,14 @@
       <img class="LogoImage" src="../images/Thig_Transparent.png" width="200px" height="150px">
       <script>
          const VERSION = require('root-require')('package.json').version
-         setupThemes()
          const electron = require('electron')
          const {
              ipcRenderer
          } = electron;
-         const Store = require('electron-store');
-         const store = new Store({name: 'dat'});
-         const config = new Store({name: 'config'});
-         const themes = new Store({name: 'themes'});
+         const path = require('path')
+         const {store,config,themes} = require(path.join(__dirname,"Resources/store"))
+         require('./Resources/DOMEditing.js').setupThemes()
+         const {addElement,removeElement,replacejscssfile} = require('./Resources/DOMEditing.js')
          const fetch = require('node-fetch')
          const LocalizedStrings = require('localized-strings').default
          var lang = ipcRenderer.sendSync('fetchLanguage')
