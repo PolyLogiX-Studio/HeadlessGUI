@@ -47,6 +47,7 @@
          const fs = require('fs')
          const path = require('path');
          const {addElement,removeElement,replacejscssfile} = require('./Resources/DOMEditing.js')
+         require('./Resources/DOMEditing.js').setupThemes()
          var md = require('markdown-it')('commonmark');
          $(document).ready(function () {
             var editor = ace.edit("editor");

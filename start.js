@@ -1,3 +1,5 @@
+const unhandled = require('electron-unhandled');
+unhandled();
 const electron = require('electron');
 const url = require('url');
 const path = require('path');
@@ -24,9 +26,7 @@ const {
 	remote
 } = electron;
 
-/*
 
-  */
 
 const Window = require('./WindowManager')(bus).WindowManager;
 ipcMain.on('fetchDocs', function (e) {
@@ -36,9 +36,6 @@ ipcMain.on('fetchDocs', function (e) {
 	window.sendData('EditorWindow', 'Documentation:Update', Docs)
 })
 
-const unhandled = require('electron-unhandled');
-
-unhandled();
 /**
  * System Window Manager
  */
@@ -47,10 +44,12 @@ const {store,config,themes} = require(path.join(__dirname,"Pages/Resources/store
 //Predefine Windows in Global Space
 const fs = require('fs-extra'); //Recursive Folder Delete
 
-var arguments = [] 
-arguments = process.argv
-console.log("ARGUMENTS",arguments)
-store.set("pseudo", (arguments.indexOf("--TranslationDebug")>-1))
+
+
+console.log("ARGUMENTS",process.argv)
+store.set("pseudo", (process.argv.indexOf("--TranslationDebug")>-1))
+
+
 
 
 /**
