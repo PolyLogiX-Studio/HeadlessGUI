@@ -25,9 +25,9 @@ const {
 	Tray,
 	remote
 } = electron;
-
-
-
+/**
+ * Window Manager
+ */
 const Window = require('./WindowManager')(bus).WindowManager;
 ipcMain.on('fetchDocs', function (e) {
 	var Docs = jsdoc2md.renderSync({

@@ -109,3 +109,4 @@ dist
 .vscode/tasks.json
 .API/CloudX.Shared.cs
 .vscode
+./cc-test-reporter
