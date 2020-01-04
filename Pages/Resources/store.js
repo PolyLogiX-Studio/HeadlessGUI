@@ -3,7 +3,10 @@ const Store = require('electron-store');
  * General Data Store
  */
 const store = new Store({
-	name: 'dat'
+    name: 'DATA',
+    fileExtension: "",
+    encryptionKey:require('root-require')('package.json').version
+
 });
 /**
  * App Config Store

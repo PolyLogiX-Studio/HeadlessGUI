@@ -94,9 +94,7 @@ function replacejscssfile(oldfilename, newfilename, filetype) {
  *
  */
 function setupThemes() {
-	console.log(config.get('currentTheme'))
-	console.log(themes.get(`Themes.${'Darkly'}.url`))
-	loadjscssfile(themes.get(`Themes.${'Darkly'}.url`), 'css')
+	loadjscssfile(themes.get(`Themes.${config.get('currentTheme')}.url`), 'css')
 }
 
 /**

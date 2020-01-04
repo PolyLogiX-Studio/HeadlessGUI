@@ -7,7 +7,7 @@
               require('bootstrap')
               
       </script>
-      <title id="title">Headless Core</title>
+      <title id="title">Headless GUI</title>
       <style>
          .AlertWindow {
          position: fixed;
@@ -184,7 +184,7 @@
          
          addAlert(strings.formatString(strings.getString('Notifications.NewServerNotif'),strings.getString("Menu.Main"),strings.getString("Menu.New_Server")), 'info', 'StartupAlert')
          
-         if (!store.has('configSet')||!config.get('loginPassword')) {
+         if (!store.has('configSet')||!store.get('loginPassword')) {
              addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P'),strings.getString("Menu.Main"),strings.getString("Menu.Config")), 'danger', 'noConfig')
          }
          
@@ -192,8 +192,8 @@
          /* Version Check */
          const compareVersions = require('compare-versions');
          
-         $('#title').html(`Headless Core ${VERSION}`)
-         fetch('https://api.github.com/repos/bombitmanbomb/HeadlessCore/releases/latest').then(res => res.json())
+         $('#title').html(`HeadlessGUI ${VERSION}`)
+         fetch('https://api.github.com/repos/bombitmanbomb/HeadlessGUI/releases/latest').then(res => res.json())
          .then(json => {
          let releaseTag = compareVersions(json.tag_name,VERSION)
          switch (releaseTag){
@@ -201,7 +201,7 @@
              addAlert(strings.getString('Notifications.PreReleaseNotif'),'warning')
              break
              case 1:
-             addAlert(`<h4 class="alert-heading">${strings.formatString(strings.getString("Notifications.NewVersionNotif"),json.tag_name,`<a href="https://github.com/bombitmanbomb/HeadlessCore/releases/latest">`,"</a></h4>")}<p class="mb-0">${json.body}</p>`,'warning')
+             addAlert(`<h4 class="alert-heading">${strings.formatString(strings.getString("Notifications.NewVersionNotif"),json.tag_name,`<a href="https://github.com/bombitmanbomb/HeadlessGUI/releases/latest">`,"</a></h4>")}<p class="mb-0">${json.body}</p>`,'warning')
              break
          }
          })

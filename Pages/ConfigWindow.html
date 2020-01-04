@@ -155,7 +155,7 @@
          </div>
          <!--DANGER ZONE-->
          <div class="tab-pane fade" id="danger">
-            <button type="button" class="btn btn-outline-danger disabled" type="submit" onclick="">Wipe HeadlessCore Data
+            <button type="button" class="btn btn-outline-danger disabled" type="submit" onclick="">Wipe HeadlessGUI Data
             (Disabled)</button>
          </div>
          <!--Scripts-->
@@ -189,6 +189,7 @@
          const {store,config,themes} = require(path.join(__dirname,"Resources/store"))
          const fetch = require('node-fetch')
          require('./Resources/DOMEditing.js').setupThemes()
+         const {addElement,removeElement,replacejscssfile} = require('./Resources/DOMEditing.js')
          var pathValid = false
          var neosToken = store.get('NEOS:token')
          console.log("Loading Localized Strings")
@@ -380,7 +381,7 @@
                   config.set('tickRate', $('#tickRate').val())
                   break
             }
-            if (config.has('neosClientPath') && config.has('loginCredentials') && config.has('loginPassword')) {
+            if (config.has('neosClientPath') && store.has('loginCredentials') && store.has('loginPassword')) {
                store.set('configSet', true)
             }
             ipcRenderer.send('Config:Update');

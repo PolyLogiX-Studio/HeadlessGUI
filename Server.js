@@ -46,11 +46,18 @@ const DefaultConfig = {
 const {
 	spawn
 } = require('child_process');
-var config
+/* 
+REGEX FOR USERS COMMAND
+(\D+) Role: (\S+) Present: (\S+) Ping: (\S+) ms FPS: (\S+)
+make sure to trim() user
+*/
+
+
 /**
  * App Config Store
  */
 const path = require('path')
+const {store,config,themes} = require(path.join(__dirname,"Pages/Resources/store"))
 const fs = require('fs-extra'); //Recursive Folder Delete
 const uuidv4 = require('uuid/v4');
 /**
@@ -112,8 +119,8 @@ class Server {
 		this.Config.startWorlds[0].autoInviteUsernames = autoInviteUsernames
 		this.Config.tickRate = parseInt(tickRate, 10)
 		this.Config.usernameOverride = (config.get('usernameOverride') === '' ? null : config.get('usernameOverride'))
-		this.Config.loginCredential = config.get('loginCredentials')
-		this.Config.loginPassword = config.get('loginPassword')
+		this.Config.loginCredential = store.get('loginCredentials')
+		this.Config.loginPassword = store.get('loginPassword')
 		this.Config.allowedUrlHosts = (!config.get('allowedUrlHosts') ? ['127.0.0.1'] : config.get('allowedUrlHosts'))
 		this.Config.dataFolder = path.join(this.sessionDir, 'Data')
 		this.Config.cacheFolder = path.join(this.sessionDir, 'Cache')
@@ -533,7 +540,6 @@ class Instances {
 module.exports = function (b, s, c) {
 	bus = b;
 	strings = s;
-	config = c;
 	return {
 		Instances,
 		Server

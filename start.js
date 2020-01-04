@@ -143,7 +143,7 @@ checkInternet(function (isConnected) {
 		store.set('isConnected', true)
 		if ((store.has('NEOS:token') && (new Date(store.get('NEOS:token:expire')) > new Date()))) {
 
-			login(config.get('loginCredentials'), config.get('loginPassword')) // Login to Neos (If Able)
+			login(store.get('loginCredentials'), store.get('loginPassword')) // Login to Neos (If Able)
 		}
 	} else {
 		store.set('isConnected', false)
@@ -310,7 +310,7 @@ function createAddWindow() {
 		window.sendData('MainWindow', 'NOCONNECTION')
 		return
 	}
-	if (!store.get('configSet') || !config.get('loginPassword')) {
+	if (!store.get('configSet') || !store.get('loginPassword')) {
 		window.sendData('MainWindow', 'ConfigError')
 		return
 	}
@@ -443,6 +443,8 @@ function createEditorWindow() {
  * @returns {JSON} Session Object
  */
 function login(credential, password) {
+	
+	console.log(`Calling Login for ${credential}...`)
 	let loginPayload = {}
 	loginPayload.secretMachineId = store.get('MachineId');
 	if (credential) {
@@ -503,16 +505,18 @@ function sendLoginPost(loginPayload) {
 		})
 		.then(res => res.json())
 		.then(json => {
-			config.set('loginCredentials', (loginPayload.email ? loginPayload.email : loginPayload.username))
-			config.set('loginPassword', (loginPayload.password ? loginPayload.password : config.get('loginPassword')))
+			console.log("Login Successfull!")
+			store.set('loginCredentials', (loginPayload.email ? loginPayload.email : loginPayload.username))
+			store.set('loginPassword', (loginPayload.password ? loginPayload.password : store.get('loginPassword')))
 			store.set('NEOS:token', json.token)
 			store.set('NEOS:userId', json.userId)
 			store.set('NEOS:token:expire', json.expire)
 			return json
 		}).catch((err) => {
+			console.log('Login Failed!')
 			if (!store.get('offlineMode')) { //Dont clear Credentials if offline
-				config.delete('loginCredentials')
-				config.delete('loginPassword')
+				store.delete('loginCredentials')
+				store.delete('loginPassword')
 				store.delete('NEOS:token')
 				store.delete('NEOS:userId')
 				store.delete('NEOS:token:expire')
@@ -662,7 +666,7 @@ const mainMenuTemplate = [{
 				 * @function
 				 */
 				click() {
-					createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/wiki/Introduction')
+					createURLWindow('www.github.com/bombitmanbomb/HeadlessGUI/wiki/Introduction')
 				}
 			},
 			{
@@ -684,7 +688,7 @@ const mainMenuTemplate = [{
 				 * @function
 				 */
 				click() {
-					createURLWindow('www.github.com/bombitmanbomb/HeadlessCore/issues')
+					createURLWindow('www.github.com/bombitmanbomb/HeadlessGUI/issues')
 				}
 			},
 		]

@@ -136,7 +136,7 @@
          const path = require('path')
          const {store,config,themes} = require(path.join(__dirname,"Resources/store"))
          console.log("Loading Localized Strings")
-         const {addElement,removeElement} = require('./Resources/DOMEditing.js')
+         const {addElement,removeElement,replacejscssfile} = require('./Resources/DOMEditing.js')
          const LocalizedStrings = require('localized-strings').default;
          require('./Resources/DOMEditing.js').setupThemes()
          strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), { pseudo: store.get("pseudo") })

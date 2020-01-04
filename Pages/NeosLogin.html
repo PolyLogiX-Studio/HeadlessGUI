@@ -8,7 +8,7 @@
    <body>
       <div id="alerts">
       </div>
-      <form>
+      <form onsubmit="attemptLogin()">
          <div class="form-group">
          <label for="neosCredential">Neos Account Credential</label>
          <input type="text" class="form-control" id="neosCredential" aria-describedby="emailHelp" placeholder="Neos Login">
@@ -27,6 +27,7 @@
          ipcRenderer.on('NEOS:Failed',()=>{
              document.getElementById('Error').style.display = 'block'
          })
+         require('./Resources/DOMEditing.js').setupThemes()
          /**
           * Login to Neos, Handling is in start.js : NEOS:Login
           */ 

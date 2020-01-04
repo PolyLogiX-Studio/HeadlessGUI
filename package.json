@@ -7,8 +7,8 @@
   "scripts": {
     "test": "exit 0",
     "start": "electron .",
-    "package-linux-x64": "electron-packager . \"Headless Core\" --overwrite --asar --platform=linux --arch=x64 --icon=images/icon.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Headless Core\"",
-    "package-win32-x64": "electron-packager . \"Headless Core\" --overwrite --asar --platform=win32 --arch=x64 --icon=images/icon.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"Headless Core\""
+    "package-linux-x64": "electron-packager . \"HeadlessGUI\" --overwrite --asar --platform=linux --arch=x64 --icon=images/icon.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"HeadlessGUI\"",
+    "package-win32-x64": "electron-packager . \"HeadlessGUI\" --overwrite --asar --platform=win32 --arch=x64 --icon=images/icon.ico --prune=true --out=release-builds --version-string.CompanyName=PolyLogiX --version-string.FileDescription=CE --version-string.ProductName=\"HeadlessGUI\""
   },
   "author": "Ethan Snow",
   "license": "GNU GPLv3",

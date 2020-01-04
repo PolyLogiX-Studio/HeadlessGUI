@@ -94,7 +94,7 @@
          const path = require('path')
          const {store,config,themes} = require(path.join(__dirname,"Resources/store"))
          require('./Resources/DOMEditing.js').setupThemes()
-         const {addElement,removeElement} = require('./Resources/DOMEditing.js')
+         const {addElement,removeElement,replacejscssfile} = require('./Resources/DOMEditing.js')
          const LocalizedStrings = require('localized-strings').default
          var strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), { pseudo: store.get("pseudo") })
          strings.setLanguage(config.get('lang'))
