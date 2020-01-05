@@ -1,7 +1,7 @@
 {
   "name": "headlesscore",
   "productName": "HeadlessGUI",
-  "version": "1.0.1",
+  "version": "1.0.1-alpha.1",
   "description": "Headless Server for Neos",
   "main": "start.js",
   "scripts": {
