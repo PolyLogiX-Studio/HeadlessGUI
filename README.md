@@ -1,7 +1,7 @@
 # Neos Headless Manager 
 Headless Manager for Neos Headless Client
 
-[![Build Status](https://travis-ci.org/bombitmanbomb/HeadlessCore.svg?branch=master)](https://travis-ci.org/bombitmanbomb/HeadlessGUI) [![Maintainability](https://api.codeclimate.com/v1/badges/69cd0dabe98ce6ccace9/maintainability)](https://codeclimate.com/github/bombitmanbomb/HeadlessGUI/maintainability) [![Inline docs](http://inch-ci.org/github/bombitmanbomb/HeadlessCore.svg?branch=master)](http://inch-ci.org/github/bombitmanbomb/HeadlessGUI) ![GitHub All Releases](https://img.shields.io/github/downloads/bombitmanbomb/HeadlessGUI/total) ![GitHub issues](https://img.shields.io/github/issues/bombitmanbomb/HeadlessGUI) ![GitHub](https://img.shields.io/github/license/bombitmanbomb/HeadlessGUI)
+[![Build Status](https://travis-ci.org/bombitmanbomb/HeadlessGUI.svg?branch=master)](https://travis-ci.org/bombitmanbomb/HeadlessGUI) [![Maintainability](https://api.codeclimate.com/v1/badges/69cd0dabe98ce6ccace9/maintainability)](https://codeclimate.com/github/bombitmanbomb/HeadlessGUI/maintainability) [![Inline docs](http://inch-ci.org/github/bombitmanbomb/HeadlessCore.svg?branch=master)](http://inch-ci.org/github/bombitmanbomb/HeadlessGUI) ![GitHub All Releases](https://img.shields.io/github/downloads/bombitmanbomb/HeadlessGUI/total) ![GitHub issues](https://img.shields.io/github/issues/bombitmanbomb/HeadlessGUI) ![GitHub](https://img.shields.io/github/license/bombitmanbomb/HeadlessGUI)
 <a href="https://discord.gg/qXatU97"><img src="https://img.shields.io/discord/571612136036499466?logo=discord" alt="chat on Discord"></a>
 
 
