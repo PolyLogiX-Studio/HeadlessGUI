@@ -222,59 +222,108 @@ if (!themes.has('Themes')) {
 		}
 	})
 }
-
+let singlemode = false
 
 // Listen for App to be ready
 let tray = null
 app.on('ready', function () {
-	tray = new Tray(ICON_GLOBAL_PNG)
+
+	
 	const contextMenu = Menu.buildFromTemplate(mainMenuTemplate)
-	tray.setToolTip('Headless Core')
-	tray.setContextMenu(contextMenu)
+	
 
 
 	Menu.setApplicationMenu(Menu.buildFromTemplate(mainMenuTemplate))
 	// Create new Window
-	window.createWindow('MainWindow', {
-		parent: 'MainWindow',
-		width: 1920,
-		height: 1080,
-		title: "Main Window",
-		icon: ICON_GLOBAL_PNG,
-		webPreferences: {
-			nodeIntegration: true
-		}
-	}, {
-		page: {
-			pathname: path.join(__dirname, '/Pages/mainWindow.html'),
-			protocol: 'file:',
-			slashes: true,
-		}
-	})
-	// Quit app when main closed
-	window.Windows['MainWindow'].setMenu(Menu.buildFromTemplate(mainMenuTemplate))
-	window.Windows['MainWindow'].on('closed', function () {
-		safeQuit()
-	})
-	window.Windows['MainWindow'].on('close', (e) => {
-		if (JSON.stringify(instances.all()) === '{}') {
-			return false
-		} else {
-			e.preventDefault()
-			dialog.showMessageBox(null, {
-				type: 'question',
-				buttons: [strings.getString("Terms.Cancel"), strings.getString("Terms.Yes"), strings.getString("Terms.No")],
-				defaultId: 2,
-				title: strings.getString("Notifications.closeTitle"),
-				message: strings.getString("Notifications.closeMessage"),
-				detail: strings.getString("Notifications.closeDetail")
-			}).then((e) => {
-				if (e.response === 1) {
-					safeQuit()
-				}
-			})
-		}
-	})
+	if (process.argv.indexOf("--light")>-1) {
+		tray = new Tray(ICON_GLOBAL_PNG)
+		tray.setToolTip('HeadlessGUI')
+		tray.setContextMenu(contextMenu)
+		window.createWindow('MainWindow', {
+			backgroundColor: '#303030',
+			parent: 'MainWindow',
+			width: 1920,
+			height: 1080,
+			title: "Main Window",
+			icon: ICON_GLOBAL_PNG,
+			webPreferences: {
+				nodeIntegration: true
+			}
+		}, {
+			page: {
+				pathname: path.join(__dirname, '/Pages/mainWindow.html'),
+				protocol: 'file:',
+				slashes: true,
+			},
+			
+		},false)
+		//window.Windows['MainWindow'].setMenu(Menu.buildFromTemplate(mainMenuTemplate))
+		window.Windows['MainWindow'].on('closed', function () {
+			safeQuit()
+		})
+		window.Windows['MainWindow'].on('close', (e) => {
+			if (JSON.stringify(instances.all()) === '{}') {
+				return false
+			} else {
+				e.preventDefault()
+				dialog.showMessageBox(null, {
+					type: 'question',
+					buttons: [strings.getString("Terms.Cancel"), strings.getString("Terms.Yes"), strings.getString("Terms.No")],
+					defaultId: 2,
+					title: strings.getString("Notifications.closeTitle"),
+					message: strings.getString("Notifications.closeMessage"),
+					detail: strings.getString("Notifications.closeDetail")
+				}).then((e) => {
+					if (e.response === 1) {
+						safeQuit()
+					}
+				})
+			}
+		})
+	} else {
+		window.createWindow('MainWindow', {
+			backgroundColor: '#303030',
+			parent: 'MainWindow',
+			width: 1920,
+			height: 1080,
+			title: "Main Window",
+			icon: ICON_GLOBAL_PNG,
+			webPreferences: {
+				nodeIntegration: true
+			}
+		}, {
+			page: {
+				pathname: path.join(__dirname, '/Pages/mainWindow.html'),
+				protocol: 'file:',
+				slashes: true,
+			}
+		})
+		window.Windows['MainWindow'].setMenu(Menu.buildFromTemplate(mainMenuTemplate))
+		window.Windows['MainWindow'].on('closed', function () {
+			safeQuit()
+		})
+		window.Windows['MainWindow'].on('close', (e) => {
+			if (JSON.stringify(instances.all()) === '{}') {
+				return false
+			} else {
+				e.preventDefault()
+				dialog.showMessageBox(null, {
+					type: 'question',
+					buttons: [strings.getString("Terms.Cancel"), strings.getString("Terms.Yes"), strings.getString("Terms.No")],
+					defaultId: 2,
+					title: strings.getString("Notifications.closeTitle"),
+					message: strings.getString("Notifications.closeMessage"),
+					detail: strings.getString("Notifications.closeDetail")
+				}).then((e) => {
+					if (e.response === 1) {
+						safeQuit()
+					}
+				})
+			}
+		})
+	}
+	//Create Main Window
+	
 });
 //QUIT HANDELING
 
@@ -305,7 +354,7 @@ function ClearQuit() {
  *
  */
 function createAddWindow() {
-	if (!store.get('isConnected')) {
+	if (!store.get('isConnected')&&!singlemode) {
 		window.sendData('MainWindow', 'NOCONNECTION')
 		return
 	}
@@ -316,6 +365,7 @@ function createAddWindow() {
 	window.sendData('MainWindow', 'removeStart')
 
 	window.createWindow('AddWindow', {
+		backgroundColor: '#303030',
 		parent: 'MainWindow',
 		show: false,
 		darkTheme: true,
@@ -332,7 +382,7 @@ function createAddWindow() {
 			protocol: 'file:',
 			slashes: true,
 		}
-	})
+	},true)
 }
 
 /**
@@ -341,6 +391,7 @@ function createAddWindow() {
  */
 function createLoginWindow() {
 	window.createWindow('LoginWindow', {
+		backgroundColor: '#303030',
 		parent: 'ConfigWindow',
 		show: false,
 		darkTheme: true,
@@ -365,6 +416,7 @@ function createLoginWindow() {
  */
 function createConfigWindow() {
 	window.createWindow('ConfigWindow', {
+		backgroundColor: '#303030',
 		parent: 'MainWindow',
 		width: 1000,
 		show: false,
@@ -392,6 +444,7 @@ function createConfigWindow() {
  */
 function createURLWindow(URL) {
 	window.createWindow('URLWINDOW' + uuidv4(), {
+		
 		parent: 'MainWindow',
 		show: false,
 		darkTheme: true,
@@ -415,6 +468,7 @@ function createURLWindow(URL) {
  */
 function createEditorWindow() {
 	window.createWindow('EditorWindow', {
+		backgroundColor: '#303030',
 		parent: 'ConfigWindow',
 		show: false,
 		darkTheme: true,
@@ -799,6 +853,7 @@ ipcMain.on('restartRequired', function (e, id) {
 ipcMain.on('openManager', function (e, id) {
 	instances.openWindow(id)
 	window.createWindow(`ServerManager-${id}`, {
+		backgroundColor: '#303030',
 		parent: 'MainWindow',
 		show: false,
 		darkTheme: true,

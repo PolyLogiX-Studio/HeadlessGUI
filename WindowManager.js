@@ -51,7 +51,7 @@ class WindowManager {
 	},children:['ConfigWindow']})
 	 * @returns {String} Unique Window ID
 	 */
-	createWindow(ID = uuidv4(), prop, data, menu = null) {
+	createWindow(ID = uuidv4(), prop, data,show = true, menu = null) {
 		console.log('New Window Call,', ID)
 		if (this.Windows[ID] != undefined) {
 			return false
@@ -91,7 +91,9 @@ class WindowManager {
 		console.log('windowURL', windowURL)
 		this.Windows[ID].loadURL(windowURL)
 		this.Windows[ID].once('ready-to-show', () => {
-			this.Windows[ID].show()
+			if (show) {
+			setTimeout(() => {  this.Windows[ID].show(); }, 10);
+			}
 		})
 		// GC Handle
 		this.Windows[ID].onClose = (this.Windows[ID].on('close', () => {
