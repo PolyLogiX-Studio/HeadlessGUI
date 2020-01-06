@@ -47,7 +47,7 @@ const fs = require('fs-extra'); //Recursive Folder Delete
 
 
 console.log("ARGUMENTS",process.argv)
-store.set("pseudo", (process.argv.indexOf("--TranslationDebug")>-1))
+store.set("pseudo", (process.argv.indexOf("--translationDebug")>-1))
 
 
 
@@ -150,7 +150,7 @@ checkInternet(function (isConnected) {
 })
 
 //Disable SubMenu & Dev tools
-//process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = (process.argv.indexOf("--debug")>-1?'production':'Dev');
 const contextMenu = require('electron-context-menu');
 if (process.env.NODE_ENV != 'production') {
 	contextMenu({
