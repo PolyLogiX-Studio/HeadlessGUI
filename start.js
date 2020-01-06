@@ -783,7 +783,15 @@ if (process.env.NODE_ENV !== 'production') {
 		]
 	})
 }
-
+if (process.argv.indexOf("--light")>-1) {
+	mainMenuTemplate.push({
+		label: 'Light Mode',
+		submenu: [{
+				label: 'Nothing Yet.. :)',
+			}
+		]
+	})
+}
 /**
  * @async
  * @param {CheckInternetCallback} cb Callback Function
