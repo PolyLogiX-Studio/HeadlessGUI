@@ -1,3 +1,5 @@
+process.env.NODE_ENV = ((process.argv.indexOf("--debug")>-1)?'Dev':'production');
+console.log(process.env.NODE_ENV)
 const unhandled = require('electron-unhandled');
 unhandled();
 const electron = require('electron');
@@ -150,7 +152,7 @@ checkInternet(function (isConnected) {
 })
 
 //Disable SubMenu & Dev tools
-process.env.NODE_ENV = (process.argv.indexOf("--debug")>-1?'production':'Dev');
+
 const contextMenu = require('electron-context-menu');
 if (process.env.NODE_ENV != 'production') {
 	contextMenu({
