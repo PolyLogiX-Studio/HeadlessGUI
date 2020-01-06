@@ -21,9 +21,10 @@ Feel free to contribute in any way following our [Guidelines](https://github.com
 
 ##Launch Arguments
 
-`--
-
-
+`--light` Launch without UI
+`--config <Path>` Set path to Data configs, For use with multiple instances with different accounts
+`--translationDebug` Scramble Translated Text, -Dev Option
+`--debug` Enable Debug Mode -Dev Option
 
 
 ## Translation!
