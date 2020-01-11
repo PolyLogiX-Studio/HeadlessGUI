@@ -8,18 +8,19 @@
    <body>
       <div id="alerts">
       </div>
-      <form onsubmit="attemptLogin()">
+      <form onsubmit="attemptLogin()" autocomplete="on">
          <div class="form-group">
          <label for="neosCredential">Neos Account Credential</label>
-         <input type="text" class="form-control" id="neosCredential" aria-describedby="emailHelp" placeholder="Neos Login">
+         <input type="text" class="form-control" name='email' id="neosCredential" aria-describedby="emailHelp" placeholder="Neos Login">
          <label for="NeosPassword">Neos Account Password</label>
-         <input type="password" class="form-control" id="NeosPassword" placeholder="Neos Password">
+         <input type="password" name="password" class="form-control" id="NeosPassword" placeholder="Neos Password">
          <small id="Error" class="form-text text-danger" style="display: none;">Invalid Login</small> <!--Hidden until Failed login-->
          <div class="modal-footer">
             <button type="button" class="btn btn-success" type="submit" onclick="attemptLogin()">Login</button>
          </div>
       </form>
       <script>
+         
          const electron = require('electron')
          const {
              ipcRenderer

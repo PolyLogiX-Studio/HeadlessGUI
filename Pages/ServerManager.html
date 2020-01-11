@@ -1,259 +1,268 @@
 <!DOCTYPE html>
 <html>
-   <head id="head">
-      
-      <script>
-         const $ = require('jquery')
-         require('bootstrap')
-      </script>
-      <title id="title">Server Config</title>
-      <style>
-         .AlertWindow {
-         position: fixed;
-         z-index: 999;
-         width: 100%;
-         }
-      </style>
-      <style>
-         /* width */
-         ::-webkit-scrollbar {
-         width: 20px;
-         }
-         /* Track */
-         ::-webkit-scrollbar-track {
-         box-shadow: inset 0 0 5px grey;
-         border-radius: 10px;
-         }
-         /* Handle */
-         ::-webkit-scrollbar-thumb {
-         background: #00afed;
-         border-radius: 10px;
-         }
-         /* Handle on hover */
-         ::-webkit-scrollbar-thumb:hover {
-         background: #00afed;
-         }
-      </style>
-   </head>
-   <body>
-      <div id="alerts" class="AlertWindow" width="100%">
-      </div>
-      <div style="width:70%; float: left;">
-         <div class="list-group border-secondary" id="Console"
+
+<head id="head">
+
+    <script>
+        const $ = require('jquery')
+        require('bootstrap')
+    </script>
+    <title id="title">Server Config</title>
+    <style>
+        .AlertWindow {
+            position: fixed;
+            z-index: 999;
+            width: 100%;
+        }
+    </style>
+    <style>
+        /* width */
+        ::-webkit-scrollbar {
+            width: 20px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px grey;
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #00afed;
+            border-radius: 10px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00afed;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="alerts" class="AlertWindow" width="100%">
+    </div>
+    <div style="width:70%; float: left;">
+        <div class="list-group border-secondary" id="Console"
             style="vertical-align: bottom; width:100%; height:550px; overflow-y: scroll; overflow-wrap: break-word;">
-         </div>
-         <form id="ConsoleForm" onsubmit="handle(event)">
+        </div>
+        <form id="ConsoleForm" onsubmit="handle(event)">
             <div class="form-group">
-               <div class="form-group">
-                  <div class="input-group mb-3">
-                     <input id="ConsoleInput" type="text" class="form-control" aria-label="Command">
-                     <div class="input-group-append">
-                        <span class="input-group"><button id="ConsoleSend" type="button" class="btn btn-secondary"
-                           onclick="sendCommand()">Send</button></span>
-                     </div>
-                  </div>
-               </div>
+                <div class="form-group">
+                    <div class="input-group mb-3">
+                        <input id="ConsoleInput" type="text" class="form-control" aria-label="Command">
+                        <div class="input-group-append">
+                            <span class="input-group"><button id="ConsoleSend" type="button" class="btn btn-secondary"
+                                    onclick="sendCommand()">Send</button></span>
+                        </div>
+                    </div>
+                </div>
             </div>
-         </form>
-      </div>
-      <div style="float: right; width: 30%;">
-         <div class="card border-secondary mb-3" style="height:550px; margin-bottom: 0rem !important;">
+        </form>
+    </div>
+    <div style="float: right; width: 30%;">
+        <div class="card border-secondary mb-3" style="height:550px; margin-bottom: 0rem !important;">
             <div class="card-header" id='userListHeader'>Users (0/0)</div>
             <div class="card-body" id='UserListInner' style="padding:0px; overflow-y: scroll;">
             </div>
-         </div>
-         <form onsubmit="inviteHandle(event)" class="btn-group">
+        </div>
+        <form onsubmit="inviteHandle(event)" class="btn-group">
             <input class="form-control mr-sm-2" type="text" placeholder="Username" id="inviteUser"
-               style="margin-right: 0rem !important;">
+                style="margin-right: 0rem !important;">
             <button class="btn btn-secondary my-2 my-sm-0" type="button" onclick="invite()">Invite</button>
-         </form>
-      </div>
-      <div class="modal-footer">
-        <button id="VisibilityDrop" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Visibility</button>
-        <div class="dropdown-menu" aria-labelledby="VisibilityDrop"> 
-        <a id="visany" class="dropdown-item" href="javascript:setVisibility('Anyone')">Anyone</a>
-        <a id="visreg" class="dropdown-item" href="javascript:setVisibility('RegisteredUsers')">Registered Users</a>
-        <a id="visfri" class="dropdown-item" href="javascript:setVisibility('Friends')">Friends</a>
-        <a id="vislan" class="dropdown-item" href="javascript:setVisibility('LAN')">LAN</a>
-        <a id="vispri" class="dropdown-item" href="javascript:setVisibility('Private')">Private</a>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button id="VisibilityDrop" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">Visibility</button>
+        <div class="dropdown-menu" aria-labelledby="VisibilityDrop">
+            <a id="visany" class="dropdown-item" href="javascript:setVisibility('Anyone')">Anyone</a>
+            <a id="visreg" class="dropdown-item" href="javascript:setVisibility('RegisteredUsers')">Registered Users</a>
+            <a id="visfri" class="dropdown-item" href="javascript:setVisibility('Friends')">Friends</a>
+            <a id="vislan" class="dropdown-item" href="javascript:setVisibility('LAN')">LAN</a>
+            <a id="vispri" class="dropdown-item" href="javascript:setVisibility('Private')">Private</a>
         </div>
 
-          <button type="button" style="float: right;" class="btn btn-outline-success" onclick="sendCommand('save',false)">Save</button>
-          <button id="shutdownButton" style="float: right;" type="button" class="btn btn-outline-danger" onclick="shutdown()">End Server</button>
+        <button type="button" style="float: right;" class="btn btn-outline-success"
+            onclick="sendCommand('save',false)">Save</button>
+        <button id="shutdownButton" style="float: right;" type="button" class="btn btn-outline-danger"
+            onclick="shutdown()">End Server</button>
 
-          
 
-      </div>
-      <script>
-         const urlParams = new URLSearchParams(window.location.search);
-         const SESSION_ID = urlParams.get('id');
-         const electron = require('electron')
-         const {
-             ipcRenderer
-         } = electron;
-         const path = require('path')
-         const {store,config,themes} = require(path.join(__dirname,"Resources/store"))
-         require('./Resources/DOMEditing.js').setupThemes()
-         const {addElement,removeElement,replacejscssfile} = require('./Resources/DOMEditing.js')
-         const LocalizedStrings = require('localized-strings').default
-         var strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), { pseudo: store.get("pseudo") })
-         strings.setLanguage(config.get('lang'))
-         //UpdateItems
-         $(document).ready(function () {
-             setupLocale()
-             updateElementHTML('title', `Console: ${SESSION_ID}`)
-             ipcRenderer.send('getUpdateRaw', SESSION_ID)
-         })
-         
-         var shutdownConfirm = 0
-         //ipcRenderer.send('getUpdateRaw',SESSION_ID)
-         function shutdown() {
-             if (shutdownConfirm<1){
+
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const SESSION_ID = urlParams.get('id');
+        const electron = require('electron')
+        const {
+            ipcRenderer
+        } = electron;
+        const path = require('path')
+        const { store, config, themes } = require(path.join(__dirname, "Resources/store"))
+        require('./Resources/DOMEditing.js').setupThemes()
+        const { addElement, removeElement, replacejscssfile } = require('./Resources/DOMEditing.js')
+        const LocalizedStrings = require('localized-strings').default
+        var strings = new LocalizedStrings(ipcRenderer.sendSync('fetchLanguage'), { pseudo: store.get("pseudo") })
+        strings.setLanguage(config.get('lang'))
+        //UpdateItems
+        $(document).ready(function () {
+            setupLocale()
+            updateElementHTML('title', `Console: ${SESSION_ID}`)
+            ipcRenderer.send('getUpdateRaw', SESSION_ID)
+        })
+
+        var shutdownConfirm = 0
+        //ipcRenderer.send('getUpdateRaw',SESSION_ID)
+        function shutdown() {
+            if (shutdownConfirm < 1) {
                 $('#shutdownButton').text("  Confirm?  ")
-                $('#shutdownButton').attr("class",'btn btn-danger')
+                $('#shutdownButton').attr("class", 'btn btn-danger')
                 shutdownConfirm++
                 setTimeout(() => {
                     shutdownConfirm = 0
                     $('#shutdownButton').text("End Server?")
-                    $('#shutdownButton').attr("class","btn btn-outline-danger")
-	            }, 5000)
-             } else {
-                 sendCommand('shutdown', false)
-             }
+                    $('#shutdownButton').attr("class", "btn btn-outline-danger")
+                }, 5000)
+            } else {
+                sendCommand('shutdown', false)
+            }
 
-            }
-            function setVisibility(vis){
-                ipcRenderer.send('Server:UpdateVisibility',{session:SESSION_ID,accessLevel:vis})
-                sendCommand(`accessLevel ${vis}`, false)
-                updateScroll()
-            }
-         function inviteHandle(e) {
-             e.preventDefault()
-             invite()
-         }
-         function handle(e) {
-             e.preventDefault()
-             sendCommand($('#ConsoleInput').val())
-             $('#ConsoleInput').val('')
-             updateScroll()
-         }
-         function invite() {
-             sendCommand(`invite "${$('#inviteUser').val()}"`, false)
-             $('#inviteUser').val('')
-         }
-         function runCommand(command){
+        }
+        function setVisibility(vis) {
+            ipcRenderer.send('Server:UpdateVisibility', { session: SESSION_ID, accessLevel: vis })
+            sendCommand(`accessLevel ${vis}`, false)
+            updateScroll()
+        }
+        function inviteHandle(e) {
+            e.preventDefault()
+            invite()
+        }
+        function handle(e) {
+            e.preventDefault()
+            sendCommand($('#ConsoleInput').val())
+            $('#ConsoleInput').val('')
+            updateScroll()
+        }
+        function invite() {
+            sendCommand(`invite "${$('#inviteUser').val()}"`, false)
+            $('#inviteUser').val('')
+        }
+        function runCommand(command) {
             ipcRenderer.send('Console:Command', {
-                     'id': SESSION_ID,
-                     'command': command
-                 })
-         }
-         function sendCommand(command, display = true) {
-             if (!command) {
-                 return
-             }
-             if (display) {
-                 addElement('Console', 'div', '0', 'list-group-item', `>${command}`)
-             }
-             if (!parseCommand(command)) {
-                 runCommand(command)
-             }
-         
-         }
-         //Custom Commands
-         function parseCommand(command) {
+                'id': SESSION_ID,
+                'command': command
+            })
+        }
+        function sendCommand(command, display = true) {
+            if (!command) {
+                return
+            }
+            if (display) {
+                addElement('Console', 'div', '0', 'list-group-item', `>${command}`)
+                addCommand(command)
+            }
+            if (!parseCommand(command)) {
+                runCommand(command)
+            }
+
+        }
+        //Custom Commands
+        function parseCommand(command) {
             return false //Implimented Later, Custom Command Handeling
-         }
-         function setupLocale(){
-             $('#VisibilityDrop').text(strings.getString("Config.accessLevel"))
-             $('#visany').text(strings.getString("AccessLevel.Anyone"))
-             $('#visreg').text(strings.getString("AccessLevel.RegisteredUsers"))
-             $('#visfri').text(strings.getString("AccessLevel.Friends"))
-             $('#vislan').text(strings.getString("AccessLevel.LAN"))
-             $('#vispri').text(strings.getString("AccessLevel.Private"))
-         }
-         
-         
-         var scrolled = false
-         
-         function updateScroll() {
-             if (!scrolled) {
-                 var element = document.getElementById("Console");
-                 element.scrollTop = element.scrollHeight;
-                 while (element.scrollHeight > 6000) {
-                     removeTop()
-                 }
-             }
-         }
-         
-         function removeTop() {
-             document.getElementById('Console').removeChild(documment.getElementById('Console').children[0])
-         }
-         
-         
-         //addElement(parentId, elementTag, elementId, elementClass, html)
-         
-         ipcRenderer.on('Update:Raw', (e, session) => {
-             updateSession(session)
-         })
-         
-         ipcRenderer.on('Server:Log', (e, message) => {
-             addElement('Console', 'div', '0', 'list-group-item', `${message}`)
-             updateScroll()
-         })
-         
-         function updateElementHTML(ID, value) {
-             document.getElementById(ID).innerHTML = value
-         }
-         
-         function updateElementSrc(ID, value) {
-             document.getElementById(ID).src = value
-         }
-         function setrole(user,role){
-             ipcRenderer.send('Server:UpdateRole',{session:SESSION_ID,user:user,role:role})
-             sendCommand(`role ${user} ${role}`,false)
-         }
-         function updateSession(session) {
-             console.log('Update: ' + session.ID)
-             console.log(session.Vars)
-         
-             if (session.Vars._Status === 'Running') {
-                 removeAlert('startAlert-' + session.ID)
-             }
-             updateElementHTML('userListHeader', `${strings.getString('Menu.ConnectedUsers')} (${session.Vars._UserCount - 1}/${session.Config.startWorlds[0].maxUsers - 1})<br><small>${strings.getString("Config.accessLevel")}: ${strings.getString("AccessLevel."+session.accessLevel)}</small>`)
-             const myNode = document.getElementById("UserListInner");
-             while (myNode.firstChild) {
-                 myNode.removeChild(myNode.firstChild);
-             }
-             for (let i = 0; session.Vars._Users.length > i; i++) {
-                 var badge = 'badge-'
-                 let translatedRole = "undefined"
-                 switch(session.Vars._Users[i].role){
-                     case "Admin":
-                     badge += 'danger'
-                     translatedRole = strings.getString("Roles.Admin")
-                     break
-                     case "Builder":
-                     badge += 'info'
-                     translatedRole = strings.getString("Roles.Builder")
-                     break
-                     case "Moderator":
-                     badge += 'warning'
-                     translatedRole = strings.getString("Roles.Moderator")
-                     break
-                     case "Guest":
-                     badge += 'light'
-                     translatedRole = strings.getString("Roles.Guest")
-                     break
-                     case "Spectator":
-                     badge += 'secondary'
-                     translatedRole = strings.getString("Roles.Spectator")
-                     break
-                     default:
-                     badge += 'success'
-                     translatedRole = 'Connecting...'
-                     break
-                 }
-                 addElement('UserListInner', 'div', '0', '', `<div class="list-group-item"><p style="">${session.Vars._Users[i].username} <span id="ROLE-${session.Vars._Users[i].username}" class="badge ${badge}">${translatedRole}</span></p>
+        }
+        function setupLocale() {
+            $('#VisibilityDrop').text(strings.getString("Config.accessLevel"))
+            $('#visany').text(strings.getString("AccessLevel.Anyone"))
+            $('#visreg').text(strings.getString("AccessLevel.RegisteredUsers"))
+            $('#visfri').text(strings.getString("AccessLevel.Friends"))
+            $('#vislan').text(strings.getString("AccessLevel.LAN"))
+            $('#vispri').text(strings.getString("AccessLevel.Private"))
+        }
+
+
+        var scrolled = false
+
+        function updateScroll() {
+            if (!scrolled) {
+                var element = document.getElementById("Console");
+                element.scrollTop = element.scrollHeight;
+                while (element.scrollHeight > 6000) {
+                    removeTop()
+                }
+            }
+        }
+
+        function removeTop() {
+            document.getElementById('Console').removeChild(documment.getElementById('Console').children[0])
+        }
+
+
+        //addElement(parentId, elementTag, elementId, elementClass, html)
+
+        ipcRenderer.on('Update:Raw', (e, session) => {
+            updateSession(session)
+        })
+
+        ipcRenderer.on('Server:Log', (e, message) => {
+            addElement('Console', 'div', '0', 'list-group-item', `${message}`)
+            updateScroll()
+        })
+
+        function updateElementHTML(ID, value) {
+            document.getElementById(ID).innerHTML = value
+        }
+
+        function updateElementSrc(ID, value) {
+            document.getElementById(ID).src = value
+        }
+        function setrole(user, role) {
+            ipcRenderer.send('Server:UpdateRole', { session: SESSION_ID, user: user, role: role })
+            sendCommand(`role ${user} ${role}`, false)
+        }
+        function updateSession(session) {
+            console.log('Update: ' + session.ID)
+            console.log(session.Vars)
+
+            if (session.Vars._Status === 'Running') {
+                removeAlert('startAlert-' + session.ID)
+            }
+            updateElementHTML('userListHeader', `${strings.getString('Menu.ConnectedUsers')} (${session.Vars._UserCount - 1}/${session.Config.startWorlds[0].maxUsers - 1})<br><small>${strings.getString("Config.accessLevel")}: ${strings.getString("AccessLevel." + session.accessLevel)}</small>`)
+            const myNode = document.getElementById("UserListInner");
+            while (myNode.firstChild) {
+                myNode.removeChild(myNode.firstChild);
+            }
+            for (let i = 0; session.Vars._Users.length > i; i++) {
+                var badge = 'badge-'
+                let translatedRole = "undefined"
+                switch (session.Vars._Users[i].role) {
+                    case "Admin":
+                        badge += 'danger'
+                        translatedRole = strings.getString("Roles.Admin")
+                        break
+                    case "Builder":
+                        badge += 'info'
+                        translatedRole = strings.getString("Roles.Builder")
+                        break
+                    case "Moderator":
+                        badge += 'warning'
+                        translatedRole = strings.getString("Roles.Moderator")
+                        break
+                    case "Guest":
+                        badge += 'light'
+                        translatedRole = strings.getString("Roles.Guest")
+                        break
+                    case "Spectator":
+                        badge += 'secondary'
+                        translatedRole = strings.getString("Roles.Spectator")
+                        break
+                    default:
+                        badge += 'success'
+                        translatedRole = 'Connecting...'
+                        break
+                }
+                addElement('UserListInner', 'div', '0', '', `<div class="list-group-item"><p style="">${session.Vars._Users[i].username} <span id="ROLE-${session.Vars._Users[i].username}" class="badge ${badge}">${translatedRole}</span></p>
                          <button type="button" class="btn btn-sm btn-danger" style="" onclick="sendCommand('kick ${session.Vars._Users[i].username}',false)">${strings.getString("Menu.Kick")}</button>
                          <div class="btn-group btn-sm" role="group">
                          <button id="btnGroupDrop3" type="button" style="" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${strings.getString('Menu.Roles')} </button>
@@ -266,65 +275,118 @@
                          
          </div>
          </div></div>`)
-             }
-             /*
-             updateElementSrc('previewImage-'+session.ID,session.SessionPreview)
-             updateElementHTML('usercount-'+session.ID,'Players: '+(session.UserCount-1)+'/'+(session.Config.startWorlds[0].maxUsers-1))
-             updateElementHTML("status-"+session.ID,'Status: '+session.Status)
-             console.log(session.displayStatusMessage)
-             */
-             if (session.Vars._displayStatusMessage) {
-                 console.log('alert')
-                 switch (session.Vars._event) {
-                     case 'Saving':
-                         removeAlert(addAlert(`Saving...`, 'info'), 5000)
-                         break
-                     case 'Started':
-                         removeAlert(addAlert(`Session Running!`, 'success'), 2000)
-                         break
-                     case 'Saved':
-                         removeAlert(addAlert(`Saved!`, 'success'), 5000)
-                         break
-                     case 'Syncing':
-                         removeAlert(addAlert(`Syncing...`, 'info'), 5000)
-                         break
-                     case 'Synced':
-                         removeAlert(addAlert(`Synced!`, 'success'), 5000)
-                         break
-                     case 'ShuttingDown':
-                         removeAlert(addAlert(`Shutting Down...`, 'warning'), 5000)
-                         break
-                     case 'ShutDown':
-                         removeAlert(addAlert(`Session Ended.`, 'danger'), 2000)
-                         break
-                     case 'UserJoinContext':
-                         removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> connected!`, 'primary'), 5000)
-                         break
-                     case 'UserLeft':
-                         removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> disconnected!`, 'warning'), 5000)
-                         break
-                     default:
-                 }
-             }
-         
-         }
-         
-         let alertID = 0
-         
-         function removeAlert(alertID, timeout = 0) {
-             setTimeout(function () {
-                 removeElement('alert-' + alertID)
-             }, timeout)
-         }
-         
-         function addAlert(message, alertType = "", CustomAlertID) {
-             let myAlert = (!CustomAlertID ? alertID : CustomAlertID)
-             addElement('alerts', 'div', 'alert-' + myAlert, 'alert alert-dismissible alert-' + alertType, '<button type="button" class="close" data-dismiss="alert" onclick="removeElement(\'alert-' + myAlert + '\')">&times;</button>' + message)
-             if (!CustomAlertID) {
-                 alertID++
-             }
-             return myAlert
-         }
-      </script>
-   </body>
+            }
+            /*
+            updateElementSrc('previewImage-'+session.ID,session.SessionPreview)
+            updateElementHTML('usercount-'+session.ID,'Players: '+(session.UserCount-1)+'/'+(session.Config.startWorlds[0].maxUsers-1))
+            updateElementHTML("status-"+session.ID,'Status: '+session.Status)
+            console.log(session.displayStatusMessage)
+            */
+            if (session.Vars._displayStatusMessage) {
+                console.log('alert')
+                switch (session.Vars._event) {
+                    case 'Saving':
+                        removeAlert(addAlert(`Saving...`, 'info'), 5000)
+                        break
+                    case 'Started':
+                        removeAlert(addAlert(`Session Running!`, 'success'), 2000)
+                        break
+                    case 'Saved':
+                        removeAlert(addAlert(`Saved!`, 'success'), 5000)
+                        break
+                    case 'Syncing':
+                        removeAlert(addAlert(`Syncing...`, 'info'), 5000)
+                        break
+                    case 'Synced':
+                        removeAlert(addAlert(`Synced!`, 'success'), 5000)
+                        break
+                    case 'ShuttingDown':
+                        removeAlert(addAlert(`Shutting Down...`, 'warning'), 5000)
+                        break
+                    case 'ShutDown':
+                        removeAlert(addAlert(`Session Ended.`, 'danger'), 2000)
+                        break
+                    case 'UserJoinContext':
+                        removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> connected!`, 'primary'), 5000)
+                        break
+                    case 'UserLeft':
+                        removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> disconnected!`, 'warning'), 5000)
+                        break
+                    default:
+                }
+            }
+
+        }
+        var usedCommands = []
+        var commandIndexOffset = -1
+        /**
+         * Previous Command
+        */
+        function prevCommand() { 
+            if (commandIndexOffset>=usedCommands.length-1) return;
+            commandIndexOffset++;
+            $('#ConsoleInput').val(getCurrentIndexCommand())
+        }
+        /**
+         * Go To Next Command in List
+        */
+        function nextCommand() { 
+            if (commandIndexOffset<0) return;
+            commandIndexOffset--
+            $('#ConsoleInput').val(getCurrentIndexCommand())
+        }
+        /**
+         * Add Command to usedCommands
+        */
+        function addCommand(command,index) { 
+            if (!index){ 
+                if (usedCommands[usedCommands.length-1]==command) return;
+                usedCommands.push(command)
+            } else {
+                usedCommands[index] = command
+            }
+            commandIndexOffset = -1
+        }
+        function getCurrentIndexCommand(){
+            if (!usedCommands[usedCommands.length-1 - commandIndexOffset]) return ''
+            return usedCommands[usedCommands.length-1 - commandIndexOffset]
+        }
+        //Detect Keystroke UP and DOWN
+        $('#ConsoleInput').keydown(function (event) {
+            switch (event.which) {
+                case 38:
+                    prevCommand()
+                    event.preventDefault()
+                    break
+                case 40:
+                    nextCommand()
+                    event.preventDefault()
+                    break
+                default:
+                    return
+            }
+
+        })
+
+
+
+        let alertID = 0
+
+        function removeAlert(alertID, timeout = 0) {
+            setTimeout(function () {
+                removeElement('alert-' + alertID)
+            }, timeout)
+        }
+
+        function addAlert(message, alertType = "", CustomAlertID) {
+            let myAlert = (!CustomAlertID ? alertID : CustomAlertID)
+            addElement('alerts', 'div', 'alert-' + myAlert, 'alert alert-dismissible alert-' + alertType, '<button type="button" class="close" data-dismiss="alert" onclick="removeElement(\'alert-' + myAlert + '\')">&times;</button>' + message)
+            if (!CustomAlertID) {
+                alertID++
+            }
+            return myAlert
+        }
+    </script>
+</body>
+
 </html>

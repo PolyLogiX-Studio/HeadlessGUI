@@ -27,6 +27,7 @@ const {
 	Tray,
 	remote
 } = electron;
+const NEOSAPI = require('./.API/NeosAPI')(bus).Neos
 /**
  * Window Manager
  */
@@ -137,6 +138,12 @@ const instances = new Instances()
 if (!store.has('MachineId')) { //For API Calls
 	store.set('MachineId', uuidv4())
 }
+//define NeosAPI
+const Neos = new NEOSAPI(store.get('machineId'))
+
+
+
+
 //Check if there is an internet connection, and set values accordingly
 
 checkInternet(function (isConnected) {
@@ -444,7 +451,7 @@ function createConfigWindow() {
  *
  * @param {URL} URL www.host.com
  */
-function createURLWindow(URL) {
+function createURLWindow(URL, width = 1080, height = 1080) {
 	window.createWindow('URLWINDOW' + uuidv4(), {
 		
 		parent: 'MainWindow',
@@ -803,8 +810,7 @@ if (process.argv.indexOf("--light")>-1) {
  * }
  * })
  */
-
-function checkInternet(cb) {
+async function checkInternet(cb) {
 	require('url-exists')(`https://neosvr.com/`, function (err, exists) {
 		if (!exists) {
 			cb(false);
