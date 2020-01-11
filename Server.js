@@ -344,7 +344,11 @@ class Server {
 			console.log("Role Set", user, role)
 		}
 		updateSession(this.ID)
-    }
+	}
+	/**
+	 * Set the Access Level of the server
+	 * @param {("Anyone"|"RegisteredUsers"|"Friends"|"LAN"|"Private")} accessLevel 
+	 */
     setAccess(accessLevel) {
         this.accessLevel = accessLevel
         console.log('UpdateAccess',accessLevel)
@@ -537,7 +541,7 @@ class Instances {
 /**
  * @private
  */
-module.exports = function (b, s, c) {
+module.exports = function (b, s) {
 	bus = b;
 	strings = s;
 	return {

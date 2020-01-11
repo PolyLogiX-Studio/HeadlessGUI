@@ -1,221 +1,265 @@
 <!DOCTYPE html>
 <html>
-   <head id="head">
-      
-      <script>
-         const $ = require('jquery')
-              require('bootstrap')
-              
-      </script>
-      <title id="title">Headless GUI</title>
-      <style>
-         .AlertWindow {
-         position: fixed;
-         z-index: 999;
-         width: 100%;
-         }
-         .LogoImage{
-         position: fixed;
-         z-index: -1;
-         bottom: 0;
-         right: 0;
-         }
-         body {
-         position: relative;
-         }
-      </style>
-      <style>
-         /* width */
-         ::-webkit-scrollbar {
-         width: 20px;
-         }
-         /* Track */
-         ::-webkit-scrollbar-track {
-         box-shadow: inset 0 0 5px grey;
-         border-radius: 10px;
-         }
-         /* Handle */
-         ::-webkit-scrollbar-thumb {
-         background: #00afed;
-         border-radius: 10px;
-         }
-         /* Handle on hover */
-         ::-webkit-scrollbar-thumb:hover {
-         background: #00afed;
-         }
-      </style>
-   </head>
-   <body class="card">
-      <div id="alerts" class="AlertWindow" width="100%">
-      </div>
-      <div id="ServerList" class="" style="display:flex;flex-direction:row; flex-wrap:wrap;">
-      </div>
-      <img class="LogoImage" src="../images/Thig_Transparent.png" width="200px" height="150px">
-      <script>
-         const VERSION = require('root-require')('package.json').version
-         const electron = require('electron')
-         const {
-             ipcRenderer
-         } = electron;
-         const path = require('path')
-         const {store,config,themes} = require(path.join(__dirname,"Resources/store"))
-         require('./Resources/DOMEditing.js').setupThemes()
-         const {addElement,removeElement,replacejscssfile} = require('./Resources/DOMEditing.js')
-         const fetch = require('node-fetch')
-         const LocalizedStrings = require('localized-strings').default
-         var lang = ipcRenderer.sendSync('fetchLanguage')
-         var strings = new LocalizedStrings(lang, {pseudo: store.get("pseudo")})
-         strings.setLanguage(config.get('lang'))
-         
-         
-         checkInternet(function(isConnected){
-         if (!isConnected){
-             addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`,'danger')
-         } 
-         })
-         
-         /* Data Passing */
-         ipcRenderer.on('NOCONNECTION', (e, session) => {
-             removeAlert(addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`,'danger'),5000)
-         })
-         ipcRenderer.on('Server:Update', (e, session) => {
-             console.log("SERVER UPDATE REQUEST ON MAIN WINDOW")
-             updateSession(session)
-         })
-         ipcRenderer.on('restartRequired', function(e){
-             if (!$('#alert-restartRequired').length){
-                 addAlert(`<h4>${strings.getString("Notifications.restartRequired")}</h4>`, 'danger', 'restartRequired',true)
-             }
-         })
-         ipcRenderer.on('ConfigError', function(e, items) {
-             removeAlert(addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P'),strings.getString("Menu.Main"),strings.getString("Menu.Config")), 'danger', 'noConfig'), 5000)
-         });
-         ipcRenderer.on('removeStart', function(e, items) {
-             removeAlert('StartupAlert')
-         });
-         ipcRenderer.on('removeConfig', function(e, items) {
-             replacejscssfile(themes.get(`Themes.${store.get('oldTheme')}.url`), themes.get(`Themes.${config.get('currentTheme')}.url`), 'css')
-             while (document.getElementById('alert-noConfig')) {
-                 removeAlert('noConfig')
-             }
-         });
-         ipcRenderer.on('Main:updateList', function(e, items) {
-             addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),items.id,strings.getString("Terms.Starting")), 'info', 'startAlert-' + items.id)
-             addElement('ServerList', "div", 'SERVER-' + items.id, "form-group", '<div class="card" id=""  style="width: 300px;"><h3 id="SessionName-'+items.id+'" class="card-header">' + items.sessionName + '</h3><div class="card-body"><h5 id="WorldName-' + items.id + '" class="card-title">' + (!items.loadWorldURL ? items.loadWorldPresetName : 'Custom') + '</h5><h6 class="card-subtitle text-muted">' + items.id + '</h6></div><img id="previewImage-' + items.id + '" style="height: 200px; width: 100%; display: block;" src="https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607" alt="Card image"><div class="card-body"><p id="description-' + items.id + '" class="card-text">' + items.description + '</p></div><ul class="list-group list-group-flush"><li id="usercount-' + items.id + '" class="list-group-item">'+strings.getString("Terms.Players")+': 0/' + items.maxUsers-- + '</li>  <li id="status-' + items.id + '" class="list-group-item">'+strings.getString("Terms.Status")+': '+strings.getString("Terms.Starting")+'</li><li id="visibility-' + items.id + '" class="list-group-item">'+strings.getString("Config.accessLevel")+': '+strings.getString("AccessLevel."+items.accessLevel)+'</li></ul><div class="card-body"><a href="javascript:openManager(\'' + items.id + '\')" class="card-link">'+strings.getString("Menu.ManageServer")+'</a></div><div id="uptime" class="card-footer text-muted">' + new Date() + '</div></div>')
-         });
-         
-         function openManager(id) {
-             ipcRenderer.send('openManager', id)
-         }
-         
-         function updateElementHTML(ID, value) {
-             document.getElementById(ID).innerHTML = value
-         }
-         
-         function updateElementSrc(ID, value) {
-             document.getElementById(ID).src = value
-         }
-         
-         function updateSession(session) {
-             
-             console.log('Update: ' + session.ID,session.Vars)
-             if (session.Vars._event === 'Started') {
-                 removeAlert('startAlert-' + session.ID)
-             }
-             updateElementHTML('visibility-' + session.ID, `${strings.getString("Config.accessLevel")}: ` + strings.getString("AccessLevel."+session.accessLevel))
-             updateElementSrc('previewImage-' + session.ID, session.Vars._SessionPreview)
-             updateElementHTML('usercount-' + session.ID, `${strings.getString("Terms.Players")}: ` + (session.Vars._UserCount - 1) + '/' + (session.Config.startWorlds[0].maxUsers - 1))
-             updateElementHTML("status-" + session.ID, `${strings.getString("Terms.Status")}: ` + session.Vars._Status)
-             updateElementHTML("SessionName-" + session.ID, session.sessionName)
-             console.log(session.Vars._displayStatusMessage)
-             if (session.Vars._displayStatusMessage) {
-                 console.log('alert')
-                 switch (session.Vars._event) {
-                     case 'Saving':
-                         removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Saving")), 'info'), 5000)
-                         break
-                     case 'Started':
-                         removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Running")), 'success'), 2000)
-                         break
-                     case 'Saved':
-                         removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Saved")), 'success'), 5000)
-                         break
-                     case 'Syncing':
-                         removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Syncing")), 'info'), 5000)
-                         break
-                     case 'Synced':
-                         removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.Synced")), 'success'), 5000)
-                         break
-                     case 'ShuttingDown':
-                         removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"),session.ID,strings.getString("Terms.ShuttingDown")), 'warning'), 5000)
-                         break
-                     case 'ShutDown':
-                         removeAlert(addAlert(`Session ${session.ID} Ended.`, 'danger'), 2000)
-                         removeElement('SERVER-' + session.ID)
-                         break
-                     case 'UserJoinContext':
-                         removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> connected to ${session.ID}!`, 'primary'), 5000)
-                         break
-                     case 'UserLeft':
-                         removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> disconnected from ${session.ID}!`, 'warning'), 5000)
-                         break
-                     default:
-                 }
-             }
-         }
-         
-         let alertID = 0
-         
-         function removeAlert(alertID, timeout = 0) {
-             setTimeout(function() {
-                 removeElement('alert-' + alertID)
-             }, timeout)
-         }
-         
-         function addAlert(message, alertType = "", CustomAlertID, hideClear) {
-             let myAlert = (!CustomAlertID ? alertID : CustomAlertID)
-             addElement('alerts', 'div', 'alert-' + myAlert, 'alert alert-dismissible alert-' + alertType, `${(hideClear?'':'<button type="button" class="close" data-dismiss="alert" onclick="removeElement(\'alert-'+myAlert+'\')">&times;</button>')}` + message)
-             if (!CustomAlertID) {
-                 alertID++
-             }
-             return myAlert
-         }
-         
-         
-         addAlert(strings.formatString(strings.getString('Notifications.NewServerNotif'),strings.getString("Menu.Main"),strings.getString("Menu.New_Server")), 'info', 'StartupAlert')
-         
-         if (!store.has('configSet')||!store.get('loginPassword')) {
-             addAlert(strings.formatString(strings.getString("Notifications.ConfigError"),(process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P'),strings.getString("Menu.Main"),strings.getString("Menu.Config")), 'danger', 'noConfig')
-         }
-         
-         
-         /* Version Check */
-         const compareVersions = require('compare-versions');
-         
-         $('#title').html(`HeadlessGUI ${VERSION}`)
-         fetch('https://api.github.com/repos/bombitmanbomb/HeadlessGUI/releases/latest').then(res => res.json())
-         .then(json => {
-         let releaseTag = compareVersions(json.tag_name,VERSION)
-         switch (releaseTag){
-             case -1:
-             addAlert(strings.getString('Notifications.PreReleaseNotif'),'warning')
-             break
-             case 1:
-             addAlert(`<h4 class="alert-heading">${strings.formatString(strings.getString("Notifications.NewVersionNotif"),json.tag_name,`<a href="https://github.com/bombitmanbomb/HeadlessGUI/releases/latest">`,"</a></h4>")}<p class="mb-0">${json.body}</p>`,'warning')
-             break
-         }
-         })
-         function checkInternet(cb){
-         require('url-exists')(`https://neosvr.com/`,function(err,exists){
-         if (!exists) {
-             console.log(false)
-             cb(false);
-         } else {
-             console.log(true)
-             cb(true);
-         }
-         });
-         }
-      </script>
-   </body>
+
+<head id="head">
+
+    <script>
+        const $ = require('jquery')
+        require('bootstrap')
+
+    </script>
+    <title id="title">Headless GUI</title>
+    <style>
+        .AccountWindow {
+            cursor: pointer;
+            position: fixed;
+            z-index: 998;
+            bottom: 0;
+            left: 0;
+        }
+
+        .AlertWindow {
+            position: fixed;
+            z-index: 999;
+            width: 100%;
+        }
+
+        .LogoImage {
+            position: fixed;
+            z-index: -1;
+            bottom: 0;
+            right: 0;
+        }
+
+        body {
+            position: relative;
+        }
+    </style>
+    <style>
+        /* width */
+        ::-webkit-scrollbar {
+            width: 20px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px grey;
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #00afed;
+            border-radius: 10px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00afed;
+        }
+    </style>
+</head>
+
+<body class="card">
+    <div id="alerts" class="AlertWindow" width="100%">
+    </div>
+    <div id="ServerList" class="" style="display:flex;flex-direction:row; flex-wrap:wrap;">
+    </div>
+    <img id="ProfilePicture" class="AccountWindow" onclick="addAlert('yes','danger')"
+        src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
+        style="width:75px; height: 75px; padding-right: 5px; border-radius: 50%;">
+    <img class="LogoImage" src="../images/Thig_Transparent.png" width="200px" height="150px">
+    <script>
+        const VERSION = require('root-require')('package.json').version
+        const electron = require('electron')
+        const {
+            ipcRenderer
+        } = electron;
+        const path = require('path')
+        const { store, config, themes } = require(path.join(__dirname, "Resources/store"))
+        require('./Resources/DOMEditing.js').setupThemes()
+        const { addElement, removeElement, replacejscssfile } = require('./Resources/DOMEditing.js')
+        const fetch = require('node-fetch')
+        const LocalizedStrings = require('localized-strings').default
+        var lang = ipcRenderer.sendSync('fetchLanguage')
+        var strings = new LocalizedStrings(lang, { pseudo: store.get("pseudo") })
+        strings.setLanguage(config.get('lang'))
+
+
+        checkInternet(function (isConnected) {
+            if (!isConnected) {
+                addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`, 'danger')
+            }
+        })
+
+        /* Data Passing */
+        ipcRenderer.on('NOCONNECTION', (e, session) => {
+            removeAlert(addAlert(`<h4 class="alert-heading">No Server Connection!</h4><p class="mb-0">Could not establish connection to NEOS, Please check your connection and try again.</p>`, 'danger'), 5000)
+        })
+        ipcRenderer.on('Server:Update', (e, session) => {
+            console.log("SERVER UPDATE REQUEST ON MAIN WINDOW")
+            updateSession(session)
+        })
+        ipcRenderer.on('restartRequired', function (e) {
+            if (!$('#alert-restartRequired').length) {
+                addAlert(`<h4>${strings.getString("Notifications.restartRequired")}</h4>`, 'danger', 'restartRequired', true)
+            }
+        })
+        ipcRenderer.on('ConfigError', function (e, items) {
+            removeAlert(addAlert(strings.formatString(strings.getString("Notifications.ConfigError"), (process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P'), strings.getString("Menu.Main"), strings.getString("Menu.Config")), 'danger', 'noConfig'), 5000)
+        });
+        ipcRenderer.on('removeStart', function (e, items) {
+            removeAlert('StartupAlert')
+        });
+        ipcRenderer.on('removeConfig', function (e, items) {
+            replacejscssfile(themes.get(`Themes.${store.get('oldTheme')}.url`), themes.get(`Themes.${config.get('currentTheme')}.url`), 'css')
+            while (document.getElementById('alert-noConfig')) {
+                removeAlert('noConfig')
+            }
+        });
+        ipcRenderer.on('Main:updateList', function (e, items) {
+            addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"), items.id, strings.getString("Terms.Starting")), 'info', 'startAlert-' + items.id)
+            addElement('ServerList', "div", 'SERVER-' + items.id, "form-group", '<div class="card" id=""  style="width: 300px;"><h3 id="SessionName-' + items.id + '" class="card-header">' + items.sessionName + '</h3><div class="card-body"><h5 id="WorldName-' + items.id + '" class="card-title">' + (!items.loadWorldURL ? items.loadWorldPresetName : 'Custom') + '</h5><h6 class="card-subtitle text-muted">' + items.id + '</h6></div><img id="previewImage-' + items.id + '" style="height: 200px; width: 100%; display: block;" src="https://media1.tenor.com/images/9218be0e29e5acb3e17d96a3f0b1e366/tenor.gif?itemid=14857607" alt="Card image"><div class="card-body"><p id="description-' + items.id + '" class="card-text">' + items.description + '</p></div><ul class="list-group list-group-flush"><li id="usercount-' + items.id + '" class="list-group-item">' + strings.getString("Terms.Players") + ': 0/' + items.maxUsers-- + '</li>  <li id="status-' + items.id + '" class="list-group-item">' + strings.getString("Terms.Status") + ': ' + strings.getString("Terms.Starting") + '</li><li id="visibility-' + items.id + '" class="list-group-item">' + strings.getString("Config.accessLevel") + ': ' + strings.getString("AccessLevel." + items.accessLevel) + '</li></ul><div class="card-body"><a href="javascript:openManager(\'' + items.id + '\')" class="card-link">' + strings.getString("Menu.ManageServer") + '</a></div><div id="uptime" class="card-footer text-muted">' + new Date() + '</div></div>')
+        });
+
+        function openManager(id) {
+            ipcRenderer.send('openManager', id)
+        }
+
+        function updateElementHTML(ID, value) {
+            document.getElementById(ID).innerHTML = value
+        }
+
+        function updateElementSrc(ID, value) {
+            document.getElementById(ID).src = value
+        }
+
+        function updateSession(session) {
+
+            console.log('Update: ' + session.ID, session.Vars)
+            if (session.Vars._event === 'Started') {
+                removeAlert('startAlert-' + session.ID)
+            }
+            updateElementHTML('visibility-' + session.ID, `${strings.getString("Config.accessLevel")}: ` + strings.getString("AccessLevel." + session.accessLevel))
+            updateElementSrc('previewImage-' + session.ID, session.Vars._SessionPreview)
+            updateElementHTML('usercount-' + session.ID, `${strings.getString("Terms.Players")}: ` + (session.Vars._UserCount - 1) + '/' + (session.Config.startWorlds[0].maxUsers - 1))
+            updateElementHTML("status-" + session.ID, `${strings.getString("Terms.Status")}: ` + session.Vars._Status)
+            updateElementHTML("SessionName-" + session.ID, session.sessionName)
+            console.log(session.Vars._displayStatusMessage)
+            if (session.Vars._displayStatusMessage) {
+                console.log('alert')
+                switch (session.Vars._event) {
+                    case 'Saving':
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"), session.ID, strings.getString("Terms.Saving")), 'info'), 5000)
+                        break
+                    case 'Started':
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"), session.ID, strings.getString("Terms.Running")), 'success'), 2000)
+                        break
+                    case 'Saved':
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"), session.ID, strings.getString("Terms.Saved")), 'success'), 5000)
+                        break
+                    case 'Syncing':
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"), session.ID, strings.getString("Terms.Syncing")), 'info'), 5000)
+                        break
+                    case 'Synced':
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"), session.ID, strings.getString("Terms.Synced")), 'success'), 5000)
+                        break
+                    case 'ShuttingDown':
+                        removeAlert(addAlert(strings.formatString(strings.getString("Notifications.sessionNotif"), session.ID, strings.getString("Terms.ShuttingDown")), 'warning'), 5000)
+                        break
+                    case 'ShutDown':
+                        removeAlert(addAlert(`Session ${session.ID} Ended.`, 'danger'), 2000)
+                        removeElement('SERVER-' + session.ID)
+                        break
+                    case 'UserJoinContext':
+                        removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> connected to ${session.ID}!`, 'primary'), 5000)
+                        break
+                    case 'UserLeft':
+                        removeAlert(addAlert(`User <strong>${session.Vars._eventContext[1]}</strong> disconnected from ${session.ID}!`, 'warning'), 5000)
+                        break
+                    default:
+                }
+            }
+        }
+
+        let alertID = 0
+
+        function removeAlert(alertID, timeout = 0) {
+            setTimeout(function () {
+                removeElement('alert-' + alertID)
+            }, timeout)
+        }
+
+        function addAlert(message, alertType = "", CustomAlertID, hideClear) {
+            let myAlert = (!CustomAlertID ? alertID : CustomAlertID)
+            addElement('alerts', 'div', 'alert-' + myAlert, 'alert alert-dismissible alert-' + alertType, `${(hideClear ? '' : '<button type="button" class="close" data-dismiss="alert" onclick="removeElement(\'alert-' + myAlert + '\')">&times;</button>')}` + message)
+            if (!CustomAlertID) {
+                alertID++
+            }
+            return myAlert
+        }
+        ipcRenderer.on("NEOS:Login", (e) => {
+         login()
+        })
+        ipcRenderer.on("NEOS:Logout", (e) => {
+         logout()
+        })
+        function login() {
+            fetch(`https://cloudx.azurewebsites.net/api/users/${store.get('NEOS:userId')}`)
+                .then(res => res.json())
+                .then(json => {
+                    $('#userNameProfile').html(json.username)
+                    let str = json.profile.iconUrl
+                    var hash = str.substring(
+                        str.lastIndexOf("/") + 1,
+                        str.lastIndexOf("."))
+                    $('#ProfilePicture').attr('src', `https://cloudxstorage.blob.core.windows.net/assets/${hash}`)
+                })
+        }
+        function logout() {
+           $('#ProfilePicture').attr('src', `https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png`)
+        }
+
+        addAlert(strings.formatString(strings.getString('Notifications.NewServerNotif'), strings.getString("Menu.Main"), strings.getString("Menu.New_Server")), 'info', 'StartupAlert')
+
+        if (!store.has('configSet') || !store.get('loginPassword')) {
+            addAlert(strings.formatString(strings.getString("Notifications.ConfigError"), (process.platform == 'darwin' ? 'Command+P' : 'Ctrl+P'), strings.getString("Menu.Main"), strings.getString("Menu.Config")), 'danger', 'noConfig')
+        }
+
+
+        /* Version Check */
+        const compareVersions = require('compare-versions');
+
+        $('#title').html(`HeadlessGUI ${VERSION}`)
+        fetch('https://api.github.com/repos/bombitmanbomb/HeadlessGUI/releases/latest').then(res => res.json())
+            .then(json => {
+                let releaseTag = compareVersions(json.tag_name, VERSION)
+                switch (releaseTag) {
+                    case -1:
+                        addAlert(strings.getString('Notifications.PreReleaseNotif'), 'warning')
+                        break
+                    case 1:
+                        addAlert(`<h4 class="alert-heading">${strings.formatString(strings.getString("Notifications.NewVersionNotif"), json.tag_name, `<a href="https://github.com/bombitmanbomb/HeadlessGUI/releases/latest">`, "</a></h4>")}<p class="mb-0">${json.body}</p>`, 'warning')
+                        break
+                }
+            })
+        function checkInternet(cb) {
+            require('url-exists')(`https://neosvr.com/`, function (err, exists) {
+                if (!exists) {
+                    console.log(false)
+                    cb(false);
+                } else {
+                    console.log(true)
+                    cb(true);
+                }
+            });
+        }
+        $(document).ready(function(){
+            if (store.get('NEOS:token')){
+                login()
+            }
+        })
+    </script>
+</body>
+
 </html>

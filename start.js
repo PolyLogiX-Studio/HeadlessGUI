@@ -27,7 +27,7 @@ const {
 	Tray,
 	remote
 } = electron;
-const NEOSAPI = require('./.API/NeosAPI')(bus).Neos
+const NEOSAPI = require('./NeosAPI')(bus).CloudXInterface
 /**
  * Window Manager
  */
@@ -139,8 +139,8 @@ if (!store.has('MachineId')) { //For API Calls
 	store.set('MachineId', uuidv4())
 }
 //define NeosAPI
-const Neos = new NEOSAPI(store.get('machineId'))
-
+const CloudXInterface = new NEOSAPI(store.get('machineId'))
+console.log(CloudXInterface.NEOS_BLOB)
 
 
 
@@ -589,10 +589,14 @@ function sendLoginPost(loginPayload) {
 		})
 }
 /* Data Calls from Windows */
+ipcMain.on('NEOS:Logout', function (e, info) {
+			window.sendData('MainWindow', 'NEOS:Logout')
+})
 ipcMain.on('NEOS:Login', function (e, info) {
 	login(info.neosCredential, info.neosPassword).then((test) => {
 		if (!test.err) {
 			window.sendData('ConfigWindow', 'NEOS:Login')
+			window.sendData('MainWindow', 'NEOS:Login')
 			if (window.isOpen('LoginWindow')) {
 				window.closeWindow('LoginWindow')
 			}
