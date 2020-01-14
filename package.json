@@ -15,6 +15,7 @@
   "dependencies": {
     "bootstrap": "^4.4.1",
     "compare-versions": "^3.5.1",
+    "css.gg": "^1.0.5",
     "electron": "^7.1.5",
     "electron-context-menu": "^0.15.1",
     "electron-css-reload": "^1.0.8",

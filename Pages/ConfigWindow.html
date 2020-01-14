@@ -65,6 +65,7 @@
       <!--VISUAL-->
       <div class="tab-pane fade" id="visual">
          <div>
+            <i class="gg-profile"></i>
             <button type="button" class="btn btn-primary">Primary</button>
             <button type="button" class="btn btn-secondary">Secondary</button>
             <button type="button" class="btn btn-success">Success</button>
@@ -358,7 +359,7 @@
       var newTheme = undefined
 
       function newThemeFunc() {
-         oldTheme = (newTheme ? newTheme : config.get('currentTheme'))
+         oldTheme = (newTheme ? newTheme : config.get('currentTheme.name'))
          newTheme = $("#SelectTheme").val()
          replacejscssfile(themes.get(`Themes.${oldTheme}.url`), themes.get(`Themes.${newTheme}.url`), 'css')
       }
@@ -379,8 +380,9 @@
                config.set('allowedUrlHosts', (!hosts) ? null : hosts.split(','))
                break
             case 'visual':
-               store.set('oldTheme', config.get('currentTheme'))
-               config.set('currentTheme', $("#SelectTheme").val())
+               store.set('oldTheme', config.get('currentTheme.name'))
+               config.set('currentTheme.name', $("#SelectTheme").val())
+               config.set('currentTheme.dark',themes.get(`Themes.${$("#SelectTheme").val()}.dark`))
                break
             case 'account':
                config.set('PolyLogiXAPI', $('#apikey').val())

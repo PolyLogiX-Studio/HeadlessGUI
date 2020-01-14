@@ -93,9 +93,14 @@ function replacejscssfile(oldfilename, newfilename, filetype) {
  *Setup the page Theme
  *
  */
-function setupThemes() {
-	loadjscssfile(themes.get(`Themes.${config.get('currentTheme')}.url`), 'css')
+function newTheme(oldfilename, newfilename, filetype){
+	replacejscssfile(oldfilename,newfilename,filetype)
 }
+function setupThemes() {
+	loadjscssfile(themes.get(`Themes.${config.get('currentTheme.name')}.url`), 'css')
+	//loadjscssfile('./Resources/Icons-', 'css')
+}
+
 
 /**
  * Update to a new theme(If changed)
@@ -104,7 +109,7 @@ function setupThemes() {
 function updateTheme() {
 	console.log("updateTheme")
 	const reload = require('electron-css-reload');
-	document.getElementById('Theme').href = themes.get(`Themes.${config.get('currentTheme')}.url`)
+	document.getElementById('Theme').href = themes.get(`Themes.${config.get('currentTheme.name')}.url`)
 	reload()
 }
-module.exports = {setupThemes,removeElement,addElement,replacejscssfile,loadjscssfile,createjscssfile}
+module.exports = {setupThemes,removeElement,addElement,replacejscssfile,loadjscssfile,createjscssfile,newTheme}

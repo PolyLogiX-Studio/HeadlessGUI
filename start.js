@@ -27,7 +27,8 @@ const {
 	Tray,
 	remote
 } = electron;
-const NEOSAPI = require('./NeosAPI')(bus).CloudXInterface
+const NeosAPI = require('Neos.js')
+console.log(new NeosAPI.CloudXInterface)
 /**
  * Window Manager
  */
@@ -138,9 +139,6 @@ const instances = new Instances()
 if (!store.has('MachineId')) { //For API Calls
 	store.set('MachineId', uuidv4())
 }
-//define NeosAPI
-const CloudXInterface = new NEOSAPI(store.get('machineId'))
-console.log(CloudXInterface.NEOS_BLOB)
 
 
 
@@ -192,42 +190,50 @@ if (process.env.NODE_ENV != 'production') {
 
 
 if (!themes.has('Themes')) {
-	config.set('currentTheme', 'Darkly')
+	config.set('currentTheme.name', 'Darkly')
+	config.set('currentTheme.dark',true)
 	themes.set('Themes', {
 		"Darkly": {
 			"url": `./CSS/Darkly.css`,
 			"type": "file",
-			"description": "Flatly in night mode"
+			"description": "Flatly in night mode",
+			"dark":true
 		},
 		"Flatly": {
 			"url": `./CSS/Flatly.css`,
 			"type": "file",
-			"description": "Flat and modern"
+			"description": "Flat and modern",
+			"dark":false
 		},
 		"Cyborg": {
 			"url": `./CSS/Cyborg.css`,
 			"type": "file",
-			"description": "Jet black and electric blue"
+			"description": "Jet black and electric blue",
+			"dark":true
 		},
 		"Minty": {
 			"url": `./CSS/Minty.css`,
 			"type": "file",
-			"description": "A fresh feel"
+			"description": "A fresh feel",
+			"dark":false
 		},
 		"Sketchy": {
 			"url": `./CSS/Sketchy.css`,
 			"type": "file",
-			"description": "A hand-drawn look for mockups and mirth"
+			"description": "A hand-drawn look for mockups and mirth",
+			"dark":false
 		},
 		"Solar": {
 			"url": `./CSS/Solar.css`,
 			"type": "file",
-			"description": "A spin on Solarized"
+			"description": "A spin on Solarized",
+			"dark":true
 		},
 		"Superhero": {
 			"url": `./CSS/Superhero.css`,
 			"type": "file",
-			"description": "The brave and the blue"
+			"description": "The brave and the blue",
+			"dark":true
 		}
 	})
 }
