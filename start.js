@@ -564,6 +564,13 @@ function login(credential, password) {
  * @example sendLoginPost(username:"someUser",password:"password",rememberMe:true})
  */
 function sendLoginPost(loginPayload) {
+	console.log({
+		method: "POST",
+		body: JSON.stringify(loginPayload),
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
 	return fetch(CLOUDX_PRODUCTION_NEOS_API + 'api/userSessions', {
 			method: "POST",
 			body: JSON.stringify(loginPayload),
