@@ -27,8 +27,7 @@ const {
 	Tray,
 	remote
 } = electron;
-const NeosAPI = require('Neos.js')
-console.log(new NeosAPI.CloudXInterface)
+const NeosAPI = require('@bombitmanbomb/neosjs')
 /**
  * Window Manager
  */

@@ -264,6 +264,7 @@
                 }
                 addElement('UserListInner', 'div', '0', '', `<div class="list-group-item"><p style="">${session.Vars._Users[i].username} <span id="ROLE-${session.Vars._Users[i].username}" class="badge ${badge}">${translatedRole}</span></p>
                          <button type="button" class="btn btn-sm btn-danger" style="" onclick="sendCommand('kick ${session.Vars._Users[i].username}',false)">${strings.getString("Menu.Kick")}</button>
+                         <button type="button" class="btn btn-sm btn-danger" style="" onclick="sendCommand('ban ${session.Vars._Users[i].username}',false)">${strings.getString("Menu.Ban")}</button>
                          <div class="btn-group btn-sm" role="group">
                          <button id="btnGroupDrop3" type="button" style="" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${strings.getString('Menu.Roles')} </button>
                          <div class="dropdown-menu" aria-labelledby="btnGroupDrop3" style=""> 
