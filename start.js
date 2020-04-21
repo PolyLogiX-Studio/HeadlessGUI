@@ -1,4 +1,7 @@
-process.env.NODE_ENV = ((process.argv.indexOf("--debug")>-1)?'Dev':'production');
+process.env.NODE_ENV = ((process.argv.indexOf("--debug")>-1)?'development':'production');
+const os = require("os");
+const PLATFORM = os.platform()
+console.log(PLATFORM)
 console.log(process.env.NODE_ENV)
 const unhandled = require('electron-unhandled');
 unhandled();
@@ -27,7 +30,7 @@ const {
 	Tray,
 	remote
 } = electron;
-const NeosAPI = require('@bombitmanbomb/neosjs')
+const NEOS = require('@bombitmanbomb/neosjs')
 /**
  * Window Manager
  */
