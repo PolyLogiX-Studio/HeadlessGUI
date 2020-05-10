@@ -104,7 +104,7 @@ class Server {
         console.log(this.accessLevel)
 		this.sessionDir = path.join(session.sessionsDir, session.UUID)
 		this.Config.startWorlds[0] = session
-		this.Config.tickRate = parseInt(session.tickRate, 10)
+		this.Config.tickRate = 60
 		this.Config.usernameOverride = (config.get('usernameOverride') === '' ? null : config.get('usernameOverride'))
 		this.Config.loginCredential = store.get('loginCredentials')
 		this.Config.loginPassword = store.get('loginPassword')
@@ -197,6 +197,7 @@ class Server {
 
 		// Handle Events
 		this.Session.stdout.on('data', (data) => {
+			console.log(data.toString())
 			if (data.toString().startsWith('Enabling logging output.')) {
 				return
 			}
