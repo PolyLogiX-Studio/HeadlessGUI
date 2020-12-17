@@ -78,7 +78,7 @@
         const path = require('path')
         const { store, config, themes } = require(path.join(__dirname, "Resources/store"))
         require('./Resources/DOMEditing.js').setupThemes()
-        const { addElement, removeElement, replacejscssfile, newTheme} = require('./Resources/DOMEditing.js')
+        const { addElement, removeElement, replacejscssfile, newTheme } = require('./Resources/DOMEditing.js')
         const fetch = require('node-fetch')
         const LocalizedStrings = require('localized-strings').default
         var lang = ipcRenderer.sendSync('fetchLanguage')
@@ -112,7 +112,7 @@
             removeAlert('StartupAlert')
         });
         ipcRenderer.on('removeConfig', function (e, items) {
-            if (store.get('oldTheme')!=config.get('currentTheme')){
+            if (store.get('oldTheme') != config.get('currentTheme')) {
                 newTheme(themes.get(`Themes.${store.get('oldTheme')}.url`), themes.get(`Themes.${config.get('currentTheme')}.url`), 'css')
             }
             while (document.getElementById('alert-noConfig')) {
@@ -126,14 +126,6 @@
 
         function openManager(id) {
             ipcRenderer.send('openManager', id)
-        }
-
-        function updateElementHTML(ID, value) {
-            document.getElementById(ID).innerHTML = value
-        }
-
-        function updateElementSrc(ID, value) {
-            document.getElementById(ID).src = value
         }
 
         function updateSession(session) {
@@ -201,10 +193,10 @@
             return myAlert
         }
         ipcRenderer.on("NEOS:Login", (e) => {
-         login()
+            login()
         })
         ipcRenderer.on("NEOS:Logout", (e) => {
-         logout()
+            logout()
         })
         function login() {
             fetch(`https://cloudx.azurewebsites.net/api/users/${store.get('NEOS:userId')}`)
@@ -219,7 +211,7 @@
                 })
         }
         function logout() {
-           $('#ProfilePicture').attr('src', `https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png`)
+            $('#ProfilePicture').attr('src', `https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png`)
         }
 
         addAlert(strings.formatString(strings.getString('Notifications.NewServerNotif'), strings.getString("Menu.Main"), strings.getString("Menu.New_Server")), 'info', 'StartupAlert')
@@ -256,8 +248,8 @@
                 }
             });
         }
-        $(document).ready(function(){
-            if (store.get('NEOS:token')){
+        $(document).ready(function () {
+            if (store.get('NEOS:token')) {
                 login()
             }
         })
