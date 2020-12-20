@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head id="head">
+   <script>
+      const $ = require("jquery");
+      require("bootstrap");
+   </script>
+   <title>Account</title>
+</head>
+
+<body>
+   <!--Oh Lord here we go-->
+   <div id="LoggedIn">
+      <img id="ProfilePicture" class="AccountWindow"
+         src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
+         style="width:75px; height: 75px; padding-right: 5px; border-radius: 50%;">
+      <button class="btn-danger" onclick="attemptLogout()">Logout</button>
+      <button onclick="openFriendsList()">Open Messenger Client</button>
+      <br>
+      <p id="ProfileUsername">Username</p>
+      KFC<span class="badge badge-pill badge-primary">Redacted</span>
+      <br>
+      NCR<span class="badge badge-pill badge-primary">Redacted</span>
+      
+   </div>
+   <div id="Login">
+      <form onsubmit="attemptLogin()" autocomplete="on">
+         <div class="form-group">
+            <label for="neosCredential">Neos Account Credential</label>
+            <input type="text" class="form-control" name="email" id="neosCredential" aria-describedby="emailHelp"
+               placeholder="Neos Login">
+            <label for="NeosPassword">Neos Account Password</label>
+            <input type="password" name="password" class="form-control" id="NeosPassword" placeholder="Neos Password">
+            <small id="Error" class="form-text text-danger" style="display: none;">Invalid Login</small>
+            <!--Hidden until Failed login-->
+            <div class="modal-footer">
+               <button type="button" class="btn btn-success" type="submit" onclick="attemptLogin()">Login</button>
+            </div>
+         </div>
+      </form>
+   </div>
+   <script>
+      var Account = {}
+      var ProfileURL = "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
+      const electron = require("electron");
+      const { ipcRenderer, app } = electron;
+      const VERSION = require("root-require")("package.json").version;
+      const fs = require("fs-extra");
+      const path = require("path");
+      const { store, config, themes } = require(path.join(
+         __dirname,
+         "Resources/store"
+      ));
+      const fetch = require("node-fetch");
+      require("./Resources/DOMEditing.js").setupThemes();
+      const {
+         addElement,
+         removeElement,
+         replacejscssfile,
+      } = require("./Resources/DOMEditing.js");
+      console.log("Loading Localized Strings");
+      const LocalizedStrings = require("localized-strings").default;
+      strings = new LocalizedStrings(ipcRenderer.sendSync("fetchLanguage"), {
+         pseudo: store.get("pseudo"),
+      });
+      strings.setLanguage(config.get("lang"));
+      $(document).ready(function () {
+         setLocalization();
+         checkLoggedIn()
+      });
+      function openURL(url) {
+         ipcRenderer.send("openURL", url);
+      }
+      function openFriendsList() {
+         ipcRenderer.send("OpenFriendsList")
+      }
+      function checkLoggedIn() {
+         Account = ipcRenderer.sendSync("GetAccount")
+
+         if (!Account) return UpdateDisplay()
+         let str = Account.Profile.IconUrl
+         ProfileURL = `https://cloudxstorage.blob.core.windows.net/assets/${str.substring(
+            str.lastIndexOf("/") + 1,
+            str.lastIndexOf("."))}`
+         UpdateDisplay()
+      }
+      function setLocalization() {
+         $("Title").text(strings.getString("Menu.Neos"));
+      }
+      function LoggedIn() {
+         $("#ProfileUsername").text(Account.Username)
+         $('#ProfilePicture').attr('src', ProfileURL)
+         $("#openFriendsList").show()
+         $("#LoggedIn").show()
+         $("#Login").hide()
+      }
+      function LoggedOut() {
+         ProfileURL = "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
+         $('#ProfilePicture').attr('src', ProfileURL)
+         $("#openFriendsList").hide()
+         $("#LoggedIn").hide()
+         $("#Login").show()
+      }
+      function attemptLogin() {
+         if ($('#neosCredential').val() && $('#NeosPassword').val())
+            ipcRenderer.send('NEOS:Login', { 'neosCredential': $('#neosCredential').val(), 'neosPassword': $('#NeosPassword').val() })
+      }
+      function attemptLogout() {
+         ipcRenderer.send("NEOS:Logout")
+      }
+      ipcRenderer.on('NEOS:LoginFailed', () => {
+         $('#Error').show()
+         UpdateDisplay()
+      })
+      ipcRenderer.on('NEOS:LoginSuccess', () => {
+         $('#Error').hide()
+         checkLoggedIn()
+      })
+      ipcRenderer.on('NEOS:LoggedOut', () => {
+         checkLoggedIn()
+      })
+      function UpdateDisplay() {
+         if (Account && Account.Id) {
+            LoggedIn()
+         } else {
+            LoggedOut()
+         }
+      }
+   </script>
+</body>
+
+</html>

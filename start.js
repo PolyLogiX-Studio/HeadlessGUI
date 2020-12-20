@@ -28,7 +28,6 @@ const {
   Tray,
   remote,
 } = electron;
-const Neos = new (require('@bombitmanbomb/neosjs'))
 /**
  * Window Manager
  */
@@ -302,6 +301,11 @@ app.on('ready', function () {
   }
   //Create Main Window
 });
+//Setup NEOS
+const Neos = new (require("@bombitmanbomb/neosjs"))()
+const {CommandManager} = require("neosjs-commands")
+const Commands = CommandManager.CreateCommands(Neos)
+
 //QUIT HANDELING
 
 shuttingDown = false;
@@ -309,6 +313,7 @@ shuttingDown = false;
  * Safely quit the program
  */
 function safeQuit() {
+  Neos.Logout()
   shuttingDown = true;
   instances.endAll();
 }
@@ -423,7 +428,58 @@ function createConfigWindow() {
     }
   );
 }
-
+/**
+ * Open the Config Menu
+ */
+function createAccountWindow() {
+  window.createWindow(
+    'NeosAccount',
+    {
+      backgroundColor: '#303030',
+      parent: 'MainWindow',
+      width: 700,
+      show: false,
+      height: 300,
+      title: 'Neos',
+      icon: ICON_GLOBAL_PNG,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    },
+    {
+      page: {
+        pathname: path.join(__dirname, '/Pages/AccountWindow.html'),
+        protocol: 'file:',
+        slashes: true,
+      },
+      children: ['LoginWindow',"Messages","Chat","Friends"],
+    }
+  );
+}
+function createFriendsWindow() {
+  window.createWindow(
+    'Friends',
+    {
+      backgroundColor: '#303030',
+      parent: 'MainWindow',
+      width: 1000,
+      show: false,
+      height: 810,
+      title: 'Friends',
+      icon: ICON_GLOBAL_PNG,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    },
+    {
+      page: {
+        pathname: path.join(__dirname, '/Pages/Friends.html'),
+        protocol: 'file:',
+        slashes: true,
+      },
+    }
+  );
+}
 /**
  * Open a Window to a URL
  *
@@ -536,6 +592,20 @@ const mainMenuTemplate = [
         },
       },
     ],
+  },{
+    label:strings.getString('Menu.Neos'),
+    submenu:[
+      {
+        label: strings.getString('Menu.Account'),
+        /**
+         * @private
+         * @function
+         */
+        click() {
+          createAccountWindow();
+        },
+      }
+    ]
   },
   {
     label: strings.getString('Menu.Help'),
@@ -622,10 +692,35 @@ if (process.argv.indexOf('--light') > -1) {
     ],
   });
 }
-
+ipcMain.on("OpenFriendsList", ()=>{
+  createFriendsWindow()
+})
+ipcMain.on("NEOS:Login", (event, arg)=>{
+  Neos.Login(arg.neosCredential, arg.neosPassword, undefined, uuidv4(),true).then(e=>{if (e && e.IsOK){
+    console.log("Success")
+    event.reply("NEOS:LoginSuccess")
+  } else {
+    console.log("Failed")
+    event.reply("NEOS:LoginFailed")
+  }}).catch(()=>{
+    console.log("Error")
+    event.reply("NEOS:LoginFailed")
+  })
+})
+ipcMain.on("NEOS:Logout", (event)=>{
+  Neos.once("logout",()=>event.reply("NEOS:LoggedOut"))
+  Neos.Logout()
+})
+ipcMain.on("GetAccount", (event)=>{
+  console.log(Neos.CurrentUser)
+  event.returnValue = Neos.CurrentUser
+})
 ipcMain.on('fetchLanguage', (event, arg) => {
   event.returnValue = strings.getContent();
 });
 bus.on('getLang', (event, arg) => {
   bus.emit('sendLang', strings.getContent());
 });
+Neos.on("error",(error)=>{
+  //Error Handling! lol
+})
